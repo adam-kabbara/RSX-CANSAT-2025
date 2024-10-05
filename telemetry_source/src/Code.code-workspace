@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../../../Code"
+		},
+		{
+			"name": "telemetry_source",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
