@@ -13,10 +13,10 @@ enum mode_control {
 };
 
 struct command_packet {
-    char[CMD_WORD_SIZE] keyword;
-    char[CMD_WORD_SIZE] team_id_check;
-    char[CMD_WORD_SIZE] commad;
-    char[CMD_WORD_SIZE] data;
+    char keyword[CMD_WORD_SIZE];
+    char team_id[CMD_WORD_SIZE];
+    char command[CMD_WORD_SIZE];
+    char data[CMD_WORD_SIZE];
 };
 
 #endif /* SET_VALS_H */

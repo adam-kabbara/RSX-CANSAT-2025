@@ -7,7 +7,7 @@ int extract_cmd_msg(const char *buff, struct command_packet *packet)
     int pos = 0;
     char *current_field = packet->keyword;
 
-    for(int i = 0; buff[i] != '\0', i++)
+    for(int i = 0; buff[i] != '\0'; i++)
     {
         if(buff[i] == ',')
         {
@@ -17,7 +17,7 @@ int extract_cmd_msg(const char *buff, struct command_packet *packet)
             switch (delimiter_count)
             {
                 case 1:
-                    current_field = packet->team_id_check;
+                    current_field = packet->team_id;
                     break;
                 case 2:
                     current_field = packet->command;
@@ -27,10 +27,10 @@ int extract_cmd_msg(const char *buff, struct command_packet *packet)
                     return 0;
             }
         }
-        elsif(pos < CMD_WORD_SIZE - 1)
+        else if(pos < CMD_WORD_SIZE - 1)
         {
             current_field[pos] = buff[i];
-            pos++
+            pos++;
         }
         else
         {
@@ -41,7 +41,7 @@ int extract_cmd_msg(const char *buff, struct command_packet *packet)
     return 1;
 }
 
-int comapre_strings(const char *a, const char *b)
+int compare_strings(const char *a, const char *b)
 {  
     int i = 0;
 
