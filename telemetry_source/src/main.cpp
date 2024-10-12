@@ -187,13 +187,24 @@ void do_sim(const char *data)
 
 void do_simp(const char *data)
 {
-  Serial2.println("$I RECEIVED COMMAND: SIMP\n");
+  // Check if we are in simulation mode
+  if(current_mode != SIM)
+  {
+    Serial2.printf("$E NOT IS SIMULATION MODE; CODE: %d", current_mode);
+  }
+
+  int sim_pressure_recv = atoi(data);
+
+  // TODO: Do something with the data
 }
 
 void do_cal(const char *data)
 {
   Serial2.println("$I RECEIVED COMMAND: CAL\n");
-  // TODO: Set up watchdog timer/critical state flash memory to recover from hanging/unexpected reset
+
+  // TODO: Calibrate altitude to 0 meters
+
+  // TODO: Set up reset and processor recovery
 }
 
 void do_mec(const char *data)
