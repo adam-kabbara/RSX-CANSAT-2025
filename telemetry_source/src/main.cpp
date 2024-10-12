@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "global.h"
 #include "helpers.h"
 
@@ -22,6 +21,7 @@ void do_reset_team_id(const char *data);
 hw_timer_t *send_timer = NULL;
 char cmd_buff[CMD_BUFF_SIZE];
 int TEAM_ID = 9999;
+char MISSION_TIME[GENERAL_WORD_SIZE] = "00:00:00";
 mode_control current_mode = STANDBY;
 /*------- VARIABLES ------*/
 
@@ -109,9 +109,26 @@ void do_cx(const char *data)
 void do_st(const char *data)
 {
   Serial2.println("$I RECEIVED COMMAND: SET TIME\n");
-  // TODO: What do they mean by this??
-  // <UTC_TIME>|GPS is UTC time in the format hh:mm:ss or ‘GPS’ which sets the
-  // flight software time to the current time read from the GPS module
+  if(compare_strings(data, "GPS"))
+  {
+    // TODO: Get time from GPS, pass this to MISSION_TIME
+  }
+  else if(time_format_check(data) == 0)
+  {
+    int i = 0;
+    while(data[i] != '\0')
+    {
+      MISSION_TIME[i] = data[i];
+      i++;
+    }
+    MISSION_TIME[i] = '\0';
+
+    Serial2.printf("$I SET TIME TO: %s\n", MISSION_TIME);
+  }
+  else
+  {
+    Serial2.println("$E DATA IS NOT VALID. SEND EITHER UTC TIME OR 'GPS'\n");
+  }
 }
 
 void do_sim(const char *data)
