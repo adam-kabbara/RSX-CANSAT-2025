@@ -1,0 +1,54 @@
+Test commands to be sent from ground station
+
+TODO: Once we have arduino shield, make this into a bash script for sanity regression testing.
+
+* After every correct command expect return of "RECEIVED COMMAND: <command>"
+
+1. Wrong format: expected return = "$W COMMAND REJECTED: FORMAT IS INCORRECT. EXPECTING 'CMD,<TEAM_ID>,<CMD>,<DATA>'"
+"HELLO WORLD"
+"CMD"
+"A,B,C,D"
+"CMD , 9999 , CX , ON"
+"CMD,9999,CX,ON,DATA"
+"CMD9999CXON"
+
+2. Message does not start with 'CMD': expected return = "$W REJECTED INPUT: TEAM ID DOES NOT MATCH."
+"ABC,DEF,GHI,JKL"
+
+3. Set TEAM ID
+  a. "CMD,XXXX,RESET_TEAM_ID,0420" - expected return = "$I TEAM ID HAS BEEN RESET TO 0420"
+
+4. Wrong TEAM ID: expected return = "$W REJECTED INPUT: TEAM ID DOES NOT MATCH."
+"CMD,ABCD,CX,ON"
+"CMD,00000000,CX,ON"
+"CMD,1234,ST,GPS"
+
+5. CX Command: TODO
+
+6. ST (Set time) Command
+  a. UTC, garbage data - expected return = "$E DATA IS NOT VALID. SEND EITHER UTC TIME OR 'GPS'"
+    i. "CMD,0420,ST,12345" 
+    ii. "CMD,0420,ST,10:10:10:10"
+    iii. "CMD, 0420,ST,10:10"
+  b. UTC, valid data - expected return = "$I SET TIME TO: <time>"
+    i. "CMD,0420,ST,12:10:34"
+    ii. "CMD,0420,ST,06:06:32"
+  c. TODO: GPS test
+
+7. SIM Command
+  a. Garbage - expected return = "$E UNRECOGNIZED SIM COMMAND:"
+    "CMD,0420,SIM,XX3EG"
+  b. Enable, Activate, Enable, Activate, Disable - expected return = "$I MODE SET: SIM_READY", "$I STARTING SIMULATION MODE...", "$E PAYLOAD IS NOT IN STANDBY MODE", "$E PAYLOAD IS NOT IN STANDBY MODE", "$I ENDING SIMULATION MODE..."
+    "CMD,0420,SIM,ENABLE"
+    "CMD,0420,SIM,ACTIVATE"
+    "CMD,0420,SIM,DISABLE"
+  c. Activate - expected return = "$E SIMULATION MODE IS NOT ENABLED"
+    "CMD,0420,SIM,ACTIVATE"
+  d. Disable - expected return = "$E PAYLOAD IS ON STANDBY"
+    "CMD,0420,SIM,DISABLE"
+  e. Enable, Enable, Disable - expected return = "$I MODE SET: SIM_READY", "$I MODE IS ALREADY SET TO: SIM_READY", "$I SIMULATION MODE DISABLED."
+    "CMD,0420,SIM,ENABLE"
+    "CMD,0420,SIM,ENABLE"
+    "CMD,0420,SIM,DISABLE"
+
+TODO: SIMP, CAL, MEC
