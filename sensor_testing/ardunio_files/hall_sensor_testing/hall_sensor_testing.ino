@@ -2,14 +2,14 @@
 // CANSAT 2T4-2T5
 
 int hallSensorPin = 2;     
-int ledPin =  13;
+int ledPin = 13;
+
 int currState = 0;
 int lastState = 1;
-int counter = 0; 
-float onTime = 0.0;
-float offTime = 0.0;
 float rpm = 0.0;
-float prev_rpm = 0.0;
+float prevRPM = 0.0;
+unsigned long lastPulseTime = 0;
+unsigned long pulseInterval = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -20,34 +20,20 @@ void setup() {
   pinMode(hallSensorPin, INPUT);     
 }
 
-void loop(){
+void loop() {
   currState = digitalRead(hallSensorPin);
 
-  if (currState == LOW) {
+  if (currState == LOW && lastState == HIGH) {
     digitalWrite(ledPin, HIGH);
-    if (lastState != currState) {
-      // Serial.println("Detected Magnet: LED ON!");
-      // Serial.print("At Time: ");
-      // onTime = counter * 0.01;
-      // Serial.print(onTime);
-      // Serial.println(" seconds.");
-      counter = 0;
-    } else {
-      counter++;
-    }
-  } else {
+    unsigned long currentTime = micros();
+    pulseInterval = currentTime - lastPulseTime;
+    lastPulseTime = currentTime;
+  } else if (currState == HIGH) {
     digitalWrite(ledPin, LOW);
-    if (lastState != currState) {
-      // Serial.println("Lost Magnet: LED OFF!");
-      // Serial.print("At Time: ");
-      // offTime = counter * 0.01;
-      // Serial.print(offTime);
-      // Serial.println(" seconds.");
-    }
   }
 
-  calculateRPM(counter, prev_rpm);
-  prev_rpm = rpm;
+  rpm = calculateRPM(pulseInterval, prevRPM);
+  prevRPM = rpm;
 
   Serial.print("Current RPM: ");
   Serial.println(rpm);
@@ -56,23 +42,12 @@ void loop(){
   delay(10);
 }
 
-float calculateRPM(int revolution, float previous) {
-  // float oneRotationTime = end - start;
-  // Serial.println(end);
-  // Serial.println(start);
-  // Serial.println(oneRotationTime);
-  float oneRotationTime = 0.0;
-
-  if (lastState != currState) {
-    oneRotationTime = revolution * 0.01;
-    // Serial.println(oneRotationTime);
-  }
-  
-  if (oneRotationTime > 0) {
-    rpm = (60.0 / oneRotationTime);
+float calculateRPM(unsigned long pulseInterval, float previous) {
+  if ((currState == HIGH) && (pulseInterval > 0)) {
+    rpm = (60.0 * 1000000) / pulseInterval;
   }
 
-  if (rpm > 500.0) {
+  if (rpm > 2000.0) {
     rpm = previous;
   }
 
