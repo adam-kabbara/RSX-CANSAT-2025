@@ -1,7 +1,7 @@
 // Daniel Yu
 // CANSAT 2T4-2T5
 
-int hallSensorPin = 2;     
+int hallSensorPin = 2;
 int ledPin = 13;
 
 int currState = 0;
