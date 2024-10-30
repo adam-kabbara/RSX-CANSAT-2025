@@ -1,4 +1,9 @@
 from camera import Camera, GrabMode, PixelFormat, FrameSize, GainCeiling
+import uos
+import machine
+from machine import Pin, SPI, WDT, SDCard
+#import sdcard
+#from sdcard import SDCard
 
 # Camera construction and initialization
 # These pins are just examples and if you use them just like that will get a watchdog error. Adapt them to your board!
@@ -20,12 +25,40 @@ camera = Camera(
     grab_mode=GrabMode.WHEN_EMPTY
 )
 
-#Camera construction using defaults (if you specified them in mpconfigboard.h)
-#camera = Camera(data_pins)
-
-# Capture image
+# Capture and save the image to the SD card
 img = camera.capture()
 
-# Camera reconfiguration 
-camera.reconfigure(pixel_format=PixelFormat.JPEG,frame_size=FrameSize.QVGA,grab_mode=GrabMode.LATEST, fb_count=2)
-camera.set_quality(10)
+# Initialize the SDCard (substitute pins if needed based on your board)
+sd = SDCard(slot=2, sck=Pin(39), mosi=Pin(38), miso=Pin(40), cs=Pin(5), freq=20000000)
+
+#cs = Pin(5, machine.Pin.OUT)
+
+#spi = SPI(1, polarity=0, phase=0, baudrate=1000000, sck=Pin(39), mosi=Pin(38), miso=Pin(40)) #baudrate=400000
+
+#sd = sdcard.SDCard(spi, cs)#baudrate=8000000 #43 gave no res.
+
+#sd = machine.SDCard(slot=2)
+#vfs=os.VfsFat(sd)
+#os.mount(vfs, "/sd")  # mount
+
+#fn = open('/sd/textsd.txt', 'w')
+#fn.write('some data')
+#fn.close()
+
+#os.listdir('/sd')    # list directory contents
+
+print(uos.listdir("/"))
+# Mount the SD card to the filesystem
+uos.mount(sd, "/sd")
+
+# Writing a file to the SD card
+with open("/sd/image.jpg", "wb") as file:
+    file.write(img)
+
+# Confirm the file has been written by reading it
+with open("/sd/image.jpg", "r") as file:
+    print(file.read())
+
+# Unmount the SD card when done
+uos.umount("/sd")
+print('TEST DONE')
