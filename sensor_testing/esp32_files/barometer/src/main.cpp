@@ -13,7 +13,7 @@ unsigned long pulseInterval = 0;
 float calculateRPM(unsigned long pulseInterval, float previous);
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println("Starting...");
     delay(1000);
 
