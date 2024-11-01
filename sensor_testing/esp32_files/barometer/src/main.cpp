@@ -1,8 +1,10 @@
 #include <Arduino.h>
 
+// ESP32 Pins
 int hallSensorPin = 23;
 int ledPin = 2;
 
+// Initializing variables
 int currState = 0;
 int lastState = 1;
 float rpm = 0.0;
@@ -24,30 +26,33 @@ void setup() {
 void loop() {
     currState = digitalRead(hallSensorPin);
 
+    // Turns on LED and calculates starting time when magnet comes across the hall effect sensor
     if (currState == LOW && lastState == HIGH) {
         digitalWrite(ledPin, HIGH);
         unsigned long currentTime = micros();
         pulseInterval = currentTime - lastPulseTime;
         lastPulseTime = currentTime;
     } else if (currState == HIGH) {
-        digitalWrite(ledPin, LOW);
+        digitalWrite(ledPin, LOW); // Turns off LED at its falling edge
     }
 
     rpm = calculateRPM(pulseInterval, prevRPM);
-    prevRPM = rpm;
+    prevRPM = rpm; // Resets the RPM state
 
     Serial.print("Current RPM: ");
     Serial.println(rpm);
 
-    lastState = currState;
+    lastState = currState; // Resets the hall effect state
     delay(10);
 }
 
+// Calculates the RPM value 
 float calculateRPM(unsigned long pulseInterval, float previous) {
     if ((currState == HIGH) && (pulseInterval > 0)) {
         rpm = (60.0 * 1000000) / pulseInterval;
     }
 
+    // Filters out extreme RPM calculations 
     if (rpm > 2000.0) {
         rpm = previous;
     }
