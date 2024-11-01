@@ -7,7 +7,7 @@
 1. Just `pip install esptool`. Gonna use this tool to flash firmware onto the esp32
 
 ## Flashing
-1. Ensure that your ESP32 is in flash mode while you’re trying to upload the firmware. To enter flash mode, hold down the `BOOT` button while resetting the board or powering it on.
+1. Ensure that your ESP32 is in flash mode while you're trying to upload the firmware. To enter flash mode, hold down the `BOOT` button while resetting the board or powering it on.
 2. After you have pluged in, on windows, to check what port the esp32 is using go to `Device Manager` and look under the `Ports` drop down menue. In the commands below, `COM6` was the port used.
 3. Look for where `esptools` was installed and `cd` there. For my case I installed it in a conda env and it was found in `C:\Users\adamk\anaconda3\envs\cansat\Scripts>`. The commads below use `esptool.exe` but for you it might be `esptool.py`
 4. Remove the old fiirmware by running
@@ -19,6 +19,16 @@ esptool.exe --port COM6 erase_flash
 esptool.exe --chip esp32s3 --baud 115200 --port COM6 write_flash -z 0 "dir_to_firmmware_.bin_file"
 ```
 Now this should take a min or two and you should have the miropython firmware on the esp32.
+
+## Installing dependancies
+```
+pip install mpremote
+```
+then use (COM6 is the port connected to esp32)
+```
+mpremote connect COM6 mip install package-name
+```
+get packages from here https://github.com/micropython/micropython-lib/tree/master
 
 ## Programming
 1. Download Thonny https://thonny.org/

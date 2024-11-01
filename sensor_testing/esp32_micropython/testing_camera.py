@@ -25,40 +25,40 @@ camera = Camera(
     grab_mode=GrabMode.WHEN_EMPTY
 )
 
-# Capture and save the image to the SD card
+
+# Capture an image
 img = camera.capture()
+if img is None:
+    print("Image capture failed!")
+    machine.reset()
 
-# Initialize the SDCard (substitute pins if needed based on your board)
-sd = SDCard(slot=2, sck=Pin(39), mosi=Pin(38), miso=Pin(40), cs=Pin(5), freq=20000000)
+# SD card setup
+cs_pin = Pin(5, Pin.OUT)
+cs_pin.value(1)  # Start with CS high (deselected)
+sd = SDCard(slot=2, sck=Pin(39), mosi=Pin(40), miso=Pin(38), cs=cs_pin, freq=20000000)
 
-#cs = Pin(5, machine.Pin.OUT)
+# Mount the SD card and write image
+try:
+    cs_pin.value(0)  # Select the SD card
+    uos.mount(sd, "/sd")
+    print("SD card mounted successfully")
 
-#spi = SPI(1, polarity=0, phase=0, baudrate=1000000, sck=Pin(39), mosi=Pin(38), miso=Pin(40)) #baudrate=400000
+    # Write the image to the SD card
+    with open("/sd/image.jpg", "wb") as file:
+        file.write(img)
+    print("Image written successfully")
 
-#sd = sdcard.SDCard(spi, cs)#baudrate=8000000 #43 gave no res.
+    # Read back the file to confirm
+    with open("/sd/image.jpg", "rb") as file:
+        data = file.read()
+        print("Read back image size:", len(data))
 
-#sd = machine.SDCard(slot=2)
-#vfs=os.VfsFat(sd)
-#os.mount(vfs, "/sd")  # mount
+except Exception as e:
+    print("Error:", e)
 
-#fn = open('/sd/textsd.txt', 'w')
-#fn.write('some data')
-#fn.close()
+finally:
+    uos.umount("/sd")
+    cs_pin.value(1)  # Deselect the SD card
+    print("SD card unmounted")
 
-#os.listdir('/sd')    # list directory contents
-
-print(uos.listdir("/"))
-# Mount the SD card to the filesystem
-uos.mount(sd, "/sd")
-
-# Writing a file to the SD card
-with open("/sd/image.jpg", "wb") as file:
-    file.write(img)
-
-# Confirm the file has been written by reading it
-with open("/sd/image.jpg", "r") as file:
-    print(file.read())
-
-# Unmount the SD card when done
-uos.umount("/sd")
-print('TEST DONE')
+print("TEST DONE")
