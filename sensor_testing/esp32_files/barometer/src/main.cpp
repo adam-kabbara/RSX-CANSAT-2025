@@ -46,7 +46,7 @@ void loop() {
     delay(10);
 }
 
-// Calculates the RPM value 
+// Calculates the RPM value using the subtracted time
 float calculateRPM(unsigned long pulseInterval, float previous) {
     if ((currState == HIGH) && (pulseInterval > 0)) {
         rpm = (60.0 * 1000000) / pulseInterval;
