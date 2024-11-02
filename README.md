@@ -5,4 +5,4 @@ This repository is designed to manage the files made by the CANSAT team under th
 The code in the main branch is tested and confirmed to be working. All untested code must be pushed into the 'beta' branch.
 
 ## Sensor Testing
-All sensors used on our CANSAT are tested separately using an ESP32 Dev Module microcontroller and those codes are under this folder.
+All sensors used on our CANSAT are tested separately using an ESP32 Dev Module microcontroller. This folder contains all related information regarding the tests completed on these sensors including past designs, schematics, pin connections, and code.
