@@ -46,6 +46,8 @@ void printValues() {
     Serial.print(1.8 * bme.readTemperature() + 32);
     Serial.println(" *F");*/
 
+    // Quite accurate according to https://toronto.weatherstats.ca/charts/pressure_station-hourly.html
+    // Note: 1 kPa = 10 hPa
     Serial.print("Pressure = ");
     Serial.print(bme.readPressure() / 100.0F);
     Serial.println(" hPa");
