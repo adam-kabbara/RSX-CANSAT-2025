@@ -1,61 +1,64 @@
-#include <Arduino.h>
+// Daniel Yu
+// CANSAT Team 2T4-2T5
+// Robotics for Space Exploration
+// University of Toronto
 
-// ESP32 Pins
-int hallSensorPin = 23;
-int ledPin = 2;
+// Barometer Code
 
-// Initializing variables
-int currState = 0;
-int lastState = 1;
-float rpm = 0.0;
-float prevRPM = 0.0;
-unsigned long lastPulseTime = 0;
-unsigned long pulseInterval = 0;
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
 
-float calculateRPM(unsigned long pulseInterval, float previous);
+// Standard atmospheric pressure is 1013.25 hPa --> https://en.wikipedia.org/wiki/Atmospheric_pressure, https://www.noaa.gov/jetstream/atmosphere/air-pressure
+#define SEALEVELPRESSURE_HPA (1013.25)
+
+Adafruit_BME280 bme;
+
+void printValues();
 
 void setup() {
-    Serial.begin(115200);
-    Serial.println("Starting...");
-    delay(1000);
+    Serial.begin(9600);
+    Serial.println(F("\nBooting up BME280 testing..."));
 
-    pinMode(ledPin, OUTPUT);      
-    pinMode(hallSensorPin, INPUT); 
+    // Checking if the I2C connection is setup correctly 
+    bool status;
+    status = bme.begin(0x77);  
+    if (!status) {
+        Serial.println("Could not find a valid BME280 sensor, check wiring!");
+        while (1);
+    }
+
+    Serial.println("\n----- Starting Test -----\n");
 }
 
-void loop() {
-    currState = digitalRead(hallSensorPin);
-
-    // Turns on LED and calculates starting time when magnet comes across the hall effect sensor
-    if (currState == LOW && lastState == HIGH) {
-        digitalWrite(ledPin, HIGH);
-        unsigned long currentTime = micros();
-        pulseInterval = currentTime - lastPulseTime;
-        lastPulseTime = currentTime;
-    } else if (currState == HIGH) {
-        digitalWrite(ledPin, LOW); // Turns off LED at its falling edge
-    }
-
-    rpm = calculateRPM(pulseInterval, prevRPM);
-    prevRPM = rpm; // Resets the RPM state
-
-    Serial.print("Current RPM: ");
-    Serial.println(rpm);
-
-    lastState = currState; // Resets the hall effect state
-    delay(10);
+void loop() { 
+    printValues();
+    delay(2000);
 }
 
-// Calculates the RPM value using the subtracted time
-float calculateRPM(unsigned long pulseInterval, float previous) {
-    if ((currState == HIGH) && (pulseInterval > 0)) {
-        rpm = (60.0 * 1000000) / pulseInterval;
-    }
+void printValues() {
+    Serial.print("Temperature = ");
+    Serial.print(bme.readTemperature());
+    Serial.println(" *C");
 
-    // Filters out extreme RPM calculations 
-    if (rpm > 2000.0) {
-        rpm = previous;
-    }
+    // Convert temperature to Fahrenheit
+    /*Serial.print("Temperature = ");
+    Serial.print(1.8 * bme.readTemperature() + 32);
+    Serial.println(" *F");*/
 
-    return rpm;
+    // Quite accurate according to https://toronto.weatherstats.ca/charts/pressure_station-hourly.html
+    // Note: 1 kPa = 10 hPa
+    Serial.print("Pressure = ");
+    Serial.print(bme.readPressure() / 100.0F);
+    Serial.println(" hPa");
+
+    Serial.print("Approx. Altitude = ");
+    Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
+    Serial.println(" m");
+
+    Serial.print("Humidity = ");
+    Serial.print(bme.readHumidity());
+    Serial.println(" %");
+
+    Serial.println();
 }
