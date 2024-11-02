@@ -3,6 +3,8 @@
 // Robotics for Space Exploration
 // University of Toronto
 
+// Hall Effect Sensor Code
+
 #include <Arduino.h>
 
 // ESP32 Pins
