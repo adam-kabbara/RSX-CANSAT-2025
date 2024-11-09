@@ -19,6 +19,7 @@ void loop() {
         gps.encode(c); // Feed the GPS parser
 
         if (gps.location.isUpdated()) {
+            // Latitude location
             Serial.print("Latitude: ");
             Serial.print(gps.location.lat(), 6);
             if (gps.location.lat() > 0) {
@@ -27,6 +28,7 @@ void loop() {
                 Serial.println(" °S");
             }
             
+            // Longitude location
             Serial.print("Longitude: ");
             Serial.println(gps.location.lng(), 6);
             if (gps.location.lng() > 0) {
@@ -35,13 +37,16 @@ void loop() {
                 Serial.println(" °W");
             }
             
+            // Number of satellites
             Serial.print("Satellites: ");
             Serial.println(gps.satellites.value());
             
+            // Altitude 
             Serial.print("Altitude: ");
             Serial.print(gps.altitude.meters());
             Serial.println(" m");
 
+            // Speed in knots and m/s
             Serial.print("Speed: ");
             Serial.print(gps.speed.knots());
             Serial.print(" knots ");
@@ -49,8 +54,42 @@ void loop() {
             Serial.print(gps.speed.mps());
             Serial.println(" m/s)");
 
+            // Prints the current time in HH:MM:SS format with 24-hour clock
+            int hour = gps.time.hour();
+            int minute = gps.time.minute();
+            int second = gps.time.second();
             Serial.print("Time: ");
-            Serial.println(gps.time.value());
+            if (hour < 10) {
+                Serial.print("0");
+            } 
+            Serial.print(hour);
+            Serial.print(":");
+            if (minute < 10) {
+                Serial.print("0");
+            }
+            Serial.print(minute);
+            Serial.print(":");
+            if (second < 10) {
+                Serial.print("0");
+            }
+            Serial.println(second);
+
+            // Prints the current date in DD/MM/YYYY format
+            int day = gps.date.day();
+            int month = gps.date.month();
+            int year = gps.date.year();
+            Serial.print("Date: ");
+            if (day < 10) {
+                Serial.print("0");
+            }
+            Serial.print(day);
+            Serial.print("/");
+            if (month < 10) {
+                Serial.print("0");
+            }
+            Serial.print(month);
+            Serial.print("/");
+            Serial.println(year);
 
             Serial.println("--------------------------------");
         }
