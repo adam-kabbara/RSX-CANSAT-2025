@@ -12,7 +12,7 @@
 // #define FAST_MODE
 
 // For SPI mode, we also need a RESET 
-#define BNO08X_RESET 55
+#define BNO08X_RESET 5
 // but not for I2C or UART
 //#define BNO08X_RESET -1
 
