@@ -44,6 +44,17 @@ void setReports(sh2_SensorId_t reportType, long report_interval) {
 void setup(void) {
 
   Serial.begin(115200);
+  //hal_callback(void *cookie, sh2_AsyncEvent_t *pEvent) 
+
+  /*
+  delay(200);
+  digitalWrite(BNO08X_RESET, LOW);
+  delay(200);
+  digitalWrite(BNO08X_RESET, HIGH);
+  delay(20);
+  */
+
+
   while (!Serial) delay(10);     // will pause Zero, Leonardo, etc until serial console opens
 
   Serial.println("Adafruit BNO08x test!");
@@ -58,10 +69,11 @@ void setup(void) {
   Serial.println("BNO08x Found!");
 
 
-  setReports(reportType, reportIntervalUs);
 
   Serial.println("Reading events");
   delay(100);
+  bno08x.enableReport(reportType, reportIntervalUs);
+
 
   //magnometer setup 
   Serial.println("Setting magn f calib");
@@ -73,6 +85,9 @@ void setup(void) {
     Serial.println("Could not enable raw magnetometer");
   }
   Serial.println("donemagninit");
+  //setReports(reportType, reportIntervalUs);
+  pinMode(BNO08X_RESET, OUTPUT);
+  digitalWrite(BNO08X_RESET, LOW);
 }
 
 void quaternionToEuler(float qr, float qi, float qj, float qk, euler_t* ypr, bool degrees = false) {
@@ -132,8 +147,10 @@ void loop() {
     double y = sensorValue.un.magneticField.y;
     
     //atan2 returns the angle in radians, then its converted to degrees -180 to 180, then mapped from 0 to 360
-    double magCircleAngle = map(atan2(y,x)*180.0/PI, -180, 180, 0, 360);
-    Serial.print("magdeg: "); 
+    //double magCircleAngle = map(atan2(x-0.03*(1.62/1.99),y+0.005*(1.99/1.62))*180.0/PI, -180, 180, 0, 360);
+    double magCircleAngle = atan2(x-0.03*(1.62/1.99),y+0.005*(1.99/1.62))*180.0/PI;
+
+    Serial.print("magdeg_map: "); 
     Serial.println(magCircleAngle); 
   }
 
