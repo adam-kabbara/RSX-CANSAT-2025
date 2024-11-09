@@ -61,3 +61,27 @@ int compare_strings(const char *a, const char *b)
     
     return 0;
 }
+
+int time_format_check(const char *time_utc)
+{
+    // Check string is in format 'hh:mm:ss'
+    for(int i = 0; i < 8; i++)
+    {
+        if(time_utc[i] == '\0') return 1;
+    }
+    if(time_utc[8] != '\0') return 1;
+
+    for(int i = 0; i < 8; i++)
+    {
+        if(i != 2 && i != 5)
+        {
+            if(!isdigit(time_utc[i])) return 1;
+        }
+        else
+        {
+            if(time_utc[i] != ':') return 1;
+        }
+    }
+
+    return 0;
+}
