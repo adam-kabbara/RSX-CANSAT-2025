@@ -92,6 +92,8 @@ void loop() {
             Serial.println(year);
 
             Serial.println("--------------------------------");
+        } else {
+            Serial.println("No GPS position detected...")
         }
     }
 }
