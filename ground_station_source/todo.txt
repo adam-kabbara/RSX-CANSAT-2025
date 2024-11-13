@@ -1,0 +1,2 @@
+1. Code to receive data
+2. Simple interface to send and display pure text
