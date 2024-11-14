@@ -88,7 +88,7 @@ void setup()
     1       
   );
 
-}
+} // END: void setup()
 
 void loop()
 {
@@ -138,7 +138,7 @@ void send_data(void *pvParameters)
     // TODO: should mode be in flash memory?
     vTaskDelay(pdMS_TO_TICKS(25));
   }
-}
+} // END: void loop()
 
 void receive_commands(void *pvParameters)
 {
@@ -202,7 +202,7 @@ void receive_commands(void *pvParameters)
     }
     vTaskDelay(pdMS_TO_TICKS(25));
   }
-}
+} // END: receive_commands()
 
 void do_cx(const char *data)
 {
@@ -237,7 +237,7 @@ void do_cx(const char *data)
   {
     safe_print("$E DATA IS NOT VALID; SEND ON/OFF");
   }
-}
+} // END: do_cx()
 
 void do_st(const char *data)
 {
@@ -266,7 +266,7 @@ void do_st(const char *data)
   {
     safe_print("$E DATA IS NOT VALID. SEND EITHER UTC TIME OR 'GPS'\n");
   }
-}
+} // END: do_st()
 
 void do_sim(const char *data)
 {
@@ -331,7 +331,7 @@ void do_sim(const char *data)
     snprintf(message, SENTENCE_SIZE, "$E UNRECOGNIZED SIM COMMAND: '%s'\n", data);
     safe_print(message);
   }
-}
+} // END: do_sim()
 
 void do_simp(const char *data)
 {
@@ -347,7 +347,7 @@ void do_simp(const char *data)
   int sim_pressure_recv = atoi(data);
 
   // TODO: Do something with the data
-}
+} // END: do_simp()
 
 void do_cal(const char *data)
 {
@@ -356,13 +356,13 @@ void do_cal(const char *data)
   // TODO: Calibrate altitude to 0 meters
 
   // TODO: Set up reset and processor recovery
-}
+} // END: do_Cal()
 
 void do_mec(const char *data)
 {
   safe_print("$I RECEIVED COMMAND: MEC\n");
   // TODO: complete after sensore are installed
-}
+} // END: do_mec()
 
 void do_reset_team_id(const char *data)
 {
@@ -380,7 +380,7 @@ void do_reset_team_id(const char *data)
   snprintf(message, msg_size, "$I TEAM ID HAS BEEN RESET TO %d\n", TEAM_ID);
   safe_print(message);
   
-}
+} // END: do_reset_team_id()
 
 void safe_print(const char *msg)
 {
@@ -388,10 +388,10 @@ void safe_print(const char *msg)
   {
     Serial2.println(msg);
   }
-}
+} // END: safe_print()
 
 void IRAM_ATTR send_1()
 {
   char message[15] = "EXAMPLE DATA!\n";
   Serial2.println(message);
-}
+} // END: send_1()
