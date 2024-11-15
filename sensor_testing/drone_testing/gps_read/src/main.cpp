@@ -4,6 +4,7 @@
 // University of Toronto
 
 // GPS High Altitude Testing
+// Reading and deleting from ESP32
 
 #include "FS.h"
 #include "SPIFFS.h"

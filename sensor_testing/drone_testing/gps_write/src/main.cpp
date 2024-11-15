@@ -4,6 +4,7 @@
 // University of Toronto
 
 // GPS High Altitude Testing
+// Writing to ESP32
 
 #include <Arduino.h>
 #include <TinyGPS++.h>

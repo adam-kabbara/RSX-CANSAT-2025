@@ -1,3 +1,10 @@
+// Daniel Yu
+// CANSAT Team 2T4-2T5
+// Robotics for Space Exploration
+// University of Toronto
+
+// GPS Code
+
 #include <Arduino.h>
 #include <TinyGPS++.h>
 #include <HardwareSerial.h>
