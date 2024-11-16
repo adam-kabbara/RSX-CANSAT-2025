@@ -10,7 +10,7 @@ packet2 = ['001', 3620, 151, 'F', 'ASCENT', 850.3, 24.1, 1015.6, 13.5, 0.01, -0.
 packet3 = ['001', 3640, 152, 'F', 'ASCENT', 1300.7, 23.5, 1012.0, 15.2, -0.02, 0.03, -0.01, -0.15, 0.20, 9.82, 42, -28, 88, 0.018, 160, 1302.4, 43.6431, -79.3865, 9, 'CMD']
 
 # SIMULATION
-packet1 = ['CMD','001', 'SIMP', 93948]
+simulation_packet = ['CMD','001', 'SIMP', 93948]
 
 def read_cansat_file(filename, team_id):
     with open(filename, 'r') as file:
@@ -220,49 +220,80 @@ class GroundStationApp(QtWidgets.QMainWindow):
         }
         self.metric_names = list(self.ygraph_data.keys())
         self.place_graphs_first()
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_graphs)
-        self.timer.start(1000)  
 
     def place_graphs_first(self):
-        for view, graph, metric in zip(self.views, self.graphs, self.metric_names[0:6]):
-            layout = QtWidgets.QVBoxLayout(view)
-            layout.addWidget(graph)
-            graph.setBackground('w')
-            graph.addLegend()
-            graph.showGrid(x=True, y=True)
-            graph.setTitle(metric)  
+        global n
+        n = 1
+        self._place_graphs(self.metric_names[0:6], self.views)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_graphs_first)
+        self.timer.start(1000) 
 
     def place_graphs_second(self):
-        for view, graph, metric in zip(self.views, self.graphs, self.metric_names[6:12]):
-            layout = QtWidgets.QVBoxLayout(view)
-            layout.addWidget(graph)
-            graph.setBackground('w')
-            graph.addLegend()
-            graph.showGrid(x=True, y=True)
-            graph.setTitle(metric)  
+        global n
+        n = 2
+        self._place_graphs(self.metric_names[6:12], self.views)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_graphs_second)
+        self.timer.start(1000) 
 
     def place_graphs_third(self):
-        for view, graph, metric in zip(self.views[0:4], self.graphs, self.metric_names[12:17]):
-            layout = QtWidgets.QVBoxLayout(view)
+        global n
+        n = 3
+        self._place_graphs(self.metric_names[12:17], self.views[0:4])
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_graphs_third)
+        self.timer.start(1000) 
+
+    def _place_graphs(self, metrics, views):
+        for view, graph, metric in zip(views, self.graphs, metrics):
+            layout = view.layout()
+            if layout is None:  # Only create layout if not already assigned
+                layout = QtWidgets.QVBoxLayout(view)
+                view.setLayout(layout)
             layout.addWidget(graph)
             graph.setBackground('w')
             graph.addLegend()
             graph.showGrid(x=True, y=True)
-            graph.setTitle(metric)  
+            graph.setTitle(metric)
 
-    def update_graphs(self):
+    def update_graphs_first(self):
         self.xgraph_data.append(len(self.xgraph_data) + 1)
+
         for metric in self.metric_names:
-            y = self.ygraph_data[metric]
-            #------------------------------#
-            y.append(random.randint(0, 100))
-            #------------------------------#
-            # if len(x) > 60:  # Keep only the last 100 points
-            #     x.pop(0)
-            #     y.pop(0)
+            self.ygraph_data[metric].append(random.randint(0, 100))
 
         for graph, metric in zip(self.graphs, self.metric_names[0:6]):
+            graph.clear()
+            graph.plot(
+                self.xgraph_data,
+                self.ygraph_data[metric],
+                pen=pg.mkPen('r', width=4),
+                name=metric
+            )
+
+    def update_graphs_second(self):
+        self.xgraph_data.append(len(self.xgraph_data) + 1)
+        
+        for metric in self.metric_names:
+            self.ygraph_data[metric].append(random.randint(0, 100))
+
+        for graph, metric in zip(self.graphs, self.metric_names[6:12]):
+            graph.clear()
+            graph.plot(
+                self.xgraph_data,
+                self.ygraph_data[metric],
+                pen=pg.mkPen('r', width=4),
+                name=metric
+            )
+
+    def update_graphs_third(self):
+        self.xgraph_data.append(len(self.xgraph_data) + 1)
+        
+        for metric in self.metric_names:
+            self.ygraph_data[metric].append(random.randint(0, 100))
+
+        for graph, metric in zip(self.graphs, self.metric_names[12:17]):
             graph.clear()
             graph.plot(
                 self.xgraph_data,
@@ -280,11 +311,18 @@ class GroundStationApp(QtWidgets.QMainWindow):
         print("Switched to Flight mode")
 
     def next_graph(self):
-        print("Next graph")
-
+        if n == 1: 
+            self.place_graphs_second()
+        elif n == 2:
+            self.place_graphs_third()
+            
     def previous_graph(self):
-        print("Previous graph")
+        if n == 2: 
+            self.place_graphs_first()
+        elif n == 3:
+            self.place_graphs_second()
 
+            
     def send_command(self):
         command = self.ui.commandArea.toPlainText()
         print(f"Command sent: {command}")
