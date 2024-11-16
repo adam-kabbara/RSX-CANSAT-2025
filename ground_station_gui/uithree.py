@@ -4,6 +4,31 @@ from pyqtgraph import PlotWidget
 import pyqtgraph as pg
 import random
 
+# FLIGHT ["TEAM_ID, MISSION_TIME, PACKET_COUNT, MODE, STATE, ALTITUDE, TEMPERATURE, PRESSURE, VOLTAGE, GYRO_R, GYRO_P, GYRO_Y, ACCEL_R, ACCEL_P, ACCEL_Y, MAG_R, MAG_P, MAG_Y, AUTO_GYRO_ROTATION_RATE, GPS_TIME, GPS_ALTITUDE, GPS_LATITUDE, GPS_LONGITUDE, GPS_SATS, CMD_ECHO [,,OPTIONAL_DATA]"]
+packet1 =  ['001', 3600, 150, 'F', 'ASCENT', 1200.5, 22.3, 1013.25, 14.8, -0.03, 0.02, -0.01, 0.1, -0.2, 9.8, 45, -30, 90, 0.015, 120, 1198.6, 43.6426, -79.3871, 8, 'CMD']
+packet2 = ['001', 3620, 151, 'F', 'ASCENT', 850.3, 24.1, 1015.6, 13.5, 0.01, -0.05, 0.00, 0.05, 0.15, 9.75, 40, -25, 85, 0.012, 140, 849.0, 43.6419, -79.3839, 7, 'CMD']
+packet3 = ['001', 3640, 152, 'F', 'ASCENT', 1300.7, 23.5, 1012.0, 15.2, -0.02, 0.03, -0.01, -0.15, 0.20, 9.82, 42, -28, 88, 0.018, 160, 1302.4, 43.6431, -79.3865, 9, 'CMD']
+
+# SIMULATION
+packet1 = ['CMD','001', 'SIMP', 93948]
+
+def read_cansat_file(filename, team_id):
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+    commands = []
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith('#'):
+            continue
+
+        command = line.replace('$', str(team_id))
+        commands.append(command)
+    return commands
+
+team_id = '001'
+filename = 'cansat_2023_simp.txt'
+simulation_packets = read_cansat_file(filename, team_id)
+
 class Ui_GroundStation(object):
     def setupUi(self, GroundStation):
         GroundStation.setObjectName("GroundStation")
@@ -46,6 +71,7 @@ class Ui_GroundStation(object):
 
         self.labelMissionTime.setFont(font)
         self.labelMissionTime.setObjectName("labelMissionTime")
+
         self.labelGPSTime = QtWidgets.QLabel(self.centralwidget)
         self.labelGPSTime.setGeometry(QtCore.QRect(630, 30, 151, 16))
 
