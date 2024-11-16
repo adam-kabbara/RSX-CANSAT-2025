@@ -176,7 +176,7 @@ class Ui_GroundStation(object):
         self.labelMissionTime.setText(_translate("GroundStation", "Mission Time: "))
         self.labelGPSTime.setText(_translate("GroundStation", "GPS Time:"))
         self.labelGPSSat.setText(_translate("GroundStation", "GPS Satellites: "))
-        self.labelTeamID.setText(_translate("GroundStation", "Team ID: #001"))
+        self.labelTeamID.setText(_translate("GroundStation", "Team ID: "))
         self.labelState.setText(_translate("GroundStation", "State:"))
         self.buttonNext.setText(_translate("GroundStation", "Next"))
         self.buttonBack.setText(_translate("GroundStation", "Back"))
@@ -197,57 +197,76 @@ class GroundStationApp(QtWidgets.QMainWindow):
         self.ui.buttonBack.clicked.connect(self.previous_graph)
 
         self.graphs = [PlotWidget(self) for _ in range(6)]
-        self.graph_data = {  # Store x and y for each metric
-            "Altitude": [[], []], 
-            "Temperature": [[], []], 
-            "Pressure": [[], []],
-            "Voltage": [[], []],
-            "Gyro R": [[], []],
-            "Gyro P": [[], []]
+        self.views = [self.ui.graphone, self.ui.graphtwo, self.ui.graphthree, self.ui.graphfour, self.ui.graphfive, self.ui.graphsix]
+        self.xgraph_data = []
+        self.ygraph_data = {
+            "Altitude": [], 
+            "Temperature": [], 
+            "Pressure": [],
+            "Voltage": [],
+            "Gyro R": [],
+            "Gyro P": [],
+            "Gyro Y": [],
+            "ACCEL_R": [],
+            "ACCEL_P": [],
+            "ACCEL_Y": [],
+            "MAG_R" : [],
+            "MAG_P" : [],
+            "MAG_Y" : [],
+            "AUTO_GYRO_ROTATION_RATE": [],
+            "GPS_ALTITUDE" : [],
+            "GPS_LATITUDE": [],
+            "GPS_LONGITUDE": [] 
         }
-        self.metric_names = list(self.graph_data.keys())
-        self.place_graphs()
-
+        self.metric_names = list(self.ygraph_data.keys())
+        self.place_graphs_first()
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_graphs)
-        self.timer.start(1000)  # Update every second
+        self.timer.start(1000)  
 
-    def place_graphs(self):
-        views = [
-            self.ui.graphone, 
-            self.ui.graphtwo, 
-            self.ui.graphthree,
-            self.ui.graphfour, 
-            self.ui.graphfive, 
-            self.ui.graphsix
-        ]
-        for view, graph, metric in zip(views, self.graphs, self.metric_names):
+    def place_graphs_first(self):
+        for view, graph, metric in zip(self.views, self.graphs, self.metric_names[0:6]):
             layout = QtWidgets.QVBoxLayout(view)
             layout.addWidget(graph)
             graph.setBackground('w')
             graph.addLegend()
             graph.showGrid(x=True, y=True)
-            graph.setTitle(metric)  # Set title for each graph
+            graph.setTitle(metric)  
+
+    def place_graphs_second(self):
+        for view, graph, metric in zip(self.views, self.graphs, self.metric_names[6:12]):
+            layout = QtWidgets.QVBoxLayout(view)
+            layout.addWidget(graph)
+            graph.setBackground('w')
+            graph.addLegend()
+            graph.showGrid(x=True, y=True)
+            graph.setTitle(metric)  
+
+    def place_graphs_third(self):
+        for view, graph, metric in zip(self.views[0:4], self.graphs, self.metric_names[12:17]):
+            layout = QtWidgets.QVBoxLayout(view)
+            layout.addWidget(graph)
+            graph.setBackground('w')
+            graph.addLegend()
+            graph.showGrid(x=True, y=True)
+            graph.setTitle(metric)  
 
     def update_graphs(self):
+        self.xgraph_data.append(len(self.xgraph_data) + 1)
         for metric in self.metric_names:
-            x = self.graph_data[metric][0]
-            y = self.graph_data[metric][1]
-            
-            # Simulate new data (replace with actual data in real use)
-            x.append(len(x) + 1)
+            y = self.ygraph_data[metric]
+            #------------------------------#
             y.append(random.randint(0, 100))
-            
-            if len(x) > 100:  # Keep only the last 100 points
-                x.pop(0)
-                y.pop(0)
+            #------------------------------#
+            # if len(x) > 60:  # Keep only the last 100 points
+            #     x.pop(0)
+            #     y.pop(0)
 
-        # Update each graph
-        for graph, metric in zip(self.graphs, self.metric_names):
+        for graph, metric in zip(self.graphs, self.metric_names[0:6]):
             graph.clear()
             graph.plot(
-                self.graph_data[metric][0],
-                self.graph_data[metric][1],
+                self.xgraph_data,
+                self.ygraph_data[metric],
                 pen=pg.mkPen('r', width=4),
                 name=metric
             )
