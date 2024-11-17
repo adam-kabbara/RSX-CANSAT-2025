@@ -3,6 +3,8 @@ from PyQt5.QtCore import QTimer
 from pyqtgraph import PlotWidget
 import pyqtgraph as pg
 import random
+from datetime import datetime
+import pytz
 
 # FLIGHT ["TEAM_ID, MISSION_TIME, PACKET_COUNT, MODE, STATE, ALTITUDE, TEMPERATURE, PRESSURE, VOLTAGE, GYRO_R, GYRO_P, GYRO_Y, ACCEL_R, ACCEL_P, ACCEL_Y, MAG_R, MAG_P, MAG_Y, AUTO_GYRO_ROTATION_RATE, GPS_TIME, GPS_ALTITUDE, GPS_LATITUDE, GPS_LONGITUDE, GPS_SATS, CMD_ECHO [,,OPTIONAL_DATA]"]
 packet1 =  ['001', 3600, 150, 'F', 'ASCENT', 1200.5, 22.3, 1013.25, 14.8, -0.03, 0.02, -0.01, 0.1, -0.2, 9.8, 45, -30, 90, 0.015, 120, 1198.6, 43.6426, -79.3871, 8, 'CMD']
@@ -62,7 +64,7 @@ class Ui_GroundStation(object):
         self.labelPackets.setObjectName("labelPackets")
 
         self.labelMissionTime = QtWidgets.QLabel(self.centralwidget)
-        self.labelMissionTime.setGeometry(QtCore.QRect(420, 30, 151, 16))
+        self.labelMissionTime.setGeometry(QtCore.QRect(420, 30, 400, 30)) # Works in Windows11 system, may need adjustment in mac
 
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -73,7 +75,7 @@ class Ui_GroundStation(object):
         self.labelMissionTime.setObjectName("labelMissionTime")
 
         self.labelGPSTime = QtWidgets.QLabel(self.centralwidget)
-        self.labelGPSTime.setGeometry(QtCore.QRect(630, 30, 151, 16))
+        self.labelGPSTime.setGeometry(QtCore.QRect(850, 30, 400, 30)) # Works in Windows11 system, may need adjustment in mac
 
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -220,6 +222,20 @@ class GroundStationApp(QtWidgets.QMainWindow):
         }
         self.metric_names = list(self.ygraph_data.keys())
         self.place_graphs_first()
+        
+        self.place_graphs_first()
+        # Timer for UTC and GPS time updates
+        self.time_timer = QTimer()
+        self.time_timer.timeout.connect(self.update_time_labels)
+        self.time_timer.start(1000) 
+   
+    def update_time_labels(self):
+        utc_time = datetime.now(pytz.timezone('UTC')).strftime('%H:%M:%S')
+        print(f"Updating time: {utc_time}")  # Debugging line
+        # It's recommended to set the time directly from the Ground Station Time and set mission time and GPS time to the same UTC time
+        self.ui.labelMissionTime.setText(f"Mission Time: {utc_time}")
+        self.ui.labelGPSTime.setText(f"GPS Time: {utc_time}")
+
 
     def place_graphs_first(self):
         global n
