@@ -26,7 +26,7 @@ def read_cansat_file(filename, team_id):
     return commands
 
 team_id = '001'
-filename = 'cansat_2023_simp.txt'
+filename = 'ground_station_gui/cansat_2023_simp.txt'
 simulation_packets = read_cansat_file(filename, team_id)
 
 class Ui_GroundStation(object):
