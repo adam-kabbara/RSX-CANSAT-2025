@@ -225,16 +225,23 @@ class GroundStationApp(QtWidgets.QMainWindow):
         
         self.place_graphs_first()
         # Timer for UTC and GPS time updates
+        # Base time for Mission Time and GPS Time
+        self.base_time = None  # Initially unset
         self.time_timer = QTimer()
         self.time_timer.timeout.connect(self.update_time_labels)
-        self.time_timer.start(1000) 
+
    
     def update_time_labels(self):
-        utc_time = datetime.now(pytz.timezone('UTC')).strftime('%H:%M:%S')
-        print(f"Updating time: {utc_time}")  # Debugging line
-        # It's recommended to set the time directly from the Ground Station Time and set mission time and GPS time to the same UTC time
-        self.ui.labelMissionTime.setText(f"Mission Time: {utc_time}")
-        self.ui.labelGPSTime.setText(f"GPS Time: {utc_time}")
+        if self.base_time is None:
+            return
+        # Calculate elapsed time since the base time
+        elapsed_time = datetime.now(pytz.timezone('UTC')) - self.base_time
+        incremented_time = (datetime.min + elapsed_time).time()  # Increment from base_time
+        formatted_time = incremented_time.strftime('%H:%M:%S')
+
+        # Update labels
+        self.ui.labelMissionTime.setText(f"Mission Time: {formatted_time}")
+        self.ui.labelGPSTime.setText(f"GPS Time: {formatted_time}")
 
 
     def place_graphs_first(self):
@@ -339,10 +346,49 @@ class GroundStationApp(QtWidgets.QMainWindow):
             self.place_graphs_second()
 
             
+    #def send_command(self):
+         # command = self.ui.commandArea.toPlainText()
+         # print(f"Command sent: {command}")
+         # self.ui.commandArea.clear()
+
     def send_command(self):
-        command = self.ui.commandArea.toPlainText()
-        print(f"Command sent: {command}")
+        command = self.ui.commandArea.toPlainText().strip()
         self.ui.commandArea.clear()
+        # Parse the command for "ST" functionality
+        if command.startswith("CMD") and "ST" in command:
+            parts = command.split(',')
+            if len(parts) == 4 and parts[2] == "ST":
+                # team_id = parts[1] # 
+                time_value = parts[3]
+                if time_value == "GPS":
+                    # Set time from GPS (for simulation, use current UTC time as GPS time)
+                    now = datetime.now(pytz.timezone('UTC'))
+                    self.base_time = datetime.now(pytz.timezone('UTC'))
+                    self.time_timer.start(1000)
+                    print(f"Mission Time and GPS Time set to GPS: {self.base_time.strftime('%H:%M:%S')}")
+                else:
+                    try:
+                        # Validate and set custom time
+                        custom_time = datetime.strptime(time_value, '%H:%M:%S')
+                        # now = datetime.now(pytz.timezone('UTC')) #
+                        # self.base_time = now.replace(hour=custom_time.hour, minute=custom_time.minute, second=custom_time.second) #
+                        # Use UTC explicitly without local timezone influence
+                        self.base_time = datetime.now(pytz.timezone('UTC')).replace(
+                            hour=custom_time.hour,
+                            minute=custom_time.minute,
+                            second=custom_time.second,
+                            microsecond=0
+                        )
+                        self.time_timer.start(1000)
+                        print(f"Mission Time and GPS Time set to: {self.base_time.strftime('%H:%M:%S')}")
+                    except ValueError:
+                        print(f"Invalid time format: {time_value}")
+            else:
+                print(f"Invalid ST command format: {command}")
+        else:
+            print(f"Command sent: {command}")
+
+
 
 if __name__ == "__main__":
     import sys
