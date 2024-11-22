@@ -3,7 +3,7 @@ from PyQt5.QtCore import QTimer
 from pyqtgraph import PlotWidget
 import pyqtgraph as pg
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 # FLIGHT ["TEAM_ID, MISSION_TIME, PACKET_COUNT, MODE, STATE, ALTITUDE, TEMPERATURE, PRESSURE, VOLTAGE, GYRO_R, GYRO_P, GYRO_Y, ACCEL_R, ACCEL_P, ACCEL_Y, MAG_R, MAG_P, MAG_Y, AUTO_GYRO_ROTATION_RATE, GPS_TIME, GPS_ALTITUDE, GPS_LATITUDE, GPS_LONGITUDE, GPS_SATS, CMD_ECHO [,,OPTIONAL_DATA]"]
@@ -223,19 +223,13 @@ class GroundStationApp(QtWidgets.QMainWindow):
         self.metric_names = list(self.ygraph_data.keys())
         self.place_graphs_first()
         
-        self.place_graphs_first()
-
-        # Timer for UTC and GPS time updates
-        # Base time for Mission Time and GPS Time
-        
         self.time_timer = QTimer()
         self.time_timer.timeout.connect(self.update_time_labels)
         self.time_timer.start(1000)
         self.time_timer.setInterval(1000)
 
         
-        self.base_time = None  # Initially unset
-        self.current_gps_time = None
+        self.timestamp = None  # Initially unset
         self.mission_time = None
 
 
@@ -339,8 +333,7 @@ class GroundStationApp(QtWidgets.QMainWindow):
             self.place_graphs_first()
         elif n == 3:
             self.place_graphs_second()
-
-
+    
     def send_command(self):
         command = self.ui.commandArea.toPlainText().strip()
         self.ui.commandArea.clear()
@@ -348,95 +341,35 @@ class GroundStationApp(QtWidgets.QMainWindow):
         if command.startswith("CMD") and "ST" in command:
             parts = command.split(',')
             if len(parts) == 4 and parts[2] == "ST":
-                 
                 time_value = parts[3]
-                current_gps_time = None
+                
                 if time_value == "GPS":
-                    # Set time from GPS (for simulation, use current UTC time as GPS time)
-                    if self.base_time is None:
-                        print ("Error: Mission Time must be set before setting GPS time.")
-                        return
-                    current_gps_time = datetime.now(pytz.timezone('UTC'))
-                    # Calculate Mission Time converted to UTC
-                    hours_offset = self.base_time.hour - current_gps_time.hour
-                    current_gps_time = self.base_time.replace(hour=(self.base_time.hour + hours_offset) % 24
-                        #$ minute=(self.base_time.minute) * 0,
-                        #$ second=(self.base_timee.second) * 0
-                    )
-
-                    self.ui.labelGPSTime.setText(f"GPS Time: {current_gps_time.strftime('%H:%M:%S')}")
-
-                    print(f"GPS Time set to GPS time: {current_gps_time.strftime('%H:%M:%S')}")
-                    ### now = datetime.now(pytz.timezone('UTC'))
-                    ### self.base_time = datetime.now(pytz.timezone('UTC'))
-                    ### self.time_timer.start(1000)
-                    ### print(f"Mission Time and GPS Time set to GPS: {self.base_time.strftime('%H:%M:%S')}")
+                    self.timestamp = datetime.now()
+                    print(f"Mission Time set to: {self.timestamp.strftime('%H:%M:%S')}")
                 else:
                     try:
-                        # Validate and set custom time
-                        mission_time = datetime.strptime(time_value, '%H:%M:%S')
+                        # Parse and set mission time
+                        parsed = datetime.strptime(time_value, '%H:%M:%S')
+                        self.timestamp = datetime.now().replace(hour=parsed.hour, minute=parsed.minute, second=parsed.second)
+                        print(f"Mission Time set to: {self.timestamp.strftime('%H:%M:%S')}")
                         
-                        self.base_time = datetime.now(pytz.timezone('UTC')).replace(
-                            hour=mission_time.hour,
-                            minute=mission_time.minute,
-                            second=mission_time.second,
-                            microsecond=0,
-                            tzinfo=pytz.UTC
-                        )
-                        self.ui.labelMissionTime.setText(f"Mission Time: {self.base_time.strftime('%H:%M:%S')}")
-                        
-                        print(f"Mission Time set to: {self.base_time.strftime('%H:%M:%S')}")
-                        self.time_timer.start(1000)
-
                     except ValueError:
-                        print(f"Invalid time format: {time_value}")
+                        print(f"Invalid time format: {time_value}")       
+                self.ui.labelMissionTime.setText(f"Mission Time: {self.timestamp.strftime('%H:%M:%S')}")
             else:
                 print(f"Invalid ST command format: {command}")
         else:
             print(f"Command sent: {command}")
 
-
-
     def update_time_labels(self):
-        if self.base_time is None or self.mission_time is None:
-            return
-        
-        now = datetime.now(pytz.timezone('UTC'))
 
-        elapsed_mission_time = now - self.base_time
-        ###### mission_time_total = self.mission_time + elapsed_mission_time
-        ###### hours = mission_time_total.hour
-        ###### minutes = mission_time_total.minute
-        ###### seconds = mission_time_total.second
-        total_seconds = int(elapsed_mission_time.total_seconds())
-        # Use the total seconds from elapsed_time to calculate hours, minutes, and seconds
-        hours = total_seconds // 3600
-        minutes = ((total_seconds % 3600) + int(self.base_time.minute) * 60) // 60
-        seconds = (total_seconds + int(self.base_time.second)) % 60
+        if self.timestamp is not None:       
+            delta = timedelta(seconds=1)
+            self.timestamp = self.timestamp + delta
+            self.ui.labelMissionTime.setText(f"Mission Time: {self.timestamp.hour:02d}:{self.timestamp.minute:02d}:{self.timestamp.second:02d}")
 
-        # Format the time as HH:MM:SS
-        formatted_mission_time = f"{hours:02}:{minutes:02}:{seconds:02}"
-
-        self.ui.labelMissionTime.setText(f"Mission Time: {formatted_mission_time}")
-        
-
-        if self.current_gps_time is None:
-            return
-        
-        elapsed_gps_time = self.mission_time.replace((self.mission_time.hour + self.hours_offset) % 24,
-                    minute = self.datetime.now(pytz.timezone('UTC')).minute - self.base_time.minute,
-                    second = self.datatime.now(pytz.timezone('UTC')).second - self.base_time.second
-                )
-                # Use the total seconds from elapsed_time to calculate hours, minutes, and seconds
-        total_seconds = int(elapsed_gps_time.total_seconds())
-        hours = total_seconds // 3600
-        minutes = ((total_seconds % 3600) + self.base_time.minute) // 60
-        seconds = (total_seconds + self.base_time.second) % 60
-
-        # Format the time as HH:MM:SS
-        formatted_gps_time = f"{hours:02}:{minutes:02}:{seconds:02}"
-
-        self.ui.labelGPSTime.setText(f"GPS Time: {formatted_gps_time}")
+        now = datetime.now()
+        self.ui.labelGPSTime.setText(f"GPS Time: {now.hour:02d}:{now.minute:02d}:{now.second:02d}")
 
 
 
