@@ -223,12 +223,6 @@ class GroundStationApp(QtWidgets.QMainWindow):
         self.metric_names = list(self.ygraph_data.keys())
         self.place_graphs_first()
         
-        self.time_timer = QTimer()
-        self.time_timer.timeout.connect(self.update_time_labels)
-        self.time_timer.start(1000)
-        self.time_timer.setInterval(1000)
-
-        
         self.timestamp = None  # Initially unset
         self.mission_time = None
 
@@ -270,6 +264,7 @@ class GroundStationApp(QtWidgets.QMainWindow):
             graph.setTitle(metric)
 
     def update_graphs_first(self):
+        self.update_time_labels()
         self.xgraph_data.append(len(self.xgraph_data) + 1)
 
         for metric in self.metric_names:
@@ -285,6 +280,7 @@ class GroundStationApp(QtWidgets.QMainWindow):
             )
 
     def update_graphs_second(self):
+        self.update_time_labels()
         self.xgraph_data.append(len(self.xgraph_data) + 1)
         
         for metric in self.metric_names:
@@ -300,6 +296,7 @@ class GroundStationApp(QtWidgets.QMainWindow):
             )
 
     def update_graphs_third(self):
+        self.update_time_labels()
         self.xgraph_data.append(len(self.xgraph_data) + 1)
         
         for metric in self.metric_names:
@@ -343,9 +340,11 @@ class GroundStationApp(QtWidgets.QMainWindow):
             if len(parts) == 4 and parts[2] == "ST":
                 time_value = parts[3]
                 
-                if time_value == "GPS":
+                # command set the time to ground station time(GST)
+                if time_value == "GST": 
                     self.timestamp = datetime.now()
-                    print(f"Mission Time set to: {self.timestamp.strftime('%H:%M:%S')}")
+                    print(f"GPS Time set to: {self.timestamp.strftime('%H:%M:%S')}")
+                    self.ui.labelGPSTime.setText(f"GPS Time: {self.timestamp.strftime('%H:%M:%S')}")
                 else:
                     try:
                         # Parse and set mission time
@@ -355,7 +354,7 @@ class GroundStationApp(QtWidgets.QMainWindow):
                         
                     except ValueError:
                         print(f"Invalid time format: {time_value}")       
-                self.ui.labelMissionTime.setText(f"Mission Time: {self.timestamp.strftime('%H:%M:%S')}")
+                
             else:
                 print(f"Invalid ST command format: {command}")
         else:
@@ -368,8 +367,8 @@ class GroundStationApp(QtWidgets.QMainWindow):
             self.timestamp = self.timestamp + delta
             self.ui.labelMissionTime.setText(f"Mission Time: {self.timestamp.hour:02d}:{self.timestamp.minute:02d}:{self.timestamp.second:02d}")
 
-        now = datetime.now()
-        self.ui.labelGPSTime.setText(f"GPS Time: {now.hour:02d}:{now.minute:02d}:{now.second:02d}")
+            now = datetime.now()
+            self.ui.labelGPSTime.setText(f"GPS Time: {now.hour:02d}:{now.minute:02d}:{now.second:02d}")
 
 
 
