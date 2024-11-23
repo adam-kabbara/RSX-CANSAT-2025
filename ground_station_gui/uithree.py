@@ -27,7 +27,7 @@ def read_cansat_file(filename, team_id):
         commands.append(command)
     return commands
 
-team_id = '001' # confirmation of the format of team_id is needed
+team_id = '001' # confirmation of the format of team_id is needed, should be four digits
 filename = 'ground_station_gui/cansat_2023_simp.txt'
 simulation_packets = read_cansat_file(filename, team_id)
 
@@ -53,7 +53,7 @@ class Ui_GroundStation(object):
         self.commandArea.setObjectName("commandArea")
 
         self.labelPackets = QtWidgets.QLabel(self.centralwidget)
-        self.labelPackets.setGeometry(QtCore.QRect(420, 80, 151, 16))
+        self.labelPackets.setGeometry(QtCore.QRect(420, 80, 400, 30))
 
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -86,7 +86,7 @@ class Ui_GroundStation(object):
         self.labelGPSTime.setObjectName("labelGPSTime")
 
         self.labelGPSSat = QtWidgets.QLabel(self.centralwidget)
-        self.labelGPSSat.setGeometry(QtCore.QRect(630, 80, 151, 16))
+        self.labelGPSSat.setGeometry(QtCore.QRect(850, 80, 400, 30))
 
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -97,7 +97,7 @@ class Ui_GroundStation(object):
         self.labelGPSSat.setObjectName("labelGPSSat")
 
         self.labelTeamID = QtWidgets.QLabel(self.centralwidget)
-        self.labelTeamID.setGeometry(QtCore.QRect(30, 140, 151, 16))
+        self.labelTeamID.setGeometry(QtCore.QRect(30, 140, 300, 30))
 
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -108,7 +108,7 @@ class Ui_GroundStation(object):
         self.labelTeamID.setObjectName("labelTeamID")
 
         self.labelState = QtWidgets.QLabel(self.centralwidget)
-        self.labelState.setGeometry(QtCore.QRect(30, 60, 151, 16))
+        self.labelState.setGeometry(QtCore.QRect(30, 60, 300, 30))
 
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -155,7 +155,7 @@ class Ui_GroundStation(object):
         self.buttonSendCommand.setObjectName("buttonSendCommand")
 
         self.labelMode = QtWidgets.QLabel(self.centralwidget)
-        self.labelMode.setGeometry(QtCore.QRect(30, 100, 151, 16))
+        self.labelMode.setGeometry(QtCore.QRect(30, 100, 300, 30))
 
         font = QtGui.QFont()
         font.setPointSize(16)
