@@ -64,7 +64,7 @@ void setup()
   Serial2.begin(XBEE_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
   delay(1000);
 
-  Serial2.println("\n$I SETUP OK!\n");
+  Serial2.println("$I SETUP OK!");
 
   xTaskCreatePinnedToCore(
     receive_commands,      // Function to be performed when the task is called 
@@ -88,7 +88,7 @@ void setup()
     1       
   );
 
-}
+} // END: void setup()
 
 void loop()
 {
@@ -99,7 +99,7 @@ void loop()
 void send_data(void *pvParameters)
 {
 
-  Serial2.printf("Data transmission started on core %d\n", xPortGetCoreID());
+  Serial2.printf("Data transmission started on core %d", xPortGetCoreID());
   
   while(1)
   {
@@ -138,12 +138,12 @@ void send_data(void *pvParameters)
     // TODO: should mode be in flash memory?
     vTaskDelay(pdMS_TO_TICKS(25));
   }
-}
+} // END: void loop()
 
 void receive_commands(void *pvParameters)
 {
   
-  Serial2.printf("Command reception started on core %d\n", xPortGetCoreID());
+  Serial2.printf("Command reception started on core %d", xPortGetCoreID());
 
   // Receive commands from ground station
   while(1)
@@ -157,7 +157,7 @@ void receive_commands(void *pvParameters)
 
       if(bytes_read == CMD_BUFF_SIZE - 1)
       {
-        safe_print("$W COMMAND REJECTED: LONGER THAN ALLOCATED BUFFER SIZE\n");
+        safe_print("$W COMMAND REJECTED: LONGER THAN ALLOCATED BUFFER SIZE");
         continue;
       }
 
@@ -166,13 +166,13 @@ void receive_commands(void *pvParameters)
       
       if(extract_cmd_msg(cmd_buff, &recv_packet) > 0)
       {
-        safe_print("$W COMMAND REJECTED: FORMAT IS INCORRECT. EXPECTING 'CMD,<TEAM_ID>,<CMD>,<DATA>'\n");
+        safe_print("$W COMMAND REJECTED: FORMAT IS INCORRECT. EXPECTING 'CMD,<TEAM_ID>,<CMD>,<DATA>'");
         continue;
       }
       
       if(compare_strings(recv_packet.keyword, "CMD") == 0)
       {
-        safe_print("$W REJECTED INPUT: NOT CMD\n");
+        safe_print("$W REJECTED INPUT: NOT CMD");
         continue;
       }
 
@@ -180,9 +180,9 @@ void receive_commands(void *pvParameters)
       sscanf(recv_packet.team_id, "%d", &team_id_chk_int);
       if((team_id_chk_int != TEAM_ID) && (compare_strings(recv_packet.command, "RESET_TEAM_ID") == 0))
       {
-        char msg_size = snprintf(NULL, 0, "$W REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d\n", TEAM_ID);
+        char msg_size = snprintf(NULL, 0, "$W REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d", TEAM_ID);
         char message[msg_size];
-        snprintf(message, msg_size, "$W REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d\n", TEAM_ID);
+        snprintf(message, msg_size, "$W REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d", TEAM_ID);
         safe_print(message);
         continue;
       }
@@ -197,12 +197,12 @@ void receive_commands(void *pvParameters)
       else if(compare_strings(recv_packet.command, "RESET_TEAM_ID")) do_reset_team_id(recv_packet.data);
       else
       {
-        safe_print("$W COMMAND REJECTED: NOT A COMMAND\n");
+        safe_print("$W COMMAND REJECTED: NOT A COMMAND");
       }
     }
     vTaskDelay(pdMS_TO_TICKS(25));
   }
-}
+} // END: receive_commands()
 
 void do_cx(const char *data)
 {
@@ -213,11 +213,11 @@ void do_cx(const char *data)
       TRANSMISSION_ON = 1;
       timerWrite(send_timer, 0);
       timerAlarmEnable(send_timer);
-      safe_print("$I RECEIVED COMMAND: BEGINNING PAYLOAD TRANSMISSION\n");
+      safe_print("$I RECEIVED COMMAND: BEGINNING PAYLOAD TRANSMISSION");
     }
     else
     {
-      safe_print("$E TRANSMISSION IS ALREADY ON\n");
+      safe_print("$E TRANSMISSION IS ALREADY ON");
     }
   }
   else if(compare_strings(data, "OFF"))
@@ -226,25 +226,25 @@ void do_cx(const char *data)
     {
       timerAlarmDisable(send_timer);
       TRANSMISSION_ON = 0;
-      safe_print("$I RECEIVED COMMAND: ENDING PAYLOAD TRANSMISSION\n");
+      safe_print("$I RECEIVED COMMAND: ENDING PAYLOAD TRANSMISSION");
     }
     else
     {
-      safe_print("$E TRANSMISSION IS ALREADY OFF\n");
+      safe_print("$E TRANSMISSION IS ALREADY OFF");
     }
   }
   else
   {
     safe_print("$E DATA IS NOT VALID; SEND ON/OFF");
   }
-}
+} // END: do_cx()
 
 void do_st(const char *data)
 {
-  safe_print("$I RECEIVED COMMAND: SET TIME\n");
+  safe_print("$I RECEIVED COMMAND: SET TIME");
   if(compare_strings(data, "GPS"))
   {
-    safe_print("$I GPS :=)\n");
+    safe_print("$I GPS :=)");
     // TODO: Get time from GPS, pass this to MISSION_TIME
   }
   else if(time_format_check(data) == 0)
@@ -259,22 +259,22 @@ void do_st(const char *data)
 
     char message[SENTENCE_SIZE];
 
-    snprintf(message, SENTENCE_SIZE, "$I SET TIME TO: %s\n", MISSION_TIME);
+    snprintf(message, SENTENCE_SIZE, "$I SET TIME TO: %s", MISSION_TIME);
     safe_print(message);
   }
   else
   {
-    safe_print("$E DATA IS NOT VALID. SEND EITHER UTC TIME OR 'GPS'\n");
+    safe_print("$E DATA IS NOT VALID. SEND EITHER UTC TIME OR 'GPS'");
   }
-}
+} // END: do_st()
 
 void do_sim(const char *data)
 {
-  safe_print("$I RECEIVED COMMAND: SIMULATION MODE CONTROL\n");
+  safe_print("$I RECEIVED COMMAND: SIMULATION MODE CONTROL");
 
   if(TRANSMISSION_ON == 1)
   {
-    safe_print("$E SIMULATION MODE CANNOT BE CHANGED WHILE TRANSMISSION IS ON\n");
+    safe_print("$E SIMULATION MODE CANNOT BE CHANGED WHILE TRANSMISSION IS ON");
     return;
   }
 
@@ -284,13 +284,13 @@ void do_sim(const char *data)
     {
       case SIM_OFF:
                   current_mode = SIM_READY;
-                  safe_print("$I MODE SET: SIM_READY\n");
+                  safe_print("$I MODE SET: SIM_READY");
                   break;
       case SIM_READY:
-                  safe_print("$I MODE IS ALREADY SET TO: SIM_READY\n");
+                  safe_print("$I MODE IS ALREADY SET TO: SIM_READY");
                   break;
       case SIM_ON:
-                  safe_print("$E SIM MODE IS ALREADY ACTIVATED!\n");
+                  safe_print("$E SIM MODE IS ALREADY ACTIVATED!");
     }
   }
   else if(compare_strings(data, "ACTIVATE"))
@@ -298,13 +298,13 @@ void do_sim(const char *data)
     switch(current_mode)
     {
       case SIM_READY:
-                  safe_print("$I STARTING SIMULATION MODE...\n");
+                  safe_print("$I STARTING SIMULATION MODE...");
                   break;
       case SIM_OFF:
-                  safe_print("$E SIMULATION MODE IS NOT ENABLED\n");
+                  safe_print("$E SIMULATION MODE IS NOT ENABLED");
                   break;
       case SIM_ON:
-                  safe_print("$E SIM MODE IS ALREADY ACTIVATED!\n");
+                  safe_print("$E SIM MODE IS ALREADY ACTIVATED!");
     }
   }
   else if(compare_strings(data, "DISABLE"))
@@ -312,26 +312,26 @@ void do_sim(const char *data)
     switch(current_mode)
     {
       case SIM_ON:
-                  safe_print("$I ENDING SIMULATION MODE...\n");
+                  safe_print("$I ENDING SIMULATION MODE...");
                   current_mode = SIM_OFF;
                   break;
       case SIM_READY:
-                  safe_print("$I ENDING SIMULATION MODE...\n");
+                  safe_print("$I ENDING SIMULATION MODE...");
                   current_mode = SIM_OFF;
                   break;
       case SIM_OFF:
-                  safe_print("$I SIMULATION MODE ALREADY DISABLED.\n");
+                  safe_print("$I SIMULATION MODE ALREADY DISABLED.");
                   break;
     }
   }
   else
   {
-    int msg_size = snprintf(NULL, 0, "$E UNRECOGNIZED SIM COMMAND: '%s'\n", data);
+    int msg_size = snprintf(NULL, 0, "$E UNRECOGNIZED SIM COMMAND: '%s'", data);
     char message[msg_size];
-    snprintf(message, SENTENCE_SIZE, "$E UNRECOGNIZED SIM COMMAND: '%s'\n", data);
+    snprintf(message, SENTENCE_SIZE, "$E UNRECOGNIZED SIM COMMAND: '%s'", data);
     safe_print(message);
   }
-}
+} // END: do_sim()
 
 void do_simp(const char *data)
 {
@@ -347,22 +347,22 @@ void do_simp(const char *data)
   int sim_pressure_recv = atoi(data);
 
   // TODO: Do something with the data
-}
+} // END: do_simp()
 
 void do_cal(const char *data)
 {
-  safe_print("$I RECEIVED COMMAND: CAL\n");
+  safe_print("$I RECEIVED COMMAND: CAL");
 
   // TODO: Calibrate altitude to 0 meters
 
   // TODO: Set up reset and processor recovery
-}
+} // END: do_Cal()
 
 void do_mec(const char *data)
 {
-  safe_print("$I RECEIVED COMMAND: MEC\n");
+  safe_print("$I RECEIVED COMMAND: MEC");
   // TODO: complete after sensore are installed
-}
+} // END: do_mec()
 
 void do_reset_team_id(const char *data)
 {
@@ -375,12 +375,12 @@ void do_reset_team_id(const char *data)
   TEAM_ID = preferences.getInt("teamid", 1234);
   preferences.end();
 
-  int msg_size = snprintf(NULL, 0, "$I TEAM ID HAS BEEN RESET TO %d\n", TEAM_ID);
+  int msg_size = snprintf(NULL, 0, "$I TEAM ID HAS BEEN RESET TO %d", TEAM_ID);
   char message[msg_size];
-  snprintf(message, msg_size, "$I TEAM ID HAS BEEN RESET TO %d\n", TEAM_ID);
+  snprintf(message, msg_size, "$I TEAM ID HAS BEEN RESET TO %d", TEAM_ID);
   safe_print(message);
   
-}
+} // END: do_reset_team_id()
 
 void safe_print(const char *msg)
 {
@@ -388,10 +388,10 @@ void safe_print(const char *msg)
   {
     Serial2.println(msg);
   }
-}
+} // END: safe_print()
 
 void IRAM_ATTR send_1()
 {
-  char message[15] = "EXAMPLE DATA!\n";
+  char message[15] = "EXAMPLE DATA!";
   Serial2.println(message);
-}
+} // END: send_1()
