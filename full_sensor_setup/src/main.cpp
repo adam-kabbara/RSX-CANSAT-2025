@@ -37,14 +37,15 @@ int ledPin = 2;
 // Initializing Hall Sensor variables
 int currState = 0;
 int lastState = 0;
-float rpm = 0.0;
+float currRPM = 0.0;
 float prevRPM = 0.0;
 unsigned long lastPulseTime = 0;
 unsigned long pulseInterval = 0;
 
-// Initializing strings to store sensor data
-char ;
-
+// Declaring strings to store sensor data
+char rpm[10];                                                         // Hall Sensor data
+char temp[], pressure[], baroAltitude[], humidity[];                // Barometer data
+char time[], latitude[], longitude[], satellites[], gpsAltitude[];  // GPS data
 
 void setup() {
     Serial.begin(115200);
@@ -62,7 +63,7 @@ void setup() {
 void loop() {
     hallSensorLoop();
     barometerLoop();
-    //gpsLoop();
+    gpsLoop();
     //printData();
     delay(20); // To accomodate the Hall Sensor sensitivity
 }
@@ -107,11 +108,11 @@ void hallSensorLoop() {
         digitalWrite(ledPin, HIGH); // Turns off LED at its falling edge detection
     }
 
-    rpm = calculateRPM(pulseInterval, prevRPM);
-    prevRPM = rpm; // Resets the RPM state
+    currRPM = calculateRPM(pulseInterval, prevRPM);
+    prevRPM = currRPM; // Resets the RPM state
 
     Serial.print("Current RPM: ");
-    Serial.println(rpm);
+    Serial.println(currRPM);
 
     lastState = currState; // Resets the hall effect state
 }
@@ -144,8 +145,6 @@ void gpsLoop() {
         gps.encode(c);
 
         if (gps.location.isUpdated()) {
-            Serial.println("---------- Satellite Data ----------");
-            
             // Time
             int hour = gps.time.hour();
             int minute = gps.time.minute();
@@ -193,8 +192,6 @@ void gpsLoop() {
             Serial.print("Altitude: ");
             Serial.print(gps.altitude.meters());
             Serial.println("m");
-
-            Serial.println("------------------------------------");
         }
     }
 }
@@ -202,17 +199,20 @@ void gpsLoop() {
 // Calculates the RPM value using the subtracted time
 float calculateRPM(unsigned long pulseInterval, float previous) {
     if ((currState == LOW) && (lastState == HIGH) && (pulseInterval > 0)) {
-        rpm = (60.0 * 1000000) / pulseInterval;
+        currRPM = (60.0 * 1000000) / pulseInterval;
     }
 
     // Filters out extreme RPM calculations 
-    if (rpm > 2000.0) {
-        rpm = previous;
+    if (currRPM > 2000.0) {
+        currRPM = previous;
     }
 
-    return rpm;
+    rpm[] = currRPM;
+    return currRPM;
 }
 
 void printData() {
-    
+    Serial.println("---------- Satellite Data ----------");
+
+    Serial.println("------------------------------------");
 }
