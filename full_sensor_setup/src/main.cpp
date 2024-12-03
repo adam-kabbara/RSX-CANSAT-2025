@@ -12,6 +12,12 @@
 #include <TinyGPS++.h>
 #include <HardwareSerial.h>
 
+// ESP32 pins
+#define HALL_SENSOR_PIN 23
+#define ONBOARD_LED_PIN 2
+#define ESP32_RX 16
+#define ESP32_TX 17
+
 // Standard atmospheric pressure is 1013.25 hPa --> https://en.wikipedia.org/wiki/Atmospheric_pressure, https://www.noaa.gov/jetstream/atmosphere/air-pressure
 #define SEALEVELPRESSURE_HPA (1013.25)
 
@@ -28,13 +34,9 @@ void barometerLoop();
 void gpsLoop();
 
 float calculateRPM(unsigned long pulseInterval, float previous);
-void printData();
+void serialPrintData();
 
-// ESP32 pins
-int hallSensorPin = 23;
-int ledPin = 2;
-
-// Initializing Hall Sensor variables
+// Initializing hall sensor variables
 int currState = 0;
 int lastState = 0;
 float currRPM = 0.0;
@@ -43,9 +45,9 @@ unsigned long lastPulseTime = 0;
 unsigned long pulseInterval = 0;
 
 // Declaring strings to store sensor data
-char rpm[10];                                                         // Hall Sensor data
-char temp[], pressure[], baroAltitude[], humidity[];                // Barometer data
-char time[], latitude[], longitude[], satellites[], gpsAltitude[];  // GPS data
+char rpm[15];                                                                       // Hall Sensor data
+char temp[15], pressure[15], baroAltitude[15], humidity[15];                        // Barometer data
+char utcTime[15], latitude[15], longitude[15], satellites[15], gpsAltitude[15];     // GPS data
 
 void setup() {
     Serial.begin(115200);
@@ -64,14 +66,14 @@ void loop() {
     hallSensorLoop();
     barometerLoop();
     gpsLoop();
-    //printData();
+    serialPrintData();
     delay(20); // To accomodate the Hall Sensor sensitivity
 }
 
 void hallSensorSetup() {
     Serial.println("Hall Sensor Setup...");
-    pinMode(ledPin, OUTPUT);
-    pinMode(hallSensorPin, INPUT); 
+    pinMode(ONBOARD_LED_PIN, OUTPUT);
+    pinMode(HALL_SENSOR_PIN, INPUT); 
 }
 
 void barometerSetup() {
@@ -88,55 +90,67 @@ void barometerSetup() {
 
 void gpsSetup() {
     Serial.println("GPS Setup...");
-    GPS_Serial.begin(9600, SERIAL_8N1, 16, 17);
+    GPS_Serial.begin(9600, SERIAL_8N1, ESP32_RX, ESP32_TX);
+
+    // Initializing GPS values before valid connections
+    strcpy(utcTime, "n/a");
+    strcpy(latitude, "n/a");
+    strcpy(longitude, "n/a");
+    strcpy(satellites, "n/a");
+    strcpy(gpsAltitude, "n/a");
 }
 
 void hallSensorLoop() {
-    currState = digitalRead(hallSensorPin);
+    currState = digitalRead(HALL_SENSOR_PIN);
     // Serial.println(currState); // Debugging statements
     // Serial.println(lastState); // Debugging statements
 
     // Turns on LED and calculates starting time when magnet comes across the hall effect sensor
     if (currState == LOW && lastState == HIGH) {
-        digitalWrite(ledPin, LOW);
+        digitalWrite(ONBOARD_LED_PIN, LOW);
         unsigned long currentTime = micros();
         // Serial.println(currentTime); // Debugging statements
         pulseInterval = currentTime - lastPulseTime;
         // Serial.println(pulseInterval); // Debugging statements
         lastPulseTime = currentTime;
     } else if (currState == HIGH) {
-        digitalWrite(ledPin, HIGH); // Turns off LED at its falling edge detection
+        digitalWrite(ONBOARD_LED_PIN, HIGH); // Turns off LED at its falling edge detection
     }
 
     currRPM = calculateRPM(pulseInterval, prevRPM);
     prevRPM = currRPM; // Resets the RPM state
 
-    Serial.print("Current RPM: ");
-    Serial.println(currRPM);
+    // Serial.print("Current RPM: ");
+    // Serial.println(currRPM);
 
     lastState = currState; // Resets the hall effect state
 }
 
 void barometerLoop() { 
-    Serial.print("Temperature: ");
-    Serial.print(bme.readTemperature());
-    Serial.println("°C");
+    snprintf(temp, sizeof(temp), "%.2f°C", bme.readTemperature());
+    snprintf(pressure, sizeof(pressure), "%.2f hPa", (bme.readPressure() / 100.0F));
+    snprintf(baroAltitude, sizeof(baroAltitude), "%.2f m", bme.readAltitude(SEALEVELPRESSURE_HPA));
+    snprintf(humidity, sizeof(humidity), "%.2f%", bme.readHumidity());
+    
+    // Serial.print("Temperature: ");
+    // Serial.print(bme.readTemperature());
+    // Serial.println("°C");
 
-    // Quite accurate according to https://toronto.weatherstats.ca/charts/pressure_station-hourly.html
-    // Note: 1 kPa = 10 hPa
-    Serial.print("Pressure: ");
-    Serial.print(bme.readPressure() / 100.0F);
-    Serial.println("hPa");
+    // // Quite accurate according to https://toronto.weatherstats.ca/charts/pressure_station-hourly.html
+    // // Note: 1 kPa = 10 hPa
+    // Serial.print("Pressure: ");
+    // Serial.print(bme.readPressure() / 100.0F);
+    // Serial.println("hPa");
 
-    Serial.print("Approx. Altitude: ");
-    Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
-    Serial.println("m");
+    // Serial.print("Approx. Altitude: ");
+    // Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
+    // Serial.println("m");
 
-    Serial.print("Humidity: ");
-    Serial.print(bme.readHumidity());
-    Serial.println("%");
+    // Serial.print("Humidity: ");
+    // Serial.print(bme.readHumidity());
+    // Serial.println("%");
 
-    Serial.println();
+    // Serial.println();
 }
 
 void gpsLoop() {
@@ -144,54 +158,60 @@ void gpsLoop() {
         char c = GPS_Serial.read();
         gps.encode(c);
 
-        if (gps.location.isUpdated()) {
-            // Time
-            int hour = gps.time.hour();
-            int minute = gps.time.minute();
-            int second = gps.time.second();
-            Serial.print("Time: ");
-            if (hour < 10) {
-                Serial.print("0");
-            }
-            Serial.print(hour);
-            Serial.print(":");
-            if (minute < 10) {
-                Serial.print("0");
-            }
-            Serial.print(minute);
-            Serial.print(":");
-            if (second < 10) {
-                Serial.print("0");
-            }
-            Serial.print(second);
-            Serial.println(" (UTC Time)");
-
-            // Latitude
-            Serial.print("Latitude: ");
-            Serial.print(gps.location.lat(), 6);
-            if (gps.location.lat() > 0) {
-                Serial.println("°N");
-            } else {
-                Serial.println("°S");
-            }
+        if (gps.location.isUpdated() && gps.location.isValid()) {
+            snprintf(utcTime, sizeof(utcTime), "%02d:%02d:%02d (UTC Time)", gps.time.hour(), gps.time.minute(), gps.time.second());
+            snprintf(latitude, sizeof(latitude), "%.6f%s°", gps.location.lat(), gps.location.lat() > 0 ? "N" : "S");
+            snprintf(longitude, sizeof(longitude), "%.6f%s°", gps.location.lng(), gps.location.lng() > 0 ? "E" : "W");
+            snprintf(satellites, sizeof(satellites), "%d", gps.satellites.value());
+            snprintf(gpsAltitude, sizeof(gpsAltitude), "%.2f m", gps.altitude.meters());
             
-            // Longitude
-            Serial.print("Longitude: ");
-            Serial.println(gps.location.lng(), 6);
-            if (gps.location.lng() > 0) {
-                Serial.println("°E");
-            } else {
-                Serial.println("°W");
-            }
+            // // Time
+            // int hour = gps.time.hour();
+            // int minute = gps.time.minute();
+            // int second = gps.time.second();
+            // Serial.print("Time: ");
+            // if (hour < 10) {
+            //     Serial.print("0");
+            // }
+            // Serial.print(hour);
+            // Serial.print(":");
+            // if (minute < 10) {
+            //     Serial.print("0");
+            // }
+            // Serial.print(minute);
+            // Serial.print(":");
+            // if (second < 10) {
+            //     Serial.print("0");
+            // }
+            // Serial.print(second);
+            // Serial.println(" (UTC Time)");
 
-            // Satellites
-            Serial.print("Satellites: ");
-            Serial.println(gps.satellites.value());
+            // // Latitude
+            // Serial.print("Latitude: ");
+            // Serial.print(gps.location.lat(), 6);
+            // if (gps.location.lat() > 0) {
+            //     Serial.println("°N");
+            // } else {
+            //     Serial.println("°S");
+            // }
             
-            // Altitude 
-            Serial.print("Altitude: ");
-            Serial.print(gps.altitude.meters());
-            Serial.println("m");
+            // // Longitude
+            // Serial.print("Longitude: ");
+            // Serial.println(gps.location.lng(), 6);
+            // if (gps.location.lng() > 0) {
+            //     Serial.println("°E");
+            // } else {
+            //     Serial.println("°W");
+            // }
+
+            // // Satellites
+            // Serial.print("Satellites: ");
+            // Serial.println(gps.satellites.value());
+            
+            // // Altitude 
+            // Serial.print("Altitude: ");
+            // Serial.print(gps.altitude.meters());
+            // Serial.println("m");
         }
     }
 }
@@ -207,12 +227,42 @@ float calculateRPM(unsigned long pulseInterval, float previous) {
         currRPM = previous;
     }
 
-    rpm[] = currRPM;
+    snprintf(rpm, sizeof(rpm), "%.2f", currRPM);
     return currRPM;
 }
 
-void printData() {
-    Serial.println("---------- Satellite Data ----------");
+void serialPrintData() {
+    Serial.println("\n---------- Sensor Data ----------");
+    
+    Serial.print("RPM: ");
+    Serial.println(rpm);
 
-    Serial.println("------------------------------------");
+    Serial.print("Temperature: ");
+    Serial.println(temp);
+
+    Serial.print("Pressure: ");
+    Serial.println(pressure);
+
+    Serial.print("Barometer Altitude: ");
+    Serial.println(baroAltitude);
+
+    Serial.print("Humidity: ");
+    Serial.println(humidity);
+
+    Serial.print("UTC Time: ");
+    Serial.println(utcTime);
+
+    Serial.print("Latitude: ");
+    Serial.println(latitude);
+
+    Serial.print("Longitude: ");
+    Serial.println(longitude);
+
+    Serial.print("Connected Satellites: ");
+    Serial.println(satellites);
+
+    Serial.print("GPS Altitude: ");
+    Serial.println(gpsAltitude);
+
+    Serial.println("---------------------------------\n");
 }
