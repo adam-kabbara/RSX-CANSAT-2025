@@ -12,5 +12,3 @@ Motor
 Orange wire -> 3 (PUM)
 Red wire    -> 5 V
 Brown wire  -> GND
-
-
