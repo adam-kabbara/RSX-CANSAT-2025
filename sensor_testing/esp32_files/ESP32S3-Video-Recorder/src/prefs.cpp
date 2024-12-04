@@ -170,29 +170,6 @@ static bool loadConfigVect() {
 }
 
 static bool savePrefs(bool retain = true) {
-  // use preferences for passwords
-  if (!prefs.begin(APP_NAME, false)) {  
-    LOG_WRN("Failed to save preferences");
-    return false;
-  }
-  if (!retain) { 
-    prefs.clear(); 
-    LOG_INF("Cleared preferences");
-    return true;
-  }
-  prefs.putString("ST_SSID", ST_SSID);
-  prefs.putString("ST_Pass", ST_Pass);
-  prefs.putString("AP_Pass", AP_Pass); 
-  prefs.putString("Auth_Pass", Auth_Pass); 
-#if INCLUDE_FTP_HFS
-  prefs.putString("FS_Pass", FS_Pass);
-#endif
-#if INCLUDE_SMTP
-  prefs.putString("SMTP_Pass", SMTP_Pass);
-#endif
-#if INCLUDE_MQTT
-  prefs.putString("mqtt_user_Pass", mqtt_user_Pass);
-#endif
   prefs.end();
   LOG_INF("Saved preferences");
   return true;
@@ -204,25 +181,9 @@ static bool loadPrefs() {
     savePrefs(); // if prefs do not yet exist
     return false;
   }
-  if (!strlen(ST_SSID)) {
-     // first call only after instal
-    prefs.getString("ST_SSID", ST_SSID, MAX_PWD_LEN); // max 15 chars
-    updateConfigVect("ST_SSID", ST_SSID);
-  } 
 
-  prefs.getString("ST_Pass", ST_Pass, MAX_PWD_LEN);
-  updateConfigVect("ST_Pass", ST_Pass);
-  prefs.getString("AP_Pass", AP_Pass, MAX_PWD_LEN);
-  prefs.getString("Auth_Pass", Auth_Pass, MAX_PWD_LEN); 
-#if INCLUDE_FTP_HFS
-  prefs.getString("FS_Pass", FS_Pass, MAX_PWD_LEN);
-#endif
-#if INCLUDE_SMTP
-  prefs.getString("SMTP_Pass", SMTP_Pass, MAX_PWD_LEN);
-#endif
-#if INCLUDE_MQTT
-  prefs.getString("mqtt_user_Pass", mqtt_user_Pass, MAX_PWD_LEN);
-#endif
+
+
   prefs.end();
   return true;
 }
@@ -233,99 +194,16 @@ void updateStatus(const char* variable, const char* _value, bool fromUser) {
   bool res = true;
   char value[IN_FILE_NAME_LEN];
   strncpy(value, _value, sizeof(value));  
-#if INCLUDE_MQTT
-  if (mqtt_active) {
-    char buff[(IN_FILE_NAME_LEN * 2)];
-    snprintf(buff, IN_FILE_NAME_LEN * 2, "%s=%s", variable, value);
-    mqttPublishPath("state", buff);
-  }
-#endif
 
   int intVal = atoi(value); 
   if (!strcmp(variable, "hostName")) strncpy(hostName, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "ST_SSID")) strncpy(ST_SSID, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "ST_Pass") && value[0] != '*') strncpy(ST_Pass, value, MAX_PWD_LEN-1);
 
-  else if (!strcmp(variable, "ST_ip")) strncpy(ST_ip, value, MAX_IP_LEN-1);
-  else if (!strcmp(variable, "ST_gw")) strncpy(ST_gw, value, MAX_IP_LEN-1);
-  else if (!strcmp(variable, "ST_sn")) strncpy(ST_sn, value, MAX_IP_LEN-1);
-  else if (!strcmp(variable, "ST_ns1")) strncpy(ST_ns1, value, MAX_IP_LEN-1);
-  else if (!strcmp(variable, "ST_ns1")) strncpy(ST_ns2, value, MAX_IP_LEN-1);
-  else if (!strcmp(variable, "Auth_Name")) strncpy(Auth_Name, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "Auth_Pass") && value[0] != '*') strncpy(Auth_Pass, value, MAX_PWD_LEN-1);
-  else if (!strcmp(variable, "AP_ip")) strncpy(AP_ip, value, MAX_IP_LEN-1);
-  else if (!strcmp(variable, "AP_gw")) strncpy(AP_gw, value, MAX_IP_LEN-1);
-  else if (!strcmp(variable, "AP_sn")) strncpy(AP_sn, value, MAX_IP_LEN-1);
-  else if (!strcmp(variable, "AP_SSID")) strncpy(AP_SSID, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "AP_Pass") && value[0] != '*') strncpy(AP_Pass, value, MAX_PWD_LEN-1); 
-  else if (!strcmp(variable, "allowAP")) allowAP = (bool)intVal;
-  else if (!strcmp(variable, "useHttps")) useHttps = (bool)intVal;
-  else if (!strcmp(variable, "useSecure")) useSecure = (bool)intVal;
-  else if (!strcmp(variable, "doGetExtIP")) doGetExtIP = (bool)intVal;  
-  else if (!strcmp(variable, "extIP")) strncpy(extIP, value, MAX_IP_LEN-1);
-#if INCLUDE_TGRAM
-  else if (!strcmp(variable, "tgramUse")) {
-    tgramUse = (bool)intVal;
-    if (tgramUse) {
-#if INCLUDE_SMTP
-      smtpUse = false;
-#endif
-      updateConfigVect("smtpUse", "0");
-    }
-  }
-  else if (!strcmp(variable, "tgramToken")) strncpy(tgramToken, value, MAX_PWD_LEN-1);
-  else if (!strcmp(variable, "tgramChatId")) strncpy(tgramChatId, value, MAX_IP_LEN-1);
-#endif
-#if INCLUDE_FTP_HFS
-  else if (!strcmp(variable, "fsServer")) strncpy(fsServer, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "fsPort")) fsPort = intVal;
-  else if (!strcmp(variable, "ftpUser")) strncpy(ftpUser, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "FS_Pass") && value[0] != '*') strncpy(FS_Pass, value, MAX_PWD_LEN-1);
-  else if (!strcmp(variable, "fsWd")) strncpy(fsWd, value, FILE_NAME_LEN-1);
-  else if(!strcmp(variable, "fsUse")) fsUse = (bool)intVal;
-  else if(!strcmp(variable, "autoUpload")) autoUpload = (bool)intVal;
-  else if(!strcmp(variable, "deleteAfter")) deleteAfter = (bool)intVal;
-  else if(!strcmp(variable, "useFtps")) useFtps = (bool)intVal;
-#endif
-#if INCLUDE_SMTP
-  else if (!strcmp(variable, "smtpUse")) {
-    smtpUse = (bool)intVal;
-    if (smtpUse) {
-#if INCLUDE_TGRAM
-      tgramUse = false;
-#endif
-      updateConfigVect("tgramUse", "0");
-    }
-  }
-  else if (!strcmp(variable, "smtp_login")) strncpy(smtp_login, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "smtp_server")) strncpy(smtp_server, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "smtp_email")) strncpy(smtp_email, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "SMTP_Pass") && value[0] != '*') strncpy(SMTP_Pass, value, MAX_PWD_LEN-1);
-  else if (!strcmp(variable, "smtp_port")) smtp_port = intVal;
-  else if (!strcmp(variable, "smtpMaxEmails")) alertMax = intVal;
-#endif
-#if INCLUDE_MQTT
-  else if (!strcmp(variable, "mqtt_active")) {
-    mqtt_active = (bool)intVal;
-    if (!mqtt_active) stopMqttClient();
-  } 
-  else if (!strcmp(variable, "mqtt_broker")) strncpy(mqtt_broker, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "mqtt_port")) strncpy(mqtt_port, value, 4);
-  else if (!strcmp(variable, "mqtt_user")) strncpy(mqtt_user, value, MAX_HOST_LEN-1);
-  else if (!strcmp(variable, "mqtt_user_Pass") && value[0] != '*') strncpy(mqtt_user_Pass, value, MAX_PWD_LEN-1);
-  else if (!strcmp(variable, "mqtt_topic_prefix")) strncpy(mqtt_topic_prefix, value, (FILE_NAME_LEN/2)-1);
-#endif
-
-  // Other settings
-  else if (!strcmp(variable, "clockUTC")) syncToBrowser((uint32_t)intVal);      
+  // Other settings   
   else if (!strcmp(variable, "timezone")) strncpy(timezone, value, FILE_NAME_LEN-1);
   else if (!strcmp(variable, "ntpServer")) strncpy(ntpServer, value, FILE_NAME_LEN-1);
   else if (!strcmp(variable, "alarmHour")) alarmHour = (uint8_t)intVal;
   else if (!strcmp(variable, "sdMinCardFreeSpace")) sdMinCardFreeSpace = intVal;
   else if (!strcmp(variable, "sdFreeSpaceMode")) sdFreeSpaceMode = intVal;
-  else if (!strcmp(variable, "responseTimeoutSecs")) responseTimeoutSecs = intVal;
-  else if (!strcmp(variable, "wifiTimeoutSecs")) wifiTimeoutSecs = intVal;
-  else if (!strcmp(variable, "usePing")) usePing = (bool)intVal;
   else if (!strcmp(variable, "dbgVerbose")) {
     dbgVerbose = (intVal) ? true : false;
     Serial.setDebugOutput(dbgVerbose);
@@ -338,8 +216,7 @@ void updateStatus(const char* variable, const char* _value, bool fromUser) {
   else if (!strcmp(variable, "sdLog")) {
     sdLog = (bool)intVal; 
     remote_log_init();
-  } 
-  else if (!strcmp(variable, "refreshVal")) refreshVal = intVal; 
+  }  
   else if (!strcmp(variable, "formatIfMountFailed")) formatIfMountFailed = (bool)intVal;
   else if (!strcmp(variable, "resetLog")) reset_log(); 
   else if (!strcmp(variable, "clear")) savePrefs(false); // /control?clear=1
@@ -391,18 +268,11 @@ void buildJsonString(uint8_t filter) {
     p += sprintf(p, "\"fw_version\":\"%s\",", APP_VER); 
     p += sprintf(p, "\"macAddressEfuse\":\"%012llX\",", ESP.getEfuseMac() ); 
     p += sprintf(p, "\"macAddressWiFi\":\"%s\",", WiFi.macAddress().c_str() ); 
-    p += sprintf(p, "\"extIP\":\"%s\",", extIP); 
-    p += sprintf(p, "\"httpPort\":\"%u\",", HTTP_PORT); 
-    p += sprintf(p, "\"httpsPort\":\"%u\",", HTTPS_PORT); 
     if (!filter) {
       // populate first part of json string from config vect
       for (const auto& row : configs) 
         p += sprintf(p, "\"%s\":\"%s\",", row[0].c_str(), row[1].c_str());
       p += sprintf(p, "\"logType\":\"%d\",", logType);
-      // passwords stored in prefs on NVS 
-      p += sprintf(p, "\"ST_Pass\":\"%.*s\",", strlen(ST_Pass), FILLSTAR);
-      p += sprintf(p, "\"AP_Pass\":\"%.*s\",", strlen(AP_Pass), FILLSTAR);
-      p += sprintf(p, "\"Auth_Pass\":\"%.*s\",", strlen(Auth_Pass), FILLSTAR);
 #if INCLUDE_FTP_HFS
       p += sprintf(p, "\"FS_Pass\":\"%.*s\",", strlen(FS_Pass), FILLSTAR);
 #endif
@@ -459,9 +329,7 @@ static bool checkConfigFile() {
       sprintf(cfg, "appId~%s~99~~na\n", APP_NAME);
       file.write((uint8_t*)cfg, strlen(cfg));
       sprintf(cfg, "hostName~%s~%d~T~Device host name\n", hostName, HOSTNAME_GRP);
-      file.write((uint8_t*)cfg, strlen(cfg));
-      sprintf(cfg, "AP_SSID~%s~0~T~AP SSID name\n", hostName);
-      file.write((uint8_t*)cfg, strlen(cfg));
+            file.write((uint8_t*)cfg, strlen(cfg));
       sprintf(cfg, "cfgVer~%u~99~T~na\n", CFG_VER);
       file.write((uint8_t*)cfg, strlen(cfg));
       file.close();

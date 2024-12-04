@@ -208,91 +208,22 @@ void tgramAlert(const char* subject, const char* message);
 void sendExternalHeartbeat();
 
 /******************** Global utility declarations *******************/
-
-extern char AP_SSID[];
-extern char AP_Pass[];
-extern char AP_ip[];
-extern char AP_sn[];
-extern char AP_gw[];
-
 extern char hostName[]; //Host name for ddns
-extern char ST_SSID[]; //Router ssid
-extern char ST_Pass[]; //Router passd
-extern bool useHttps;
-extern bool useSecure;
-extern bool useFtps;
-
-extern char ST_ip[]; //Leave blank for dhcp
-extern char ST_sn[];
-extern char ST_gw[];
-extern char ST_ns1[];
-extern char ST_ns2[];
-extern char extIP[];
-
-extern char Auth_Name[]; 
-extern char Auth_Pass[];
-
-extern int responseTimeoutSecs; // how long to wait for remote server in secs
-extern bool allowAP; // set to true to allow AP to startup if cannot reconnect to STA (router)
-extern uint32_t wifiTimeoutSecs; // how often to check wifi status
 extern uint8_t percentLoaded;
 extern int refreshVal;
 extern bool dataFilesChecked;
 extern char ipExtAddr[];
 extern bool doGetExtIP;
-extern bool usePing; // set to false if problems related to this issue occur: https://github.com/s60sc/ESP32-CAM_MJPEG2SD/issues/221
 extern bool wsLog;
 extern uint16_t sustainId;
 extern bool heartBeatDone;
 extern TaskHandle_t heartBeatHandle;
 
-// remote file server
-extern char fsServer[];
-extern char ftpUser[];
-extern uint16_t fsPort;
-extern char FS_Pass[];
-extern char fsWd[];
-extern bool autoUpload;
-extern bool deleteAfter;
-extern bool fsUse;
 extern char inFileName[];
-
-//  SMTP server
-extern char smtp_login[];
-extern char SMTP_Pass[];
-extern char smtp_email[];
-extern char smtp_server[];
-extern uint16_t smtp_port;
-extern bool smtpUse; // whether or not to use smtp
-extern int emailCount;
-
-// Mqtt broker
-extern bool mqtt_active;
-extern char mqtt_broker[];
-extern char mqtt_port[];
-extern char mqtt_user[];
-extern char mqtt_user_Pass[];
-extern char mqtt_topic_prefix[];  
 
 // control sending alerts 
 extern size_t alertBufferSize;
 extern byte* alertBuffer;
-
-// Telegram
-extern bool tgramUse;
-extern char tgramToken[];
-extern char tgramChatId[];
-extern char tgramHdr[];
-
-// certificates
-extern const char* git_rootCACertificate;
-extern const char* ftps_rootCACertificate;
-extern const char* smtp_rootCACertificate;
-extern const char* mqtt_rootCACertificate;
-extern const char* telegram_rootCACertificate;
-extern const char* hfs_rootCACertificate;
-extern const char* prvtkey_pem; // app https server private key
-extern const char* cacert_pem; // app https server public certificate
 
 // app status
 extern char timezone[];

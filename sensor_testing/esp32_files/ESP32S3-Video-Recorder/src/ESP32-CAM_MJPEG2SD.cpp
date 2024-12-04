@@ -30,7 +30,6 @@ void setup() {
 
   if (strlen(startupFailure)) LOG_WRN("%s", startupFailure);
   else {
-    startSustainTasks();
     prepRecording();
     checkMemory();
   }

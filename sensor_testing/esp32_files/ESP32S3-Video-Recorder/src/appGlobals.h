@@ -10,85 +10,11 @@
  Selecting wrong model may crash your device due to pin conflict
 ***************************************************************************/
 
-// User's ESP32 cam board
-#if defined(CONFIG_IDF_TARGET_ESP32)
-#define CAMERA_MODEL_AI_THINKER 
-//#define CAMERA_MODEL_WROVER_KIT 
-//#define CAMERA_MODEL_ESP_EYE 
-//#define CAMERA_MODEL_M5STACK_PSRAM 
-//#define CAMERA_MODEL_M5STACK_V2_PSRAM 
-//#define CAMERA_MODEL_M5STACK_WIDE 
-//#define CAMERA_MODEL_M5STACK_ESP32CAM
-//#define CAMERA_MODEL_M5STACK_UNITCAM
-//#define CAMERA_MODEL_TTGO_T_JOURNAL 
-//#define CAMERA_MODEL_ESP32_CAM_BOARD
-//#define CAMERA_MODEL_TTGO_T_CAMERA_PLUS
-//#define AUXILIARY
-
-// User's ESP32S3 cam board
-#elif defined(CONFIG_IDF_TARGET_ESP32S3)
 #define CAMERA_MODEL_FREENOVE_ESP32S3_CAM
-//#define CAMERA_MODEL_XIAO_ESP32S3 
-//#define CAMERA_MODEL_NEW_ESPS3_RE1_0
-//#define CAMERA_MODEL_M5STACK_CAMS3_UNIT
-//#define CAMERA_MODEL_ESP32S3_EYE 
-//#define CAMERA_MODEL_ESP32S3_CAM_LCD
-//#define CAMERA_MODEL_DFRobot_FireBeetle2_ESP32S3
-//#define CAMERA_MODEL_DFRobot_Romeo_ESP32S3
-//#define CAMERA_MODEL_XENOIONEX
-//#define AUXILIARY
-#endif
-
-/***************************************************************
-  Optional features NOT included by default to reduce heap use 
-  To include a particular feature, change false to true
-***************************************************************/
-#define INCLUDE_FTP_HFS false // ftp.cpp (file upload)
-#define INCLUDE_TGRAM false   // telegram.cpp (Telegram app interface)
-#define INCLUDE_AUDIO false   // audio.cpp (microphones & speakers)
-#define INCLUDE_PERIPH true  // peripherals.cpp (servos, PIR, led etc)
-#define INCLUDE_SMTP false    // smtp.cpp (email)
-#define INCLUDE_MQTT false    // mqtt.cpp (MQTT)
-#define INCLUDE_HASIO false   // mqtt.cpp (Send home assistant discovery messages). Needs INCLUDE_MQTT true
-
-#define INCLUDE_CERTS false   // certificates.cpp (https and server certificate checking)
-#define INCLUDE_UART false    // uart.cpp (use another esp32 as Auxiliary connected via UART)
-#define INCLUDE_TELEM false   // telemetry.cpp (real time data collection). Needs INCLUDE_I2C true
-#define INCLUDE_WEBDAV false  // webDav.cpp (WebDAV protocol)
-#define INCLUDE_EXTHB false   // externalHeartbeat.cpp (heartbeat to remote server)
-#define INCLUDE_PGRAM false   // photogram.cpp (photogrammetry feature). Needs INCLUDE_PERIPH true
-#define INCLUDE_MCPWM false   // mcpwm.cpp (BDC motor control). Needs INCLUDE_PERIPH true
-#define INCLUDE_I2C false     // periphsI2C.cpp (support for I2C peripherals)
-
-// if INCLUDE_I2C true, set each I2C device used to true 
-#define USE_SSD1306 false
-#define USE_BMx280 false
-#define USE_MPU6050 false
-#define USE_MPU9250 false
-#define USE_DS3231 false
-#define USE_LCD1602 false
-
-#define INCLUDE_DS18B20 false // if true, requires additional libraries: OneWire and DallasTemperature
-
-// To include Edge Impulse arduino library for additional motion detect filtering
-// Use Edge Impulse Studio to create model:
-// - Select target device: Espressif ESP-EYE
-// - Select Arduino library deployment
-// - Unzip created library into Arduino libraries folder
-// To compile app with library:
-#define INCLUDE_TINYML false  // set to true 
-#define TINY_ML_LIB "your_impulse_edge_library.h" // replace with your lib
-// To activate ML, under web page Motion tab, select Use Machine Learning option
 
 /**************************************************************************/
 
 #define ALLOW_SPACES false  // set true to allow whitespace in configs.txt key values
-
-// web server ports 
-#define HTTP_PORT 80 // insecure app access
-#define HTTPS_PORT 443 // secure app access
-
-#define USE_IP6 false // if true use IPv6 when available, else use IPv4
 
 /*********************** Fixed defines leave as is ***********************/ 
 /** Do not change anything below here unless you know what you are doing **/
@@ -107,21 +33,8 @@
  
 #define APP_VER "10.4.2"
 
-#if defined(AUXILIARY)
-#define APP_NAME "ESP-CAM_AUX" // max 15 chars
-#define INDEX_PAGE_PATH DATA_DIR "/Auxil" HTML_EXT
-#define USE_UARTTASK
-#elif defined(SIDE_ALARM)
-#define APP_NAME "ESP-CAM-SIDE" // max 15 chars
-#define INDEX_PAGE_PATH DATA_DIR "/SideAl" HTML_EXT
-#define NO_SD
-#else
 #define APP_NAME "ESP-CAM_MJPEG" // max 15 chars
 #define INDEX_PAGE_PATH DATA_DIR "/MJPEG2SD" HTML_EXT
-#endif
-
-#define HTTP_CLIENTS 2 // http(s), ws(s)
-#define MAX_STREAMS 4 // (web stream, playback, download), NVR, audio, subtitle
 #define FILE_NAME_LEN 64
 #define IN_FILE_NAME_LEN (FILE_NAME_LEN * 2)
 #define JSON_BUFF_LEN (32 * 1024) // set big enough to hold all file names in a folder
@@ -300,25 +213,20 @@ size_t writeWavFile(byte* clientBuf, size_t buffSize);
 
 /******************** Global app declarations *******************/
 
-// motion detection parameters
-extern int moveStartChecks; // checks per second for start motion
-extern int moveStopSecs; // secs between each check for stop, also determines post motion time
+// // motion detection parameters
+// extern int moveStartChecks; // checks per second for start motion
+// extern int moveStopSecs; // secs between each check for stop, also determines post motion time
 extern int maxFrames; // maximum number of frames in video before auto close 
 
-// motion recording parameters
-extern int detectMotionFrames; // min sequence of changed frames to confirm motion 
-extern int detectNightFrames; // frames of sequential darkness to avoid spurious day / night switching
-extern int detectNumBands;
-extern int detectStartBand;
-extern int detectEndBand; // inclusive
-extern int detectChangeThreshold; // min difference in pixel comparison to indicate a change
-extern bool mlUse; // whether to use ML for motion detection, requires INCLUDE_TINYML to be true
-extern float mlProbability; // minimum probability (0.0 - 1.0) for positive classification
-
-// record timelapse avi independently of motion capture, file name has same format as avi except ends with T
-extern int tlSecsBetweenFrames; // too short interval will interfere with other activities
-extern int tlDurationMins; // a new file starts when previous ends
-extern int tlPlaybackFPS;  // rate to playback the timelapse, min 1 
+// // motion recording parameters
+// extern int detectMotionFrames; // min sequence of changed frames to confirm motion 
+// extern int detectNightFrames; // frames of sequential darkness to avoid spurious day / night switching
+// extern int detectNumBands;
+// extern int detectStartBand;
+// extern int detectEndBand; // inclusive
+// extern int detectChangeThreshold; // min difference in pixel comparison to indicate a change
+// extern bool mlUse; // whether to use ML for motion detection, requires INCLUDE_TINYML to be true
+// extern float mlProbability; // minimum probability (0.0 - 1.0) for positive classification
 
 // status & control fields 
 extern const char* appConfig;
@@ -368,11 +276,6 @@ extern size_t audioBytes;
 extern char srtBuffer[];
 extern size_t srtBytes;
 
-// Auxiliary use
-extern bool useUart;
-extern int uartTxdPin;
-extern int uartRxdPin;
-
 // peripherals used
 extern bool pirUse; // true to use PIR or radar sensor (RCWL-0516) for motion detection
 extern bool lampAuto; // if true in conjunction with usePir, switch on lamp when PIR activated
@@ -386,97 +289,12 @@ extern int buzzerDuration;
 extern int relayPin;
 extern bool relayMode;
 
-// sensors 
-extern int pirPin; // if usePir is true
-extern int lampPin; // if useLamp is true
-extern int wakePin; // if wakeUse is true
-extern int lightsPin;
-extern bool teleUse;
-extern int srtInterval;
-
-// Pan / Tilt Servos 
-extern int servoPanPin; 
-extern int servoTiltPin;
-// ambient / module temperature reading 
-extern int ds18b20Pin; // if INCLUDE_DS18B20 true
-// batt monitoring 
-extern int voltPin; 
-
-// audio
-extern bool AudActive;
-extern int micSckPin; // I2S SCK 
-extern int micSWsPin;  // I2S WS / PDM CLK
-extern int micSdPin;  // I2S SD / PDM DAT
-extern bool micRem;
-extern bool spkrRem; // true to use browser speaker
-extern int mampBckIo; 
-extern int mampSwsIo;
-extern int mampSdIo;
-extern volatile bool stopAudio;
-extern volatile audioAction THIS_ACTION;
-extern uint32_t SAMPLE_RATE; // audio sample rate
-
-// configure for specific servo model, eg for SG90
-extern int servoDelay;
-extern int servoMinAngle; // degrees
-extern int servoMaxAngle;
-extern int servoMinPulseWidth; // usecs
-extern int servoMaxPulseWidth;
-extern int servoCenter;
-extern bool SVactive;
-
-// battery monitor
-extern int voltDivider;
-extern float voltLow;
-extern int voltInterval;
-
-// stepper motor
-extern bool stepperUse;
-extern uint8_t stepINpins[];
-
-// Motors and RC
-extern bool useBDC;
-extern int motorRevPin;
-extern int motorFwdPin;
-extern int motorRevPinR;
-extern int motorFwdPinR;
-extern bool trackSteer;
-extern int servoSteerPin;
-extern int lightsRCpin;
-extern char AuxIP[];
-extern int pwmFreq;
-extern int maxSteerAngle;
-extern int maxTurnSpeed;
-extern int maxDutyCycle;
-extern int minDutyCycle;
-extern bool allowReverse;
-extern bool autoControl;
-extern int waitTime;
-extern int heartbeatRC;
-extern bool stickUse;
-extern int stickzPushPin;
-extern int stickXpin;
-extern int stickYpin;
-
 // External Heartbeat
 extern bool external_heartbeat_active;
 extern char external_heartbeat_domain[]; //External Heartbeat domain/IP  
 extern char external_heartbeat_uri[];    //External Heartbeat uri (i.e. /myesp32-cam-hub/index.php)
 extern int external_heartbeat_port;      //External Heartbeat server port to connect.  
 extern char external_heartbeat_token[];  //External Heartbeat server auth token.  
-
-// photogrammetry
-extern bool PGactive; 
-extern bool clockWise;
-extern uint8_t timeForFocus; // in secs
-extern uint8_t timeForPhoto; // in secs
-extern int pinShutter;
-extern int pinFocus;
-extern uint8_t photosDone;
-extern float gearing;
-extern uint8_t numberOfPhotos;
-extern float tRPM;
-extern bool extCam;
 
 // task handling
 extern TaskHandle_t battHandle;

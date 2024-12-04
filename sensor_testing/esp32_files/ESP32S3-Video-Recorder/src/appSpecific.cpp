@@ -1,12 +1,4 @@
 // mjpeg2sd app specific functions
-//
-// Direct access URLs for NVR:
-// - Video streaming: app_ip/sustain?video=1 
-// - Audio streaming: app_ip/sustain?audio=1
-// - Subtitle streaming: app_ip/sustain?srt=1
-// - Stills: app_ip/control?still=1
-//
-// s60sc 2022 - 2024
 
 #include "appGlobals.h"
 
@@ -31,21 +23,20 @@ bool updateAppStatus(const char* variable, const char* value, bool fromUser) {
   float fltVal = atof(value);
   if (!strcmp(variable, "custom")) return res;
 #ifndef AUXILIARY
-  else if (!strcmp(variable, "stopStream")) stopSustainTask(intVal);
   else if (!strcmp(variable, "stopPlaying")) stopPlaying();
   else if (!strcmp(variable, "minf")) minSeconds = intVal; 
   else if (!strcmp(variable, "motionVal")) motionVal = intVal;
-  else if (!strcmp(variable, "moveStartChecks")) moveStartChecks = intVal;
-  else if (!strcmp(variable, "moveStopSecs")) moveStopSecs = intVal;
-  else if (!strcmp(variable, "maxFrames")) maxFrames = intVal;
-  else if (!strcmp(variable, "detectMotionFrames")) detectMotionFrames = intVal;
-  else if (!strcmp(variable, "detectNightFrames")) detectNightFrames = intVal;
-  else if (!strcmp(variable, "detectNumBands")) detectNumBands = intVal;
-  else if (!strcmp(variable, "detectStartBand")) detectStartBand = intVal;
-  else if (!strcmp(variable, "detectEndBand")) detectEndBand = intVal;
-  else if (!strcmp(variable, "detectChangeThreshold")) detectChangeThreshold = intVal;
-  else if (!strcmp(variable, "mlUse")) mlUse = (bool)intVal;
-  else if (!strcmp(variable, "mlProbability")) mlProbability = fltVal < 0 ? 0.0 : (fltVal > 1.0 ? 1.0 : fltVal);
+  // else if (!strcmp(variable, "moveStartChecks")) moveStartChecks = intVal;
+  // else if (!strcmp(variable, "moveStopSecs")) moveStopSecs = intVal;
+  // else if (!strcmp(variable, "maxFrames")) maxFrames = intVal;
+  // else if (!strcmp(variable, "detectMotionFrames")) detectMotionFrames = intVal;
+  // else if (!strcmp(variable, "detectNightFrames")) detectNightFrames = intVal;
+  // else if (!strcmp(variable, "detectNumBands")) detectNumBands = intVal;
+  // else if (!strcmp(variable, "detectStartBand")) detectStartBand = intVal;
+  // else if (!strcmp(variable, "detectEndBand")) detectEndBand = intVal;
+  // else if (!strcmp(variable, "detectChangeThreshold")) detectChangeThreshold = intVal;
+  // else if (!strcmp(variable, "mlUse")) mlUse = (bool)intVal;
+  // else if (!strcmp(variable, "mlProbability")) mlProbability = fltVal < 0 ? 0.0 : (fltVal > 1.0 ? 1.0 : fltVal);
   else if (!strcmp(variable, "depthColor")) {
     depthColor = (bool)intVal;
     colorDepth = depthColor ? RGB888_BYTES : GRAYSCALE_BYTES;
@@ -60,12 +51,6 @@ bool updateAppStatus(const char* variable, const char* value, bool fromUser) {
     } else LOG_INF("%s motion detection", useMotion ? "Enabling" : "Disabling");
   }
   else if (!strcmp(variable, "timeLapseOn")) timeLapseOn = intVal;
-  else if (!strcmp(variable, "tlSecsBetweenFrames")) tlSecsBetweenFrames = intVal;
-  else if (!strcmp(variable, "tlDurationMins")) tlDurationMins = intVal;
-  else if (!strcmp(variable, "tlPlaybackFPS")) tlPlaybackFPS = intVal;  
-  else if (!strcmp(variable, "streamNvr")) streamNvr = (bool)intVal; 
-  else if (!strcmp(variable, "streamSnd")) streamSnd = (bool)intVal; 
-  else if (!strcmp(variable, "streamSrt")) streamSrt = (bool)intVal; 
   else if (!strcmp(variable, "lswitch")) nightSwitch = intVal;
 #endif
 #if INCLUDE_FTP_HFS
@@ -150,9 +135,7 @@ bool updateAppStatus(const char* variable, const char* value, bool fromUser) {
 #if INCLUDE_TELEM
   else if (!strcmp(variable, "teleUse")) teleUse = (bool)intVal;
 #endif
-  else if (!strcmp(variable, "teleInterval")) srtInterval = intVal;
   else if (!strcmp(variable, "wakeUse")) wakeUse = (bool)intVal;
-  else if (!strcmp(variable, "wakePin")) wakePin = intVal;
 #if INCLUDE_MCPWM
   else if (!strcmp(variable, "motorRevPin")) motorRevPin = intVal;
   else if (!strcmp(variable, "motorFwdPin")) motorFwdPin = intVal;
@@ -552,31 +535,6 @@ float readTemperature(bool isCelsius, bool onlyDS18) {
 }
 #endif
 
-void setInputPeripheral(uint8_t cmd, uint32_t controlVal) {
-  // set data on client for data received from auxiliary input peripheral
-  // not used
-  //if ((char)cmd == 'I') memcpy(&pirVal, &controlVal, sizeof(pirVal));  // set PIR status
-}
-
-int getInputPeripheral(uint8_t cmd) {
-  // auxiliary get data from input peripheral, for return to client
-  // not used
-  uint32_t inputVal = -1;
-  if ((char)cmd == 'I') {
-     // get PIR status
-    bool pirVal = getPIRval();
-    memcpy(&inputVal, &pirVal, sizeof(pirVal)); 
-  }
-  return inputVal;
-}
-
-bool setOutputPeripheral(uint8_t cmd, uint32_t rxValue) {
-  // auxiliary sends data to output peripheral
-  int controlValue;
-  memcpy(&controlValue, &rxValue, sizeof(controlValue));
-  return setPeripheral((char)cmd, controlValue, true);
-}
-
 bool appDataFiles() {
   // callback from setupAssist.cpp, for any app specific files 
   return true;
@@ -624,156 +582,6 @@ static void stopRC() {
   if (motorFwdPin > 0) motorSpeed(0, true);
   if (motorFwdPinR > 0) motorSpeed(0, false); 
 #endif
-}
-
-#if INCLUDE_PERIPH
-static void heartBeatTask (void *pvParameter) {
-  // check on aux that ws and / or uart connection available
-  while (true) {
-    delay((heartbeatRC + 1) * 1000); // 1 sec more than browser heartbeat rate
-    if (!heartBeatDone) stopRC(); // stop RC as no heartbeat received
-    heartBeatDone = false;
-  }
-}
- 
-void startHeartbeat() {
-  // start heartbeat to check websocket and / or uart connectivity for RC control
-  if (RCactive || useUart) {
-    if (heartBeatHandle == NULL) xTaskCreate(&heartBeatTask, "heartBeatTask", HB_STACK_SIZE, NULL, HB_PRI, &heartBeatHandle);
-  }
-}
-#endif 
-
-void doAppPing() {
-  if (DEBUG_MEM) {
-    currentStackUsage();
-    checkMemory();
-  }
-  if (checkAlarm()) {
-    remoteServerReset();
-    getExtIP();
-#if INCLUDE_SMTP
-    if (smtpUse) {
-      emailCount = 0;
-      LOG_INF("Reset daily email allowance");
-    }
-#endif
-    LOG_INF("Daily rollover");
-  }
-#if INCLUDE_EXTHB
-  if (external_heartbeat_active) sendExternalHeartbeat();
-#endif
-#if INCLUDE_PERIPH
-    static bool atNight = false;
-#endif
-  // check for night time actions
-  if (isNight(nightSwitch)) {
-    if (wakeUse && wakePin) {
-      // to use LDR on wake pin, connect it between pin and 3V3
-      // uses internal pulldown resistor as voltage divider
-      // but may need to add external pull down between pin
-      // and GND to alter required light level for wakeup
-#ifndef AUXILIARY
-      digitalWrite(PWDN_GPIO_NUM, 1); // power down camera
-#endif
-      goToSleep(wakePin, true);
-    }
-#if INCLUDE_PERIPH
-    if (relayPin && relayMode && !atNight) {
-      // turn on relay at night
-      digitalWrite(relayPin, HIGH);
-      atNight = true; 
-    }
-  } else if (relayPin && relayMode && atNight) {
-    // turn off relay if day
-    digitalWrite(relayPin, LOW); 
-    atNight = false; 
-#endif
-  }
-}
-
-/************** telegram app specific **************/
-
-void tgramAlert(const char* subject, const char* message) {
-  // send motion alert to Telegram
-  const char* pos1 = strchr(subject + 1, '/'); // extract filename
-  const char* pos2 = strrchr(subject + 1, '.'); // remove extension
-  // make filename into command
-  if (pos1 != NULL && pos2 != NULL) {
-    strncpy(alertCaption, pos1, pos2 - pos1);
-    alertCaption[pos2 - pos1] = 0;
-    strcat(alertCaption, " from ");
-    strncat(alertCaption, hostName, sizeof(alertCaption) - strlen(alertCaption) - 1);
-    if (alertBufferSize) alertReady = true; // return image
-  } else LOG_WRN("Unable to send motion alert");
-}
-
-static bool downloadAvi(const char* userCmd) {
-  char* pos = strchr(userCmd, '_'); // if contains '_', assume filename
-  if (pos != NULL) {
-    // add folder name and avi extension to incoming file name
-    char fileName[FILE_NAME_LEN];
-    strncpy(fileName, userCmd, FILE_NAME_LEN - 1);
-    pos = strchr(fileName, '_');
-    memmove(pos, fileName, sizeof(fileName) - (pos - fileName));
-    strncat(fileName, ".avi", sizeof(fileName - 1) - strlen(fileName)); 
-    if (STORAGE.exists(fileName)) sendTgramFile(fileName, "video/x-msvideo", "");
-    else sendTgramMessage("AVI file not found: ", fileName, "");
-  }
-  return (bool)pos;
-}
-
-static void saveRamLog() {
-  // save ramlog to storage for upload to telegram
-  File ramFile = STORAGE.open(DATA_DIR "/ramlog" TEXT_EXT, FILE_WRITE);
-  int startPtr, endPtr;
-  startPtr = endPtr = mlogEnd;  
-  // write log in chunks
-  do {
-    int maxChunk = startPtr < endPtr ? endPtr - startPtr : RAM_LOG_LEN - startPtr;
-    size_t chunkSize = std::min(CHUNKSIZE, maxChunk);    
-    if (chunkSize > 0) ramFile.write((uint8_t*)messageLog + startPtr, chunkSize);
-    startPtr += chunkSize;
-    if (startPtr >= RAM_LOG_LEN) startPtr = 0;
-  } while (startPtr != endPtr);
-  ramFile.close();
-}
-
-void appSpecificTelegramTask(void* p) {
-#if INCLUDE_TGRAM
-  // process Telegram interactions
-  snprintf(tgramHdr, FILE_NAME_LEN - 1, "%s\n Ver: " APP_VER "\n\n/snap\n\n/log", hostName); 
-  sendTgramMessage("Rebooted", "", "");
-  char userCmd[FILE_NAME_LEN];
-  
-  while (true) {
-    // service requests from Telegram
-    if (getTgramUpdate(userCmd)) {     
-      if (!strcmp(userCmd, "/snap")) {
-        doKeepFrame = true;
-        delay(1000); // time to get frame
-        sprintf(userCmd, "/snap from %s", hostName);
-        sendTgramPhoto(alertBuffer, alertBufferSize, userCmd);
-      } else if (!strcmp(userCmd, "/log")) {
-        saveRamLog();
-        sprintf(userCmd, "/log from %s", hostName);
-        sendTgramFile(DATA_DIR "/ramlog" TEXT_EXT, "text/plain", userCmd);
-        deleteFolderOrFile(DATA_DIR "/ramlog" TEXT_EXT);
-      } else {
-        // initially assume it is an avi file download request
-        if (!downloadAvi(userCmd)) sendTgramMessage("Request not recognised: ", userCmd, "");
-      }
-    } else {
-      // send out any outgoing alerts from app
-      if (alertReady) {
-        alertReady = false;
-        sendTgramPhoto(alertBuffer, alertBufferSize, alertCaption);
-        alertBufferSize = 0;
-      } else delay(5000); // avoid thrashing
-    }
-  }
-#endif
-  vTaskDelete(NULL);
 }
 
 /************** default app configuration **************/
@@ -870,9 +678,7 @@ detectChangeThreshold~15~1~N~Pixel difference to indicate change
 mlUse~0~1~C~Use Machine Learning
 mlProbability~0.8~1~N~ML minimum positive probability 0.0 - 1.0
 depthColor~0~1~C~Color depth for motion detection: Gray <> RGB
-streamNvr~0~1~C~Enable NVR Video stream: /sustain?video=1
-streamSnd~0~1~C~Enable NVR Audio stream: /sustain?audio=1
-streamSrt~0~1~C~Enable NVR Subtitle stream: /sustain?srt=1
+
 smtpUse~0~2~C~Enable email sending
 smtpMaxEmails~10~2~N~Max daily alerts
 sdMinCardFreeSpace~100~2~N~Min free MBytes on SD before action
