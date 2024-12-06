@@ -21,10 +21,6 @@
 // Standard atmospheric pressure is 1013.25 hPa --> https://en.wikipedia.org/wiki/Atmospheric_pressure, https://www.noaa.gov/jetstream/atmosphere/air-pressure
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-Adafruit_BME280 bme;
-TinyGPSPlus gps;
-HardwareSerial GPS_Serial(1);
-
 void hallSensorSetup();
 void barometerSetup();
 void gpsSetup();
@@ -44,10 +40,17 @@ float prevRPM = 0.0;
 unsigned long lastPulseTime = 0;
 unsigned long pulseInterval = 0;
 
-// Declaring strings to store sensor data
-char rpm[15];                                                                       // Hall Sensor data
-char temp[15], pressure[15], baroAltitude[15], humidity[15];                        // Barometer data
-char utcTime[15], latitude[15], longitude[15], satellites[15], gpsAltitude[15];     // GPS data
+// Defining a struct to store sensor data
+struct SensorData {
+    char rpm[15];                                                                       // Hall Sensor data
+    char temp[15], pressure[15], baroAltitude[15], humidity[15];                        // Barometer data
+    char utcTime[15], latitude[15], longitude[15], satellites[15], gpsAltitude[15];     // GPS data
+};
+
+Adafruit_BME280 bme;
+TinyGPSPlus gps;
+HardwareSerial GPS_Serial(1);
+SensorData sensorData;
 
 void setup() {
     Serial.begin(115200);
@@ -93,11 +96,11 @@ void gpsSetup() {
     GPS_Serial.begin(9600, SERIAL_8N1, ESP32_RX, ESP32_TX);
 
     // Initializing GPS values before valid connections
-    strcpy(utcTime, "n/a");
-    strcpy(latitude, "n/a");
-    strcpy(longitude, "n/a");
-    strcpy(satellites, "n/a");
-    strcpy(gpsAltitude, "n/a");
+    strcpy(sensorData.utcTime, "n/a");
+    strcpy(sensorData.latitude, "n/a");
+    strcpy(sensorData.longitude, "n/a");
+    strcpy(sensorData.satellites, "n/a");
+    strcpy(sensorData.gpsAltitude, "n/a");
 }
 
 void hallSensorLoop() {
@@ -127,10 +130,10 @@ void hallSensorLoop() {
 }
 
 void barometerLoop() { 
-    snprintf(temp, sizeof(temp), "%.2f°C", bme.readTemperature());
-    snprintf(pressure, sizeof(pressure), "%.2f hPa", (bme.readPressure() / 100.0F));
-    snprintf(baroAltitude, sizeof(baroAltitude), "%.2f m", bme.readAltitude(SEALEVELPRESSURE_HPA));
-    snprintf(humidity, sizeof(humidity), "%.2f%", bme.readHumidity());
+    snprintf(sensorData.temp, sizeof(sensorData.temp), "%.2f°C", bme.readTemperature());
+    snprintf(sensorData.pressure, sizeof(sensorData.pressure), "%.2f hPa", (bme.readPressure() / 100.0F));
+    snprintf(sensorData.baroAltitude, sizeof(sensorData.baroAltitude), "%.2f m", bme.readAltitude(SEALEVELPRESSURE_HPA));
+    snprintf(sensorData.humidity, sizeof(sensorData.humidity), "%.2f%", bme.readHumidity());
     
     // Serial.print("Temperature: ");
     // Serial.print(bme.readTemperature());
@@ -159,11 +162,11 @@ void gpsLoop() {
         gps.encode(c);
 
         if (gps.location.isUpdated() && gps.location.isValid()) {
-            snprintf(utcTime, sizeof(utcTime), "%02d:%02d:%02d (UTC Time)", gps.time.hour(), gps.time.minute(), gps.time.second());
-            snprintf(latitude, sizeof(latitude), "%.6f%s°", gps.location.lat(), gps.location.lat() > 0 ? "N" : "S");
-            snprintf(longitude, sizeof(longitude), "%.6f%s°", gps.location.lng(), gps.location.lng() > 0 ? "E" : "W");
-            snprintf(satellites, sizeof(satellites), "%d", gps.satellites.value());
-            snprintf(gpsAltitude, sizeof(gpsAltitude), "%.2f m", gps.altitude.meters());
+            snprintf(sensorData.utcTime, sizeof(sensorData.utcTime), "%02d:%02d:%02d (UTC Time)", gps.time.hour(), gps.time.minute(), gps.time.second());
+            snprintf(sensorData.latitude, sizeof(sensorData.latitude), "%.6f%s°", gps.location.lat(), gps.location.lat() > 0 ? "N" : "S");
+            snprintf(sensorData.longitude, sizeof(sensorData.longitude), "%.6f%s°", gps.location.lng(), gps.location.lng() > 0 ? "E" : "W");
+            snprintf(sensorData.satellites, sizeof(sensorData.satellites), "%d", gps.satellites.value());
+            snprintf(sensorData.gpsAltitude, sizeof(sensorData.gpsAltitude), "%.2f m", gps.altitude.meters());
             
             // // Time
             // int hour = gps.time.hour();
@@ -227,7 +230,7 @@ float calculateRPM(unsigned long pulseInterval, float previous) {
         currRPM = previous;
     }
 
-    snprintf(rpm, sizeof(rpm), "%.2f", currRPM);
+    snprintf(sensorData.rpm, sizeof(sensorData.rpm), "%.2f", currRPM);
     return currRPM;
 }
 
@@ -235,34 +238,34 @@ void serialPrintData() {
     Serial.println("\n---------- Sensor Data ----------");
     
     Serial.print("RPM: ");
-    Serial.println(rpm);
+    Serial.println(sensorData.rpm);
 
     Serial.print("Temperature: ");
-    Serial.println(temp);
+    Serial.println(sensorData.temp);
 
     Serial.print("Pressure: ");
-    Serial.println(pressure);
+    Serial.println(sensorData.pressure);
 
     Serial.print("Barometer Altitude: ");
-    Serial.println(baroAltitude);
+    Serial.println(sensorData.baroAltitude);
 
     Serial.print("Humidity: ");
-    Serial.println(humidity);
+    Serial.println(sensorData.humidity);
 
     Serial.print("UTC Time: ");
-    Serial.println(utcTime);
+    Serial.println(sensorData.utcTime);
 
     Serial.print("Latitude: ");
-    Serial.println(latitude);
+    Serial.println(sensorData.latitude);
 
     Serial.print("Longitude: ");
-    Serial.println(longitude);
+    Serial.println(sensorData.longitude);
 
     Serial.print("Connected Satellites: ");
-    Serial.println(satellites);
+    Serial.println(sensorData.satellites);
 
     Serial.print("GPS Altitude: ");
-    Serial.println(gpsAltitude);
+    Serial.println(sensorData.gpsAltitude);
 
     Serial.println("---------------------------------\n");
 }
