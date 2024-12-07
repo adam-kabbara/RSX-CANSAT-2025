@@ -54,7 +54,7 @@ SensorData sensorData;
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("Starting Setup:");
+    Serial.println("\nStarting Setup:");
     
     hallSensorSetup();
     barometerSetup();
@@ -62,7 +62,7 @@ void setup() {
 
     Serial.println("Setup Complete!");
     delay(1000);
-    Serial.println("\nGATHERING SENSOR DATA...\n");
+    Serial.println("\nGATHERING SENSOR DATA...");
 }
 
 void loop() {
@@ -76,7 +76,7 @@ void loop() {
 void hallSensorSetup() {
     Serial.println("Hall Sensor Setup...");
     pinMode(ONBOARD_LED_PIN, OUTPUT);
-    pinMode(HALL_SENSOR_PIN, INPUT); 
+    pinMode(HALL_SENSOR_PIN, INPUT);
 }
 
 void barometerSetup() {
@@ -133,7 +133,7 @@ void barometerLoop() {
     snprintf(sensorData.temp, sizeof(sensorData.temp), "%.2f°C", bme.readTemperature());
     snprintf(sensorData.pressure, sizeof(sensorData.pressure), "%.2f hPa", (bme.readPressure() / 100.0F));
     snprintf(sensorData.baroAltitude, sizeof(sensorData.baroAltitude), "%.2f m", bme.readAltitude(SEALEVELPRESSURE_HPA));
-    snprintf(sensorData.humidity, sizeof(sensorData.humidity), "%.2f%", bme.readHumidity());
+    snprintf(sensorData.humidity, sizeof(sensorData.humidity), "%.2f%%", bme.readHumidity());
     
     // Serial.print("Temperature: ");
     // Serial.print(bme.readTemperature());
