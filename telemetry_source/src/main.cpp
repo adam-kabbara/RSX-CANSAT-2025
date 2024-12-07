@@ -26,11 +26,13 @@ hw_timer_t *send_timer = NULL;
 char cmd_buff[CMD_BUFF_SIZE];
 Preferences preferences;
 int TEAM_ID;
-char MISSION_TIME[GENERAL_WORD_SIZE] = "00:00:00";
-mode_control current_mode = STANDBY;
+char MISSION_TIME[WORD_SIZE] = "00:00:00";
+mode_control current_mode = SIM_OFF;
+int TRANSMISSION_ON = 0;
+int SEND_FLAG = 0;
+struct transmission_packet send_packet;
 TaskHandle_t recv_main;
 TaskHandle_t send_main;
-SemaphoreHandle_t print_mutex = xSemaphoreCreateMutex();
 /*------- VARIABLES ------*/
 
 void setup() 
@@ -49,74 +51,104 @@ void setup()
   //preferences.clear();
 
   // Retreive team id from flash memory
-  preferences.begin("payload-settings", true);
+  preferences.begin("xb-set", true);
   TEAM_ID = preferences.getInt("teamid", 1234);
   preferences.end();
 
-  // Enable serial
   Serial.begin(9600);
   delay(1000);
+
+  Serial.println("\nSerial setup OK\n");
+
   // XBee Hardware serial
   Serial2.begin(XBEE_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
   delay(1000);
 
-  Serial2.println("\n$I SETUP OK\n");
+  Serial2.println("$I SETUP OK!");
 
   xTaskCreatePinnedToCore(
-    receive_commands,      // Function to be performed the task is called 
-    "Receive Commands",    // Name of the task in text
-    10000,          // Stack size (Memory size assigned to the task)
+    receive_commands,      // Function to be performed when the task is called 
+    "Receive Commands",    // Name of the task
+    10000,         // Stack size
     NULL,         // Pointer that will be used as the parameter for the task being created
-    1,           // Task Priority 
+    2,           // Task Priority 
     &recv_main, // The task handler
     0          //xCoreID (Core 0)
   );
 
+  delay(500);
+
   xTaskCreatePinnedToCore(
-    send_data,      // Function to be performed the task is called 
-    "Send Data",    // Name of the task in text
-    10000,          // Stack size (Memory size assigned to the task)
-    NULL,         // Pointer that will be used as the parameter for the task being created
-    1,           // Task Priority 
-    &send_main, // The task handler
-    1          //xCoreID (Core 1)
+    send_data,      
+    "Send Data",  
+    10000,         
+    NULL,         
+    2,          
+    &send_main, 
+    1       
   );
 
-  assert(print_mutex);
-}
+} // END: void setup()
 
 void loop()
 {
-
+  vTaskDelay(100);
 }
 
 // This function CANNOT write to ANY global parameters
 void send_data(void *pvParameters)
 {
 
-  xSemaphoreTake(print_mutex, portMAX_DELAY);
-  Serial2.printf("Command reception started on core %d\n", xPortGetCoreID());
-  xSemaphoreGive(print_mutex);
+  Serial2.printf("Data transmission started on core %d", xPortGetCoreID());
   
   while(1)
   {
-    // Wait for the mode to be FLIGHT or SIM
-    // Then start sending data
-    // timerAlarmEnable(send_timer);
+    // Wait for the transmission to be on
+    while(TRANSMISSION_ON == 1)
+    {
+      // Fill transmission packet
+      /*
+      send_packet.TEAM_ID = "X";
+      send_packet.MISSION_TIME = "X";
+      send_packet.PACKET_COUNT = "X";
+      send_packet.MODE = "X"; 
+      send_packet.STATE = "X";
+      send_packet.ALTITUDE = "X";
+      send_packet.TEMPERATURE = "X";
+      send_packet.PRESSURE = "X";
+      send_packet.VOLTAGE = "X";
+      send_packet.GYRO_R = "X";
+      send_packet.GYRO_P = "X";
+      send_packet.GYRO_Y = "X";
+      send_packet.ACCEL_R = "X";
+      send_packet.ACCEL_P = "X";
+      send_packet.ACCEL_Y = "X";
+      send_packet.MAG_R = "X";
+      send_packet.MAG_P = "X";
+      send_packet.MAG_Y = "X";
+      send_packet.AUTO_GYRO_ROTATION_RATE = "X";
+      send_packet.GPS_TIME = "X";
+      send_packet.GPS_ALTITUDE = "X";
+      send_packet.GPS_LATITUDE = "X";
+      send_packet.GPS_LONGITUDE = "X";
+      send_packet.GPS_SATS = "X";
+      send_packet.CMD_ECHO = "X";
+      */
+    }
     // TODO: should mode be in flash memory?
+    vTaskDelay(pdMS_TO_TICKS(25));
   }
-}
+} // END: void loop()
 
 void receive_commands(void *pvParameters)
 {
   
-  xSemaphoreTake(print_mutex, portMAX_DELAY);
-  Serial2.printf("Command reception started on core %d\n", xPortGetCoreID());
-  xSemaphoreGive(print_mutex);
+  Serial2.printf("Command reception started on core %d", xPortGetCoreID());
 
   // Receive commands from ground station
   while(1)
   {
+    
     if(Serial2.available())
     {
       memset(cmd_buff, 0, CMD_BUFF_SIZE);
@@ -125,62 +157,94 @@ void receive_commands(void *pvParameters)
 
       if(bytes_read == CMD_BUFF_SIZE - 1)
       {
-        safe_print("$W COMMAND REJECTED: LONGER THAN ALLOCATED BUFFER SIZE\n");
-        break;
+        safe_print("$W COMMAND REJECTED: LONGER THAN ALLOCATED BUFFER SIZE");
+        continue;
       }
 
       // Extract data
       struct command_packet recv_packet;
+      
       if(extract_cmd_msg(cmd_buff, &recv_packet) > 0)
       {
-        safe_print("$W COMMAND REJECTED: FORMAT IS INCORRECT. EXPECTING 'CMD,<TEAM_ID>,<CMD>,<DATA>'\n");
-        break;
+        safe_print("$W COMMAND REJECTED: FORMAT IS INCORRECT. EXPECTING 'CMD,<TEAM_ID>,<CMD>,<DATA>'");
+        continue;
       }
-      if(compare_strings(recv_packet.keyword, "CMD") > 0)
+      
+      if(compare_strings(recv_packet.keyword, "CMD") == 0)
       {
-        safe_print("$W REJECTED INPUT: NOT CMD\n");
-        break;
+        safe_print("$W REJECTED INPUT: NOT CMD");
+        continue;
       }
+
       int team_id_chk_int;
       sscanf(recv_packet.team_id, "%d", &team_id_chk_int);
-      if(team_id_chk_int != TEAM_ID && compare_strings(recv_packet.command, "RESET_TEAM_ID"))
+      if((team_id_chk_int != TEAM_ID) && (compare_strings(recv_packet.command, "RESET_TEAM_ID") == 0))
       {
-        safe_print("$W REJECTED INPUT: TEAM ID DOES NOT MATCH.\n");
-        break;
+        char msg_size = snprintf(NULL, 0, "$W REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d", TEAM_ID);
+        char message[msg_size];
+        snprintf(message, msg_size, "$W REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d", TEAM_ID);
+        safe_print(message);
+        continue;
       }
 
       // Parse command
-      if(compare_strings(recv_packet.command, "CX") == 0) do_cx(recv_packet.data);
-      else if(compare_strings(recv_packet.command, "ST") == 0) do_st(recv_packet.data);
-      else if(compare_strings(recv_packet.command, "SIM") == 0) do_sim(recv_packet.data);
-      else if(compare_strings(recv_packet.command, "SIMP") == 0) do_simp(recv_packet.data);
-      else if(compare_strings(recv_packet.command, "CAL") == 0) do_cal(recv_packet.data);
-      else if(compare_strings(recv_packet.command, "MEC") == 0) do_mec(recv_packet.data);
-      else if(compare_strings(recv_packet.command, "RESET_TEAM_ID") == 0) do_reset_team_id(recv_packet.data);
+      if(compare_strings(recv_packet.command, "CX")) do_cx(recv_packet.data);
+      else if(compare_strings(recv_packet.command, "ST")) do_st(recv_packet.data);
+      else if(compare_strings(recv_packet.command, "SIM")) do_sim(recv_packet.data);
+      else if(compare_strings(recv_packet.command, "SIMP")) do_simp(recv_packet.data);
+      else if(compare_strings(recv_packet.command, "CAL")) do_cal(recv_packet.data);
+      else if(compare_strings(recv_packet.command, "MEC")) do_mec(recv_packet.data);
+      else if(compare_strings(recv_packet.command, "RESET_TEAM_ID")) do_reset_team_id(recv_packet.data);
       else
       {
-        safe_print("$W COMMAND REJECTED: NOT A COMMAND\n");
+        safe_print("$W COMMAND REJECTED: NOT A COMMAND");
       }
-
     }
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(pdMS_TO_TICKS(25));
   }
-
-}
+} // END: receive_commands()
 
 void do_cx(const char *data)
 {
-  // TODO: Multi-thread for data sending and command reception
-  // TODO: If CX OFF received set mode to STANDBY
-  safe_print("$I RECEIVED COMMAND: BEGIN PAYLOAD TRANSMISSION\n");
-}
+  if(compare_strings(data, "ON"))
+  {
+    if(TRANSMISSION_ON == 0)
+    {
+      TRANSMISSION_ON = 1;
+      timerWrite(send_timer, 0);
+      timerAlarmEnable(send_timer);
+      safe_print("$I RECEIVED COMMAND: BEGINNING PAYLOAD TRANSMISSION");
+    }
+    else
+    {
+      safe_print("$E TRANSMISSION IS ALREADY ON");
+    }
+  }
+  else if(compare_strings(data, "OFF"))
+  {
+    if(TRANSMISSION_ON == 1)
+    {
+      timerAlarmDisable(send_timer);
+      TRANSMISSION_ON = 0;
+      safe_print("$I RECEIVED COMMAND: ENDING PAYLOAD TRANSMISSION");
+    }
+    else
+    {
+      safe_print("$E TRANSMISSION IS ALREADY OFF");
+    }
+  }
+  else
+  {
+    safe_print("$E DATA IS NOT VALID; SEND ON/OFF");
+  }
+} // END: do_cx()
 
 void do_st(const char *data)
 {
-  safe_print("$I RECEIVED COMMAND: SET TIME\n");
+  safe_print("$I RECEIVED COMMAND: SET TIME");
   if(compare_strings(data, "GPS"))
   {
-    safe_print("$I GPS :=)\n");
+    safe_print("$I GPS :=)");
     // TODO: Get time from GPS, pass this to MISSION_TIME
   }
   else if(time_format_check(data) == 0)
@@ -193,32 +257,40 @@ void do_st(const char *data)
     }
     MISSION_TIME[i] = '\0';
 
-    xSemaphoreTake(print_mutex, portMAX_DELAY);
-    Serial2.printf("$I SET TIME TO: %s\n", MISSION_TIME);
-    xSemaphoreGive(print_mutex);
+    char message[SENTENCE_SIZE];
+
+    snprintf(message, SENTENCE_SIZE, "$I SET TIME TO: %s", MISSION_TIME);
+    safe_print(message);
   }
   else
   {
-    safe_print("$E DATA IS NOT VALID. SEND EITHER UTC TIME OR 'GPS'\n");
+    safe_print("$E DATA IS NOT VALID. SEND EITHER UTC TIME OR 'GPS'");
   }
-}
+} // END: do_st()
 
 void do_sim(const char *data)
 {
-  safe_print("$I RECEIVED COMMAND: SIMULATION MODE CONTROL\n");
+  safe_print("$I RECEIVED COMMAND: SIMULATION MODE CONTROL");
+
+  if(TRANSMISSION_ON == 1)
+  {
+    safe_print("$E SIMULATION MODE CANNOT BE CHANGED WHILE TRANSMISSION IS ON");
+    return;
+  }
+
   if(compare_strings(data, "ENABLE"))
   {
     switch(current_mode)
     {
-      case STANDBY:
+      case SIM_OFF:
                   current_mode = SIM_READY;
-                  safe_print("$I MODE SET: SIM_READY\n");
+                  safe_print("$I MODE SET: SIM_READY");
                   break;
       case SIM_READY:
-                  safe_print("$I MODE IS ALREADY SET TO: SIM_READY\n");
+                  safe_print("$I MODE IS ALREADY SET TO: SIM_READY");
                   break;
-      default:
-                  safe_print("$E PAYLOAD IS NOT IN STANDBY MODE\n");
+      case SIM_ON:
+                  safe_print("$E SIM MODE IS ALREADY ACTIVATED!");
     }
   }
   else if(compare_strings(data, "ACTIVATE"))
@@ -226,73 +298,71 @@ void do_sim(const char *data)
     switch(current_mode)
     {
       case SIM_READY:
-                  safe_print("$I STARTING SIMULATION MODE...\n");
-                  // TODO
+                  safe_print("$I STARTING SIMULATION MODE...");
                   break;
-      case STANDBY:
-                  safe_print("$E SIMULATION MODE IS NOT ENABLED\n");
+      case SIM_OFF:
+                  safe_print("$E SIMULATION MODE IS NOT ENABLED");
                   break;
-      default:
-                  safe_print("$E PAYLOAD IS NOT IN STANDBY MODE\n");
+      case SIM_ON:
+                  safe_print("$E SIM MODE IS ALREADY ACTIVATED!");
     }
   }
   else if(compare_strings(data, "DISABLE"))
   {
     switch(current_mode)
     {
-      case SIM:
-                  safe_print("$I ENDING SIMULATION MODE...\n");
-                  current_mode = STANDBY;
-                  // TODO
+      case SIM_ON:
+                  safe_print("$I ENDING SIMULATION MODE...");
+                  current_mode = SIM_OFF;
                   break;
-      case STANDBY:
-                  current_mode = STANDBY;
-                  safe_print("$I SIMULATION MODE DISABLED.\n");
+      case SIM_READY:
+                  safe_print("$I ENDING SIMULATION MODE...");
+                  current_mode = SIM_OFF;
                   break;
-      case FLIGHT:
-                  safe_print("$E PAYLOAD IS IN FLIGHT MODE\n");
+      case SIM_OFF:
+                  safe_print("$I SIMULATION MODE ALREADY DISABLED.");
                   break;
-      default:
-                  safe_print("$E PAYLOAD ON STANDBY\n");
     }
   }
   else
   {
-    xSemaphoreTake(print_mutex, portMAX_DELAY);
-    Serial2.println("$E UNRECOGNIZED SIM COMMAND: '" + String(data) + "'\n");
-    xSemaphoreGive(print_mutex);
+    int msg_size = snprintf(NULL, 0, "$E UNRECOGNIZED SIM COMMAND: '%s'", data);
+    char message[msg_size];
+    snprintf(message, SENTENCE_SIZE, "$E UNRECOGNIZED SIM COMMAND: '%s'", data);
+    safe_print(message);
   }
-}
+} // END: do_sim()
 
 void do_simp(const char *data)
 {
   // Check if we are in simulation mode
-  if(current_mode != SIM)
+  if(current_mode != SIM_ON)
   {
-    xSemaphoreTake(print_mutex, portMAX_DELAY);
-    Serial2.printf("$E NOT IS SIMULATION MODE; CODE: %d", current_mode);
-    xSemaphoreGive(print_mutex);
+      int msg_size = snprintf(NULL, 0, "$E NOT IN SIMULATION MODE; CODE: %d", current_mode) + 1;
+      char message[msg_size];
+      snprintf(message, msg_size, "$E NOT IS SIMULATION MODE; CODE: %d", current_mode);
+      safe_print(message);
   }
 
   int sim_pressure_recv = atoi(data);
 
   // TODO: Do something with the data
-}
+} // END: do_simp()
 
 void do_cal(const char *data)
 {
-  safe_print("$I RECEIVED COMMAND: CAL\n");
+  safe_print("$I RECEIVED COMMAND: CAL");
 
   // TODO: Calibrate altitude to 0 meters
 
   // TODO: Set up reset and processor recovery
-}
+} // END: do_Cal()
 
 void do_mec(const char *data)
 {
-  safe_print("$I RECEIVED COMMAND: MEC\n");
+  safe_print("$I RECEIVED COMMAND: MEC");
   // TODO: complete after sensore are installed
-}
+} // END: do_mec()
 
 void do_reset_team_id(const char *data)
 {
@@ -300,24 +370,28 @@ void do_reset_team_id(const char *data)
   sscanf(data, "%d", &new_team_id);
   
   // Write new team ID to flash memory
-  preferences.begin("payload-settings", false);
+  preferences.begin("xb-set", false);
   preferences.putInt("teamid", new_team_id);
   TEAM_ID = preferences.getInt("teamid", 1234);
   preferences.end();
 
-  xSemaphoreTake(print_mutex, portMAX_DELAY);
-  Serial2.printf("$I TEAM ID HAS BEEN RESET TO %d\n", TEAM_ID);
-  xSemaphoreGive(print_mutex);
-}
-
-void IRAM_ATTR send_1()
-{
-  // TODO: This will send a packet regardless if it is ready
-}
+  int msg_size = snprintf(NULL, 0, "$I TEAM ID HAS BEEN RESET TO %d", TEAM_ID);
+  char message[msg_size];
+  snprintf(message, msg_size, "$I TEAM ID HAS BEEN RESET TO %d", TEAM_ID);
+  safe_print(message);
+  
+} // END: do_reset_team_id()
 
 void safe_print(const char *msg)
 {
-  xSemaphoreTake(print_mutex, portMAX_DELAY);
-  Serial2.println(msg);
-  xSemaphoreGive(print_mutex);
-}
+  if(TRANSMISSION_ON == 0)
+  {
+    Serial2.println(msg);
+  }
+} // END: safe_print()
+
+void IRAM_ATTR send_1()
+{
+  char message[15] = "EXAMPLE DATA!";
+  Serial2.println(message);
+} // END: send_1()

@@ -1,0 +1,7406 @@
+---------------GNGGA---------------
+Time: 16:42:14 (UTC Time)
+Latitude: 43.709244°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 203.4m
+
+---------------GNGGA---------------
+Time: 16:42:16 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 208.8m
+
+---------------GNGGA---------------
+Time: 16:42:19 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 217.4m
+
+---------------GNGGA---------------
+Time: 16:42:21 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 224.8m
+
+---------------GNGGA---------------
+Time: 16:42:23 (UTC Time)
+Latitude: 43.709241°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 231.9m
+
+---------------GNGGA---------------
+Time: 16:42:24 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 235.4m
+
+---------------GNGGA---------------
+Time: 16:42:26 (UTC Time)
+Latitude: 43.709241°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 241.6m
+
+---------------GNGGA---------------
+Time: 16:42:28 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404911°W
+Satellites: 12
+Altitude: 248.3m
+
+---------------GNGGA---------------
+Time: 16:42:30 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 255.2m
+
+---------------GNGGA---------------
+Time: 16:42:35 (UTC Time)
+Latitude: 43.709246°N
+Longitude: -79.404928°W
+Satellites: 12
+Altitude: 271.4m
+
+---------------GNGGA---------------
+Time: 16:42:37 (UTC Time)
+Latitude: 43.709249°N
+Longitude: -79.404931°W
+Satellites: 12
+Altitude: 277.8m
+
+---------------GNGGA---------------
+Time: 16:42:39 (UTC Time)
+Latitude: 43.709253°N
+Longitude: -79.404935°W
+Satellites: 12
+Altitude: 284.4m
+
+---------------GNGGA---------------
+Time: 16:42:41 (UTC Time)
+Latitude: 43.709255°N
+Longitude: -79.404936°W
+Satellites: 12
+Altitude: 290.6m
+
+---------------GNGGA---------------
+Time: 16:42:42 (UTC Time)
+Latitude: 43.709257°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 293.8m
+
+---------------GNGGA---------------
+Time: 16:42:44 (UTC Time)
+Latitude: 43.709261°N
+Longitude: -79.40494°W
+Satellites: 12
+Altitude: 300.1m
+
+---------------GNGGA---------------
+Time: 16:42:46 (UTC Time)
+Latitude: 43.709263°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 306.4m
+
+---------------GNGGA---------------
+Time: 16:42:48 (UTC Time)
+Latitude: 43.709265°N
+Longitude: -79.404943°W
+Satellites: 12
+Altitude: 312.8m
+
+---------------GNGGA---------------
+Time: 16:42:49 (UTC Time)
+Latitude: 43.709267°N
+Longitude: -79.404946°W
+Satellites: 12
+Altitude: 316.0m
+
+---------------GNGGA---------------
+Time: 16:42:53 (UTC Time)
+Latitude: 43.709272°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 328.6m
+
+---------------GNGGA---------------
+Time: 16:42:56 (UTC Time)
+Latitude: 43.709273°N
+Longitude: -79.404955°W
+Satellites: 12
+Altitude: 338.1m
+
+---------------GNGGA---------------
+Time: 16:42:58 (UTC Time)
+Latitude: 43.709274°N
+Longitude: -79.404956°W
+Satellites: 12
+Altitude: 344.3m
+
+---------------GNGGA---------------
+Time: 16:43:00 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404956°W
+Satellites: 12
+Altitude: 350.4m
+
+---------------GNGGA---------------
+Time: 16:43:03 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404958°W
+Satellites: 12
+Altitude: 359.7m
+
+---------------GNGGA---------------
+Time: 16:43:05 (UTC Time)
+Latitude: 43.709276°N
+Longitude: -79.404958°W
+Satellites: 12
+Altitude: 366.0m
+
+---------------GNGGA---------------
+Time: 16:43:07 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404957°W
+Satellites: 12
+Altitude: 372.0m
+
+---------------GNGGA---------------
+Time: 16:43:10 (UTC Time)
+Latitude: 43.709277°N
+Longitude: -79.404961°W
+Satellites: 12
+Altitude: 381.4m
+
+---------------GNGGA---------------
+Time: 16:43:12 (UTC Time)
+Latitude: 43.709278°N
+Longitude: -79.404962°W
+Satellites: 12
+Altitude: 387.6m
+
+---------------GNGGA---------------
+Time: 16:43:14 (UTC Time)
+Latitude: 43.709278°N
+Longitude: -79.40496°W
+Satellites: 12
+Altitude: 393.7m
+
+---------------GNGGA---------------
+Time: 16:43:16 (UTC Time)
+Latitude: 43.709274°N
+Longitude: -79.404953°W
+Satellites: 12
+Altitude: 399.5m
+
+---------------GNGGA---------------
+Time: 16:43:17 (UTC Time)
+Latitude: 43.709271°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 402.4m
+
+---------------GNGGA---------------
+Time: 16:43:19 (UTC Time)
+Latitude: 43.70927°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 410.0m
+
+---------------GNGGA---------------
+Time: 16:43:21 (UTC Time)
+Latitude: 43.709268°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 419.4m
+
+---------------GNGGA---------------
+Time: 16:43:26 (UTC Time)
+Latitude: 43.70926°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 444.1m
+
+---------------GNGGA---------------
+Time: 16:43:28 (UTC Time)
+Latitude: 43.709257°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 453.7m
+
+---------------GNGGA---------------
+Time: 16:43:30 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404945°W
+Satellites: 12
+Altitude: 462.6m
+
+---------------GNGGA---------------
+Time: 16:43:31 (UTC Time)
+Latitude: N/A°164331.00
+Longitude: N/A°4342.55513
+Satellites: 07924.29664
+Altitude: 0.110m
+
+---------------GNGGA---------------
+Time: 16:43:33 (UTC Time)
+Latitude: 43.709248°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 476.3m
+
+---------------GNGGA---------------
+Time: 16:43:36 (UTC Time)
+Latitude: 43.709244°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 489.2m
+
+---------------GNGGA---------------
+Time: 16:43:38 (UTC Time)
+Latitude: 43.709243°N
+Longitude: -79.404937°W
+Satellites: 12
+Altitude: 497.4m
+
+---------------GNGGA---------------
+Time: 16:43:40 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404934°W
+Satellites: 12
+Altitude: 505.2m
+
+---------------GNGGA---------------
+Time: 16:43:43 (UTC Time)
+Latitude: 43.70924°N
+Longitude: -79.404929°W
+Satellites: 12
+Altitude: 517.3m
+
+---------------GNGGA---------------
+Time: 16:43:45 (UTC Time)
+Latitude: 43.709237°N
+Longitude: -79.404927°W
+Satellites: 12
+Altitude: 525.1m
+
+---------------GNGGA---------------
+Time: 16:43:47 (UTC Time)
+Latitude: 43.709232°N
+Longitude: -79.404928°W
+Satellites: 12
+Altitude: 532.5m
+
+---------------GNGGA---------------
+Time: 16:43:48 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404931°W
+Satellites: 12
+Altitude: 536.1m
+
+---------------GNGGA---------------
+Time: 16:43:50 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 543.1m
+
+---------------GNGGA---------------
+Time: 16:43:55 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 560.6m
+
+---------------GNGGA---------------
+Time: 16:43:57 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404946°W
+Satellites: 12
+Altitude: 568.4m
+
+---------------GNGGA---------------
+Time: 16:44:00 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404934°W
+Satellites: 12
+Altitude: 581.9m
+
+---------------GNGGA---------------
+Time: 16:44:02 (UTC Time)
+Latitude: 43.709196°N
+Longitude: -79.404925°W
+Satellites: 12
+Altitude: 590.7m
+
+---------------GNGGA---------------
+Time: 16:44:05 (UTC Time)
+Latitude: 43.709122°N
+Longitude: -79.405089°W
+Satellites: 12
+Altitude: 601.2m
+
+---------------GNGGA---------------
+Time: 16:44:07 (UTC Time)
+Latitude: 43.709081°N
+Longitude: -79.405219°W
+Satellites: 12
+Altitude: 606.7m
+
+---------------GNGGA---------------
+Time: 16:44:09 (UTC Time)
+Latitude: 43.709077°N
+Longitude: -79.405237°W
+Satellites: 12
+Altitude: 607.2m
+
+---------------GNGGA---------------
+Time: 16:31:35 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404773°W
+Satellites: 10
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:31:37 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404842°W
+Satellites: 10
+Altitude: 165.7m
+
+---------------GNGGA---------------
+Time: 16:31:40 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404851°W
+Satellites: 09
+Altitude: 164.9m
+
+---------------GNGGA---------------
+Time: 16:31:42 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404872°W
+Satellites: 09
+Altitude: 165.6m
+
+---------------GNGGA---------------
+Time: 16:31:44 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404859°W
+Satellites: 10
+Altitude: 165.1m
+
+---------------GNGGA---------------
+Time: 16:31:46 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404866°W
+Satellites: 10
+Altitude: 165.8m
+
+---------------GNGGA---------------
+Time: 16:31:58 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404894°W
+Satellites: 10
+Altitude: 169.1m
+
+---------------GNGGA---------------
+Time: 16:32:00 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404896°W
+Satellites: 10
+Altitude: 168.9m
+
+---------------GNGGA---------------
+Time: 16:32:02 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404897°W
+Satellites: 10
+Altitude: 168.1m
+
+---------------GNGGA---------------
+Time: 16:32:04 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.4049°W
+Satellites: 10
+Altitude: 167.7m
+
+---------------GNGGA---------------
+Time: 16:32:06 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404904°W
+Satellites: 10
+Altitude: 168.2m
+
+---------------GNGGA---------------
+Time: 16:32:08 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404906°W
+Satellites: 10
+Altitude: 167.9m
+
+---------------GNGGA---------------
+Time: 16:32:10 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404912°W
+Satellites: 10
+Altitude: 168.5m
+
+---------------GNGGA---------------
+Time: 16:32:11 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404913°W
+Satellites: 10
+Altitude: 168.6m
+
+---------------GNGGA---------------
+Time: 16:32:13 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404915°W
+Satellites: 10
+Altitude: 168.3m
+
+---------------GNGGA---------------
+Time: 16:32:17 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404915°W
+Satellites: 09
+Altitude: 166.4m
+
+---------------GNGGA---------------
+Time: 16:32:18 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404915°W
+Satellites: 10
+Altitude: 166.4m
+
+---------------GNGGA---------------
+Time: 16:32:20 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404917°W
+Satellites: 10
+Altitude: 166.3m
+
+---------------GNGGA---------------
+Time: 16:32:15 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404918°W
+Satellites: 09
+Altitude: 167.2m
+
+---------------GNGGA---------------
+Time: 16:32:22 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404917°W
+Satellites: 10
+Altitude: 165.7m
+
+---------------GNGGA---------------
+Time: 16:32:24 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404913°W
+Satellites: 09
+Altitude: 165.5m
+
+---------------GNGGA---------------
+Time: 16:32:25 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404914°W
+Satellites: 09
+Altitude: 165.4m
+
+---------------GNGGA---------------
+Time: 16:32:27 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404918°W
+Satellites: 09
+Altitude: 165.4m
+
+---------------GNGGA---------------
+Time: 16:32:31 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404912°W
+Satellites: 10
+Altitude: 164.8m
+
+---------------GNGGA---------------
+Time: 16:32:33 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404913°W
+Satellites: 10
+Altitude: 164.9m
+
+---------------GNGGA---------------
+Time: 16:32:29 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404912°W
+Satellites: 09
+Altitude: 1.37m
+
+---------------GNGGA---------------
+Time: 16:32:34 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404912°W
+Satellites: 10
+Altitude: 164.9m
+
+---------------GNGGA---------------
+Time: 16:32:36 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404911°W
+Satellites: 10
+Altitude: 164.3m
+
+---------------GNGGA---------------
+Time: 16:32:38 (UTC Time)
+Latitude: N/A°A
+Longitude: 43.709213°N
+Satellites: W
+Altitude: m
+
+---------------GNGGA---------------
+Time: 16:32:40 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404909°W
+Satellites: 09
+Altitude: 164.8m
+
+---------------GNGGA---------------
+Time: 16:32:42 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404911°W
+Satellites: 09
+Altitude: 164.7m
+
+---------------GNGGA---------------
+Time: 16:32:44 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404915°W
+Satellites: 09
+Altitude: 164.7m
+
+---------------GNGGA---------------
+Time: 16:32:46 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404911°W
+Satellites: 10
+Altitude: 164.7m
+
+---------------GNGGA---------------
+Time: 16:32:47 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.40491°W
+Satellites: 10
+Altitude: 163.8m
+
+---------------GNGGA---------------
+Time: 16:32:51 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404901°W
+Satellites: 10
+Altitude: 161.9m
+
+---------------GNGGA---------------
+Time: 16:32:53 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404898°W
+Satellites: 10
+Altitude: 161.9m
+
+---------------GNGGA---------------
+Time: 16:32:54 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404897°W
+Satellites: 10
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:32:56 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404899°W
+Satellites: 10
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:32:58 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404904°W
+Satellites: 10
+Altitude: 161.8m
+
+---------------GNGGA---------------
+Time: 16:32:59 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404904°W
+Satellites: 10
+Altitude: 162.5m
+
+---------------GNGGA---------------
+Time: 16:33:01 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404905°W
+Satellites: 09
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:33:03 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404904°W
+Satellites: 10
+Altitude: 163.5m
+
+---------------GNGGA---------------
+Time: 16:33:04 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404905°W
+Satellites: 10
+Altitude: 164.0m
+
+---------------GNGGA---------------
+Time: 16:33:06 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404914°W
+Satellites: 10
+Altitude: 164.9m
+
+---------------GNGGA---------------
+Time: 16:33:08 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404909°W
+Satellites: 10
+Altitude: 165.2m
+
+---------------GNGGA---------------
+Time: 16:33:10 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.4049°W
+Satellites: 11
+Altitude: 164.5m
+
+---------------GNGGA---------------
+Time: 16:33:12 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404902°W
+Satellites: 11
+Altitude: 164.2m
+
+---------------GNGGA---------------
+Time: 16:33:13 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404903°W
+Satellites: 11
+Altitude: 164.5m
+
+---------------GNGGA---------------
+Time: 16:33:15 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404897°W
+Satellites: 11
+Altitude: 164.3m
+
+---------------GNGGA---------------
+Time: 16:33:17 (UTC Time)
+Latitude: N/A°74
+Longitude: N/A°349
+Satellites: 73
+Altitude: 167m
+
+---------------GNGGA---------------
+Time: 16:33:19 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 164.6m
+
+---------------GNGGA---------------
+Time: 16:33:22 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 163.5m
+
+---------------GNGGA---------------
+Time: 16:33:24 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 163.8m
+
+---------------GNGGA---------------
+Time: 16:33:26 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404888°W
+Satellites: 12
+Altitude: 164.0m
+
+---------------GNGGA---------------
+Time: 16:33:28 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404886°W
+Satellites: 11
+Altitude: 164.2m
+
+---------------GNGGA---------------
+Time: 16:33:31 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 164.2m
+
+---------------GNGGA---------------
+Time: 16:33:33 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 164.0m
+
+---------------GNGGA---------------
+Time: 16:33:38 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 163.2m
+
+---------------GNGGA---------------
+Time: 16:33:40 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404862°W
+Satellites: 11
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:33:42 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404856°W
+Satellites: 12
+Altitude: 161.05m
+
+---------------GNGGA---------------
+Time: 16:33:47 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404854°W
+Satellites: 11
+Altitude: 162.4m
+
+---------------GNGGA---------------
+Time: 16:33:49 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404854°W
+Satellites: 10
+Altitude: 162.6m
+
+---------------GNGGA---------------
+Time: 16:33:51 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 162.7m
+
+---------------GNGGA---------------
+Time: 16:33:53 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 162.4m
+
+---------------GNGGA---------------
+Time: 16:33:54 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:33:56 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404855°W
+Satellites: 12
+Altitude: 162.2m
+
+---------------GNGGA---------------
+Time: 16:33:58 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404858°W
+Satellites: 12
+Altitude: 162.1m
+
+---------------GNGGA---------------
+Time: 16:34:03 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404861°W
+Satellites: 12
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:34:05 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404865°W
+Satellites: 11
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:34:07 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 16m
+
+---------------GNGGA---------------
+Time: 16:34:10 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:34:12 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404866°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:34:14 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:34:16 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:34:19 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404866°W
+Satellites: 11
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:34:21 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404859°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:34:23 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404864°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:34:25 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404868°W
+Satellites: 12
+Altitude: 158.4m
+
+---------------GNGGA---------------
+Time: 16:34:27 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:34:28 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404864°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:34:30 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404867°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:34:32 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404871°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:34:35 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404871°W
+Satellites: 12
+Altitude: 038m
+
+---------------GNGGA---------------
+Time: 16:34:37 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:34:39 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404874°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:34:41 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:34:42 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404878°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:34:44 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:34:46 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:34:47 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:34:49 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:34:51 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:34:52 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:34:54 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 158.9m
+
+---------------GNGGA---------------
+Time: 16:34:56 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:35:01 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:35:03 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:35:05 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404911°W
+Satellites: 12
+Altitude: 160.4m
+
+---------------GNGGA---------------
+Time: 16:35:06 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 160.4m
+
+---------------GNGGA---------------
+Time: 16:35:08 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:35:10 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 160.0m
+
+---------------GNGGA---------------
+Time: 16:35:11 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:35:13 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:35:15 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404913°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:35:16 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:35:18 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:35:20 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 160.8m
+
+---------------GNGGA---------------
+Time: 16:35:23 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:35:25 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:35:27 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404885°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:35:29 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:35:30 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 158.8m
+
+---------------GNGGA---------------
+Time: 16:35:32 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:35:34 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:35:35 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:35:39 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404903°W
+Satellites: 12
+Altitude: 159.8m
+
+---------------GNGGA---------------
+Time: 16:35:40 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:35:42 (UTC Time)
+Latitude: 43.709208°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:35:44 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:35:45 (UTC Time)
+Latitude: 43.709208°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:35:47 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:35:49 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:35:52 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 037m
+
+---------------GNGGA---------------
+Time: 16:35:56 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:35:54 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404903°W
+Satellites: 12
+Altitude: 160.3m
+
+---------------GNGGA---------------
+Time: 16:35:58 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:35:59 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 159.8m
+
+---------------GNGGA---------------
+Time: 16:36:01 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:36:03 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:36:04 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 159.3m
+
+---------------GNGGA---------------
+Time: 16:36:06 (UTC Time)
+Latitude: N/A°40
+Longitude: N/A°21
+Satellites: 
+Altitude: 39*52m
+
+---------------GNGGA---------------
+Time: 16:36:08 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 159.5m
+
+---------------GNGGA---------------
+Time: 16:36:09 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:36:11 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.4049°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:36:13 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:36:18 (UTC Time)
+Latitude: 43.709202°N
+Longitude: N/A°A
+Satellites: N
+Altitude: Wm
+
+---------------GNGGA---------------
+Time: 16:36:20 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:36:22 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 160.8m
+
+---------------GNGGA---------------
+Time: 16:36:23 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:36:25 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:36:27 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 159.2m
+
+---------------GNGGA---------------
+Time: 16:36:30 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 159.2m
+
+---------------GNGGA---------------
+Time: 16:36:32 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:36:34 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 158.8m
+
+---------------GNGGA---------------
+Time: 16:36:36 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:36:37 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 158.8m
+
+---------------GNGGA---------------
+Time: 16:36:39 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 158.4m
+
+---------------GNGGA---------------
+Time: 16:36:41 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404907°W
+Satellites: 12
+Altitude: 159.3m
+
+---------------GNGGA---------------
+Time: N/A (UTC Time)
+Latitude: N/A°10
+Longitude: N/A°31
+Satellites: 40
+Altitude: 23m
+
+---------------GNGGA---------------
+Time: 16:36:44 (UTC Time)
+Latitude: 43.709197°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 160.3m
+
+---------------GNGGA---------------
+Time: 16:36:46 (UTC Time)
+Latitude: 43.709197°N
+Longitude: -79.404914°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:36:48 (UTC Time)
+Latitude: 43.709196°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:36:50 (UTC Time)
+Latitude: 43.709194°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:36:59 (UTC Time)
+Latitude: 43.709194°N
+Longitude: -79.404931°W
+Satellites: 12
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:36:55 (UTC Time)
+Latitude: 43.709193°N
+Longitude: -79.404926°W
+Satellites: 12
+Altitude: 162.0m
+
+---------------GNGGA---------------
+Time: 16:36:57 (UTC Time)
+Latitude: 43.709193°N
+Longitude: -79.40493°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:37:01 (UTC Time)
+Latitude: 43.709195°N
+Longitude: -79.404926°W
+Satellites: 12
+Altitude: 161.9m
+
+---------------GNGGA---------------
+Time: 16:37:03 (UTC Time)
+Latitude: 43.709195°N
+Longitude: -79.404927°W
+Satellites: 12
+Altitude: 162.0m
+
+---------------GNGGA---------------
+Time: 16:37:04 (UTC Time)
+Latitude: 43.709196°N
+Longitude: -79.404925°W
+Satellites: 12
+Altitude: 161.8m
+
+---------------GNGGA---------------
+Time: 16:37:06 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:37:08 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.40492°W
+Satellites: 12
+Altitude: 160.4m
+
+---------------GNGGA---------------
+Time: 16:37:09 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 201m
+
+---------------GNGGA---------------
+Time: 16:37:11 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 161.1m
+
+---------------GNGGA---------------
+Time: 16:37:13 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:37:15 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 161.2m
+
+---------------GNGGA---------------
+Time: 16:37:16 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 161.1m
+
+---------------GNGGA---------------
+Time: 16:37:18 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.40492°W
+Satellites: 12
+Altitude: 160.8m
+
+---------------GNGGA---------------
+Time: 16:37:20 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:37:22 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 160.6m
+
+---------------GNGGA---------------
+Time: 16:37:24 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:37:25 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:37:27 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 161.1m
+
+---------------GNGGA---------------
+Time: 16:37:29 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:37:30 (UTC Time)
+Latitude: 43.709204°N
+Longitude: N/A°07
+Satellites: 49
+Altitude: 23m
+
+---------------GNGGA---------------
+Time: 16:37:32 (UTC Time)
+Latitude: N/A°4342.55255
+Longitude: N/A°07924.29475
+Satellites: 1.168
+Altitude: 161124m
+
+---------------GNGGA---------------
+Time: 16:37:34 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:37:36 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.40492°W
+Satellites: 12
+Altitude: 160.3m
+
+---------------GNGGA---------------
+Time: 16:37:39 (UTC Time)
+Latitude: 43.709214°N
+Longitude: N/A°76
+Satellites: 31
+Altitude: 32m
+
+---------------GNGGA---------------
+Time: 16:37:41 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404913°W
+Satellites: 12
+Altitude: 160.6m
+
+---------------GNGGA---------------
+Time: 16:37:43 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 159.8m
+
+---------------GNGGA---------------
+Time: 16:37:48 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:37:50 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:37:52 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 157.9m
+
+---------------GNGGA---------------
+Time: 16:37:53 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 157.8m
+
+---------------GNGGA---------------
+Time: 16:37:55 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404885°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:37:57 (UTC Time)
+Latitude: N/A°03
+Longitude: N/A°317
+Satellites: 10
+Altitude: 164m
+
+---------------GNGGA---------------
+Time: 16:37:59 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:38:00 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:38:02 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:38:04 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:38:06 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.40488°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:38:09 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404874°W
+Satellites: 12
+Altitude: 161.4m
+
+---------------GNGGA---------------
+Time: 16:38:11 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404871°W
+Satellites: 12
+Altitude: 161.3m
+
+---------------GNGGA---------------
+Time: 16:38:13 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404868°W
+Satellites: 12
+Altitude: 161.1m
+
+---------------GNGGA---------------
+Time: 16:38:15 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404866°W
+Satellites: 12
+Altitude: 161.4m
+
+---------------GNGGA---------------
+Time: 16:38:16 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404867°W
+Satellites: 11
+Altitude: 161.7m
+
+---------------GNGGA---------------
+Time: 16:38:18 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404867°W
+Satellites: 11
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:38:22 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404864°W
+Satellites: 12
+Altitude: 163.8m
+
+---------------GNGGA---------------
+Time: 16:38:27 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404862°W
+Satellites: 12
+Altitude: 168.2m
+
+---------------GNGGA---------------
+Time: 16:38:29 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404862°W
+Satellites: 11
+Altitude: 168.2m
+
+---------------GNGGA---------------
+Time: 16:38:31 (UTC Time)
+Latitude: 43.709195°N
+Longitude: -79.404856°W
+Satellites: 12
+Altitude: 166.3m
+
+---------------GNGGA---------------
+Time: 16:38:33 (UTC Time)
+Latitude: 43.709158°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 165.5m
+
+---------------GNGGA---------------
+Time: 16:38:34 (UTC Time)
+Latitude: 43.709142°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 163.6m
+
+---------------GNGGA---------------
+Time: 16:38:36 (UTC Time)
+Latitude: 43.709168°N
+Longitude: -79.405009°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:38:38 (UTC Time)
+Latitude: 43.709177°N
+Longitude: -79.405028°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:38:40 (UTC Time)
+Latitude: 43.709174°N
+Longitude: -79.405034°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:38:41 (UTC Time)
+Latitude: 43.709174°N
+Longitude: -79.405035°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:38:43 (UTC Time)
+Latitude: 43.709175°N
+Longitude: -79.405038°W
+Satellites: 12
+Altitude: 159.3m
+
+---------------GNGGA---------------
+Time: 16:38:45 (UTC Time)
+Latitude: 43.709176°N
+Longitude: -79.405039°W
+Satellites: 12
+Altitude: 159.2m
+
+---------------GNGGA---------------
+Time: 16:38:47 (UTC Time)
+Latitude: 43.709177°N
+Longitude: -79.405041°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:38:48 (UTC Time)
+Latitude: 43.709177°N
+Longitude: -79.405042°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:38:50 (UTC Time)
+Latitude: 43.709175°N
+Longitude: -79.405043°W
+Satellites: 12
+Altitude: 158.9m
+
+---------------GNGGA---------------
+Time: 16:38:52 (UTC Time)
+Latitude: 43.709173°N
+Longitude: -79.40503°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:38:53 (UTC Time)
+Latitude: 43.709173°N
+Longitude: -79.40503°W
+Satellites: 12
+Altitude: 159.5m
+
+---------------GNGGA---------------
+Time: 16:38:55 (UTC Time)
+Latitude: 43.70918°N
+Longitude: -79.405009°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:38:57 (UTC Time)
+Latitude: 43.709191°N
+Longitude: -79.404978°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:38:59 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404954°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:39:00 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:39:02 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404925°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:39:09 (UTC Time)
+Latitude: 43.709222°N
+Longitude: -79.404918°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:39:11 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404918°W
+Satellites: 12
+Altitude: 157.9m
+
+---------------GNGGA---------------
+Time: 16:39:13 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404919°W
+Satellites: 12
+Altitude: 157.8m
+
+---------------GNGGA---------------
+Time: 16:39:15 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 157.6m
+
+---------------GNGGA---------------
+Time: 16:39:16 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404916°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:39:22 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 156.5m
+
+---------------GNGGA---------------
+Time: 16:39:24 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 156.3m
+
+---------------GNGGA---------------
+Time: 16:39:26 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 156.2m
+
+---------------GNGGA---------------
+Time: 16:39:28 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.4049°W
+Satellites: 12
+Altitude: 156.5m
+
+---------------GNGGA---------------
+Time: 16:39:29 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404903°W
+Satellites: 12
+Altitude: 156.4m
+
+---------------GNGGA---------------
+Time: 16:39:31 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:39:33 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 156.5m
+
+---------------GNGGA---------------
+Time: 16:39:35 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:39:36 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 156.201m
+
+---------------GNGGA---------------
+Time: 16:39:38 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:39:40 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:39:42 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404907°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:39:45 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:39:47 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:39:49 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 157.0m
+
+---------------GNGGA---------------
+Time: 16:39:54 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:39:52 (UTC Time)
+Latitude: 43.709221°N
+Longitude: N/A°2
+Satellites: 07
+Altitude: 38m
+
+---------------GNGGA---------------
+Time: 16:39:56 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 156.9m
+
+---------------GNGGA---------------
+Time: 16:39:58 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 156.9m
+
+---------------GNGGA---------------
+Time: 16:40:01 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:40:03 (UTC Time)
+Latitude: N/A°1
+Longitude: N/A°0.84
+Satellites: M
+Altitude: Mm
+
+---------------GNGGA---------------
+Time: 16:40:05 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 155.7m
+
+---------------GNGGA---------------
+Time: 16:40:07 (UTC Time)
+Latitude: 43.709227°N
+Longitude: N/A°23
+Satellites: 29
+Altitude: 08m
+
+---------------GNGGA---------------
+Time: 16:40:08 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 154.6m
+
+---------------GNGGA---------------
+Time: 16:40:10 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 154.2m
+
+---------------GNGGA---------------
+Time: 16:40:12 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 154.2m
+
+---------------GNGGA---------------
+Time: 16:40:13 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 154.2m
+
+---------------GNGGA---------------
+Time: 16:40:15 (UTC Time)
+Latitude: 43.709234°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 155.0m
+
+---------------GNGGA---------------
+Time: 16:40:17 (UTC Time)
+Latitude: 43.709234°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 154.9m
+
+---------------GNGGA---------------
+Time: 16:40:18 (UTC Time)
+Latitude: 43.709233°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 154.9m
+
+---------------GNGGA---------------
+Time: 16:40:20 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 155.2m
+
+---------------GNGGA---------------
+Time: 16:40:22 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 155.4m
+
+---------------GNGGA---------------
+Time: 16:40:25 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 155.6m
+
+---------------GNGGA---------------
+Time: 16:40:27 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 155.4m
+
+---------------GNGGA---------------
+Time: 16:40:29 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 155.4m
+
+---------------GNGGA---------------
+Time: 16:40:30 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 155.5m
+
+---------------GNGGA---------------
+Time: 16:40:32 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 155.7m
+
+---------------GNGGA---------------
+Time: 16:40:34 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 155.9m
+
+---------------GNGGA---------------
+Time: 16:40:35 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 156.1m
+
+---------------GNGGA---------------
+Time: 16:40:39 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 156.8m
+
+---------------GNGGA---------------
+Time: 16:40:41 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: N/A (UTC Time)
+Latitude: N/A°25
+Longitude: N/A°26
+Satellites: 28
+Altitude: 02m
+
+---------------GNGGA---------------
+Time: 16:40:42 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:40:44 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:40:46 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 157.7m
+
+---------------GNGGA---------------
+Time: 16:40:48 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:40:49 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:40:51 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 157.5.84m
+
+---------------GNGGA---------------
+Time: 16:40:54 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 157.8m
+
+---------------GNGGA---------------
+Time: 16:40:56 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 157.6m
+
+---------------GNGGA---------------
+Time: 16:40:58 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:41:00 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:41:01 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 157.9m
+
+---------------GNGGA---------------
+Time: 16:41:03 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:41:05 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:41:08 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 158.2m
+
+---------------GNGGA---------------
+Time: 16:41:10 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:41:12 (UTC Time)
+Latitude: 43.709232°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 158.8m
+
+---------------GNGGA---------------
+Time: 16:41:14 (UTC Time)
+Latitude: 43.709234°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 163.7m
+
+---------------GNGGA---------------
+Time: 16:41:15 (UTC Time)
+Latitude: 43.70924°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 165.8m
+
+---------------GNGGA---------------
+Time: 16:41:17 (UTC Time)
+Latitude: 43.709252°N
+Longitude: -79.4049°W
+Satellites: 12
+Altitude: 170.6m
+
+---------------GNGGA---------------
+Time: 16:41:19 (UTC Time)
+Latitude: 43.709266°N
+Longitude: -79.404888°W
+Satellites: 12
+Altitude: 176.6m
+
+---------------GNGGA---------------
+Time: 16:41:21 (UTC Time)
+Latitude: 43.709278°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 183.5m
+
+---------------GNGGA---------------
+Time: 16:41:22 (UTC Time)
+Latitude: 43.70929°N
+Longitude: -79.404868°W
+Satellites: 12
+Altitude: 187.5m
+
+---------------GNGGA---------------
+Time: 16:41:24 (UTC Time)
+Latitude: 43.709292°N
+Longitude: -79.404858°W
+Satellites: 12
+Altitude: 193.1m
+
+---------------GNGGA---------------
+Time: 16:41:26 (UTC Time)
+Latitude: 43.709288°N
+Longitude: -79.404861°W
+Satellites: 12
+Altitude: 199.7m
+
+---------------GNGGA---------------
+Time: 16:41:29 (UTC Time)
+Latitude: 43.70928°N
+Longitude: -79.404858°W
+Satellites: 12
+Altitude: 209.0m
+
+---------------GNGGA---------------
+Time: 16:41:31 (UTC Time)
+Latitude: 43.709273°N
+Longitude: -79.404853°W
+Satellites: 12
+Altitude: 212.0m
+
+---------------GNGGA---------------
+Time: 16:41:33 (UTC Time)
+Latitude: 43.709274°N
+Longitude: -79.404844°W
+Satellites: 12
+Altitude: 212.7m
+
+---------------GNGGA---------------
+Time: 16:41:38 (UTC Time)
+Latitude: 43.709263°N
+Longitude: -79.404824°W
+Satellites: 12
+Altitude: 210.0m
+
+---------------GNGGA---------------
+Time: 16:41:40 (UTC Time)
+Latitude: 43.709255°N
+Longitude: -79.404826°W
+Satellites: 12
+Altitude: 207.3m
+
+---------------GNGGA---------------
+Time: 16:41:42 (UTC Time)
+Latitude: 43.709259°N
+Longitude: -79.404823°W
+Satellites: 11
+Altitude: 204.7m
+
+---------------GNGGA---------------
+Time: 16:41:45 (UTC Time)
+Latitude: 43.709264°N
+Longitude: -79.404824°W
+Satellites: 12
+Altitude: 204.6m
+
+---------------GNGGA---------------
+Time: 16:41:47 (UTC Time)
+Latitude: 43.709263°N
+Longitude: -79.404826°W
+Satellites: 12
+Altitude: 206.9m
+
+---------------GNGGA---------------
+Time: 16:41:50 (UTC Time)
+Latitude: 43.709259°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 218.7m
+
+---------------GNGGA---------------
+Time: 16:41:52 (UTC Time)
+Latitude: 43.709256°N
+Longitude: -79.404853°W
+Satellites: 12
+Altitude: 224.5m
+
+---------------GNGGA---------------
+Time: 16:41:54 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404853°W
+Satellites: 12
+Altitude: 227.9m
+
+---------------GNGGA---------------
+Time: 16:41:56 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.40485°W
+Satellites: 12
+Altitude: 224.2m
+
+---------------GNGGA---------------
+Time: 16:41:57 (UTC Time)
+Latitude: 43.709255°N
+Longitude: -79.404851°W
+Satellites: 12
+Altitude: 221.3m
+
+---------------GNGGA---------------
+Time: 16:42:01 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404866°W
+Satellites: 12
+Altitude: 210.3m
+
+---------------GNGGA---------------
+Time: 16:42:02 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404869°W
+Satellites: 12
+Altitude: 207.4m
+
+---------------GNGGA---------------
+Time: 16:42:04 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404874°W
+Satellites: 12
+Altitude: 204.4m
+
+---------------GNGGA---------------
+Time: 16:42:06 (UTC Time)
+Latitude: 43.70925°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 201.6m
+
+---------------GNGGA---------------
+Time: 16:42:08 (UTC Time)
+Latitude: 43.709249°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 200.8m
+
+---------------GNGGA---------------
+Time: 16:42:09 (UTC Time)
+Latitude: 43.709248°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 200.8m
+
+---------------GNGGA---------------
+Time: 16:42:11 (UTC Time)
+Latitude: 43.709247°N
+Longitude: -79.404874°W
+Satellites: 12
+Altitude: 199.8m
+
+---------------GNGGA---------------
+Time: 16:42:14 (UTC Time)
+Latitude: 43.709244°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 203.4m
+
+---------------GNGGA---------------
+Time: 16:42:16 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 208.8m
+
+---------------GNGGA---------------
+Time: 16:42:19 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 217.4m
+
+---------------GNGGA---------------
+Time: 16:42:21 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 224.8m
+
+---------------GNGGA---------------
+Time: 16:42:23 (UTC Time)
+Latitude: 43.709241°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 231.9m
+
+---------------GNGGA---------------
+Time: 16:42:24 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 235.4m
+
+---------------GNGGA---------------
+Time: 16:42:26 (UTC Time)
+Latitude: 43.709241°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 241.6m
+
+---------------GNGGA---------------
+Time: 16:42:28 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404911°W
+Satellites: 12
+Altitude: 248.3m
+
+---------------GNGGA---------------
+Time: 16:42:30 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 255.2m
+
+---------------GNGGA---------------
+Time: 16:42:35 (UTC Time)
+Latitude: 43.709246°N
+Longitude: -79.404928°W
+Satellites: 12
+Altitude: 271.4m
+
+---------------GNGGA---------------
+Time: 16:42:37 (UTC Time)
+Latitude: 43.709249°N
+Longitude: -79.404931°W
+Satellites: 12
+Altitude: 277.8m
+
+---------------GNGGA---------------
+Time: 16:42:39 (UTC Time)
+Latitude: 43.709253°N
+Longitude: -79.404935°W
+Satellites: 12
+Altitude: 284.4m
+
+---------------GNGGA---------------
+Time: 16:42:41 (UTC Time)
+Latitude: 43.709255°N
+Longitude: -79.404936°W
+Satellites: 12
+Altitude: 290.6m
+
+---------------GNGGA---------------
+Time: 16:42:42 (UTC Time)
+Latitude: 43.709257°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 293.8m
+
+---------------GNGGA---------------
+Time: 16:42:44 (UTC Time)
+Latitude: 43.709261°N
+Longitude: -79.40494°W
+Satellites: 12
+Altitude: 300.1m
+
+---------------GNGGA---------------
+Time: 16:42:46 (UTC Time)
+Latitude: 43.709263°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 306.4m
+
+---------------GNGGA---------------
+Time: 16:42:48 (UTC Time)
+Latitude: 43.709265°N
+Longitude: -79.404943°W
+Satellites: 12
+Altitude: 312.8m
+
+---------------GNGGA---------------
+Time: 16:42:49 (UTC Time)
+Latitude: 43.709267°N
+Longitude: -79.404946°W
+Satellites: 12
+Altitude: 316.0m
+
+---------------GNGGA---------------
+Time: 16:42:51 (UTC Time)
+Latitude: 43.70927°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 322.3m
+
+---------------GNGGA---------------
+Time: 16:42:53 (UTC Time)
+Latitude: 43.709272°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 328.6m
+
+---------------GNGGA---------------
+Time: 16:42:56 (UTC Time)
+Latitude: 43.709273°N
+Longitude: -79.404955°W
+Satellites: 12
+Altitude: 338.1m
+
+---------------GNGGA---------------
+Time: 16:42:58 (UTC Time)
+Latitude: 43.709274°N
+Longitude: -79.404956°W
+Satellites: 12
+Altitude: 344.3m
+
+---------------GNGGA---------------
+Time: 16:43:00 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404956°W
+Satellites: 12
+Altitude: 350.4m
+
+---------------GNGGA---------------
+Time: 16:43:03 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404958°W
+Satellites: 12
+Altitude: 359.7m
+
+---------------GNGGA---------------
+Time: 16:43:05 (UTC Time)
+Latitude: 43.709276°N
+Longitude: -79.404958°W
+Satellites: 12
+Altitude: 366.0m
+
+---------------GNGGA---------------
+Time: 16:43:07 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404957°W
+Satellites: 12
+Altitude: 372.0m
+
+---------------GNGGA---------------
+Time: 16:43:10 (UTC Time)
+Latitude: 43.709277°N
+Longitude: -79.404961°W
+Satellites: 12
+Altitude: 381.4m
+
+---------------GNGGA---------------
+Time: 16:43:12 (UTC Time)
+Latitude: 43.709278°N
+Longitude: -79.404962°W
+Satellites: 12
+Altitude: 387.6m
+
+---------------GNGGA---------------
+Time: 16:43:14 (UTC Time)
+Latitude: 43.709278°N
+Longitude: -79.40496°W
+Satellites: 12
+Altitude: 393.7m
+
+---------------GNGGA---------------
+Time: 16:43:16 (UTC Time)
+Latitude: 43.709274°N
+Longitude: -79.404953°W
+Satellites: 12
+Altitude: 399.5m
+
+---------------GNGGA---------------
+Time: 16:43:19 (UTC Time)
+Latitude: 43.70927°N
+Longitude: -79.404948°W
+Satellites: 4342.55624
+Altitude: 07924.29701m
+
+---------------GNGGA---------------
+Time: 16:43:21 (UTC Time)
+Latitude: 43.709268°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 419.4m
+
+---------------GNGGA---------------
+Time: 16:43:26 (UTC Time)
+Latitude: 43.70926°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 444.1m
+
+---------------GNGGA---------------
+Time: 16:43:28 (UTC Time)
+Latitude: 43.709257°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 453.7m
+
+---------------GNGGA---------------
+Time: 16:43:30 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404945°W
+Satellites: 12
+Altitude: 462.6m
+
+---------------GNGGA---------------
+Time: 16:43:31 (UTC Time)
+Latitude: 43.709252°N
+Longitude: -79.404944°W
+Satellites: 12
+Altitude: 467.3m
+
+---------------GNGGA---------------
+Time: 16:43:33 (UTC Time)
+Latitude: 43.709248°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 476.3m
+
+---------------GNGGA---------------
+Time: 16:43:36 (UTC Time)
+Latitude: 43.709244°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 489.2m
+
+---------------GNGGA---------------
+Time: 16:43:40 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404934°W
+Satellites: 12
+Altitude: 505.2m
+
+---------------GNGGA---------------
+Time: 16:43:43 (UTC Time)
+Latitude: 43.70924°N
+Longitude: -79.404929°W
+Satellites: 12
+Altitude: 517.3m
+
+---------------GNGGA---------------
+Time: 16:43:45 (UTC Time)
+Latitude: 43.709237°N
+Longitude: -79.404927°W
+Satellites: 12
+Altitude: 525.1m
+
+---------------GNGGA---------------
+Time: 16:43:47 (UTC Time)
+Latitude: 43.709232°N
+Longitude: -79.404928°W
+Satellites: 12
+Altitude: 532.5m
+
+---------------GNGGA---------------
+Time: 16:43:48 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404931°W
+Satellites: 12
+Altitude: 536.1m
+
+---------------GNGGA---------------
+Time: 16:43:50 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 543.1m
+
+---------------GNGGA---------------
+Time: 16:43:55 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 560.6m
+
+---------------GNGGA---------------
+Time: 16:43:57 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404946°W
+Satellites: 12
+Altitude: 568.4m
+
+---------------GNGGA---------------
+Time: 16:44:00 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404934°W
+Satellites: 12
+Altitude: 581.9m
+
+---------------GNGGA---------------
+Time: 16:44:02 (UTC Time)
+Latitude: 43.709196°N
+Longitude: -79.404925°W
+Satellites: 12
+Altitude: 590.7m
+
+---------------GNGGA---------------
+Time: 16:44:05 (UTC Time)
+Latitude: 43.709122°N
+Longitude: -79.405089°W
+Satellites: 12
+Altitude: 601.2m
+
+---------------GNGGA---------------
+Time: 16:44:07 (UTC Time)
+Latitude: 43.709081°N
+Longitude: -79.405219°W
+Satellites: 12
+Altitude: 606.7m
+
+---------------GNGGA---------------
+Time: 16:44:09 (UTC Time)
+Latitude: 43.709077°N
+Longitude: -79.405237°W
+Satellites: 12
+Altitude: 607.2m
+
+---------------GNGGA---------------
+Time: 16:44:14 (UTC Time)
+Latitude: 43.709087°N
+Longitude: -79.405224°W
+Satellites: 12
+Altitude: 612.7m
+
+---------------GNGGA---------------
+Time: 16:44:16 (UTC Time)
+Latitude: 43.709089°N
+Longitude: -79.405225°W
+Satellites: 12
+Altitude: 619.2m
+
+---------------GNGGA---------------
+Time: 16:44:18 (UTC Time)
+Latitude: 43.709091°N
+Longitude: -79.405229°W
+Satellites: 12
+Altitude: 628.2m
+
+---------------GNGGA---------------
+Time: 16:44:21 (UTC Time)
+Latitude: 43.709088°N
+Longitude: N/A°25
+Satellites: 26
+Altitude: 12m
+
+---------------GNGGA---------------
+Time: 16:44:23 (UTC Time)
+Latitude: 43.709086°N
+Longitude: -79.405217°W
+Satellites: 12
+Altitude: 650.4m
+
+---------------GNGGA---------------
+Time: 16:44:24 (UTC Time)
+Latitude: 43.709083°N
+Longitude: -79.405211°W
+Satellites: 12
+Altitude: 652.7m
+
+---------------GNGGA---------------
+Time: 16:44:26 (UTC Time)
+Latitude: 43.709071°N
+Longitude: -79.405211°W
+Satellites: 12
+Altitude: 655.8m
+
+---------------GNGGA---------------
+Time: 16:44:28 (UTC Time)
+Latitude: 43.709058°N
+Longitude: -79.405219°W
+Satellites: 12
+Altitude: 658.3m
+
+---------------GNGGA---------------
+Time: 16:44:31 (UTC Time)
+Latitude: 43.709059°N
+Longitude: -79.405231°W
+Satellites: 12
+Altitude: 662.4m
+
+---------------GNGGA---------------
+Time: 16:44:33 (UTC Time)
+Latitude: 43.70906°N
+Longitude: -79.405234°W
+Satellites: 12
+Altitude: 664.5m
+
+---------------GNGGA---------------
+Time: 16:44:35 (UTC Time)
+Latitude: 43.709061°N
+Longitude: -79.405237°W
+Satellites: 12
+Altitude: 666.4m
+
+---------------GNGGA---------------
+Time: 16:44:36 (UTC Time)
+Latitude: 43.709062°N
+Longitude: -79.40524°W
+Satellites: 12
+Altitude: 667.1m
+
+---------------GNGGA---------------
+Time: 16:44:38 (UTC Time)
+Latitude: 43.709057°N
+Longitude: -79.405238°W
+Satellites: 12
+Altitude: 667.3m
+
+---------------GNGGA---------------
+Time: 16:44:41 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405225°W
+Satellites: 12
+Altitude: 664.9m
+
+---------------GNGGA---------------
+Time: 16:44:43 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405219°W
+Satellites: 12
+Altitude: 663.5m
+
+---------------GNGGA---------------
+Time: 16:44:45 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405214°W
+Satellites: 12
+Altitude: 662.1m
+
+---------------GNGGA---------------
+Time: 16:44:46 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405212°W
+Satellites: 12
+Altitude: 661.4m
+
+---------------GNGGA---------------
+Time: 16:44:48 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.40521°W
+Satellites: 12
+Altitude: 660.4m
+
+---------------GNGGA---------------
+Time: 16:44:50 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405207°W
+Satellites: 12
+Altitude: 659.3m
+
+---------------GNGGA---------------
+Time: 16:44:53 (UTC Time)
+Latitude: 43.709052°N
+Longitude: -79.405203°W
+Satellites: 12
+Altitude: 658.2m
+
+---------------GNGGA---------------
+Time: 16:44:55 (UTC Time)
+Latitude: 43.709052°N
+Longitude: -79.405203°W
+Satellites: 12
+Altitude: 657.4m
+
+---------------GNGGA---------------
+Time: 16:45:00 (UTC Time)
+Latitude: 43.709051°N
+Longitude: -79.405198°W
+Satellites: 12
+Altitude: 655.9m
+
+---------------GNGGA---------------
+Time: 16:45:02 (UTC Time)
+Latitude: N/A°4342.54312
+Longitude: N/A°07924.31205
+Satellites: 2
+Altitude: 0.75m
+
+---------------GNGGA---------------
+Time: 16:45:03 (UTC Time)
+Latitude: 43.709051°N
+Longitude: -79.405194°W
+Satellites: 12
+Altitude: 655.3m
+
+---------------GNGGA---------------
+Time: 16:45:05 (UTC Time)
+Latitude: 43.709049°N
+Longitude: -79.40519°W
+Satellites: 12
+Altitude: 648.8m
+
+---------------GNGGA---------------
+Time: 16:45:12 (UTC Time)
+Latitude: 43.708788°N
+Longitude: -79.404851°W
+Satellites: 12
+Altitude: 617.9m
+
+---------------GNGGA---------------
+Time: 16:45:14 (UTC Time)
+Latitude: 43.708781°N
+Longitude: -79.404843°W
+Satellites: 12
+Altitude: 611.4m
+
+---------------GNGGA---------------
+Time: 16:45:19 (UTC Time)
+Latitude: 43.708767°N
+Longitude: -79.40483°W
+Satellites: 12
+Altitude: 594.2m
+
+---------------GNGGA---------------
+Time: 16:45:21 (UTC Time)
+Latitude: 43.708767°N
+Longitude: -79.404831°W
+Satellites: 12
+Altitude: 587.7m
+
+---------------GNGGA---------------
+Time: 16:45:23 (UTC Time)
+Latitude: 43.708805°N
+Longitude: -79.404844°W
+Satellites: 12
+Altitude: 581.5m
+
+---------------GNGGA---------------
+Time: 16:45:30 (UTC Time)
+Latitude: 43.708801°N
+Longitude: -79.404845°W
+Satellites: 12
+Altitude: 559.9m
+
+---------------GNGGA---------------
+Time: 16:45:32 (UTC Time)
+Latitude: 43.708801°N
+Longitude: -79.404845°W
+Satellites: 12
+Altitude: 553.8m
+
+---------------GNGGA---------------
+Time: 16:45:34 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 547.7m
+
+---------------GNGGA---------------
+Time: 16:45:35 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 544.6m
+
+---------------GNGGA---------------
+Time: 16:45:37 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 538.6m
+
+---------------GNGGA---------------
+Time: 16:45:39 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 532.5m
+
+---------------GNGGA---------------
+Time: 16:45:40 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 529.4m
+
+---------------GNGGA---------------
+Time: 16:45:42 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 523.3m
+
+---------------GNGGA---------------
+Time: 16:45:44 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.40485°W
+Satellites: 12
+Altitude: 517.3m
+
+---------------GNGGA---------------
+Time: 16:45:47 (UTC Time)
+Latitude: 43.708804°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 508.1m
+
+---------------GNGGA---------------
+Time: 16:45:49 (UTC Time)
+Latitude: 43.708804°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 502.0m
+
+---------------GNGGA---------------
+Time: 16:45:51 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404851°W
+Satellites: 12
+Altitude: 495.9m
+
+---------------GNGGA---------------
+Time: 16:45:52 (UTC Time)
+Latitude: 43.708801°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 492.8m
+
+---------------GNGGA---------------
+Time: 16:45:54 (UTC Time)
+Latitude: 43.708792°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 486.9m
+
+---------------GNGGA---------------
+Time: 16:45:56 (UTC Time)
+Latitude: 43.708793°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 481.1m
+
+---------------GNGGA---------------
+Time: 16:45:57 (UTC Time)
+Latitude: 43.708796°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 478.3m
+
+---------------GNGGA---------------
+Time: 16:45:59 (UTC Time)
+Latitude: 43.708797°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 472.6m
+
+---------------GNGGA---------------
+Time: 16:46:01 (UTC Time)
+Latitude: 43.708796°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 467.0m
+
+---------------GNGGA---------------
+Time: 16:46:02 (UTC Time)
+Latitude: 43.708797°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 464.0m
+
+---------------GNGGA---------------
+Time: 16:46:04 (UTC Time)
+Latitude: 43.708799°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 458.0m
+
+---------------GNGGA---------------
+Time: 16:46:06 (UTC Time)
+Latitude: 43.7088°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 452.0m
+
+---------------GNGGA---------------
+Time: 16:46:07 (UTC Time)
+Latitude: 43.708801°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 449.1m
+
+---------------GNGGA---------------
+Time: 16:46:11 (UTC Time)
+Latitude: 43.708862°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 437.6m
+
+---------------GNGGA---------------
+Time: 16:46:12 (UTC Time)
+Latitude: 43.708889°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 434.9m
+
+---------------GNGGA---------------
+Time: 16:46:14 (UTC Time)
+Latitude: 43.708888°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 429.2m
+
+---------------GNGGA---------------
+Time: 16:46:16 (UTC Time)
+Latitude: 43.708881°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 423.3m
+
+---------------GNGGA---------------
+Time: 16:46:19 (UTC Time)
+Latitude: 43.708874°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 414.5m
+
+---------------GNGGA---------------
+Time: 16:46:23 (UTC Time)
+Latitude: 43.708874°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 402.6m
+
+---------------GNGGA---------------
+Time: 16:46:24 (UTC Time)
+Latitude: 43.708874°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 399.6m
+
+---------------GNGGA---------------
+Time: 16:46:26 (UTC Time)
+Latitude: 43.708873°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 393.7m
+
+---------------GNGGA---------------
+Time: 16:46:28 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 387.7m
+
+---------------GNGGA---------------
+Time: 16:46:29 (UTC Time)
+Latitude: 43.708872°N
+Longitude: N/A°121
+Satellites: 71
+Altitude: 003m
+
+---------------GNGGA---------------
+Time: 16:46:31 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 378.5m
+
+---------------GNGGA---------------
+Time: 16:46:33 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 372.5m
+
+---------------GNGGA---------------
+Time: 16:46:36 (UTC Time)
+Latitude: 43.708873°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 363.5m
+
+---------------GNGGA---------------
+Time: 16:46:38 (UTC Time)
+Latitude: 43.708873°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 357.6m
+
+---------------GNGGA---------------
+Time: 16:46:40 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 351.6m
+
+---------------GNGGA---------------
+Time: 16:46:43 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 342.7m
+
+---------------GNGGA---------------
+Time: 16:46:45 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 336.8m
+
+---------------GNGGA---------------
+Time: 16:46:46 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 333.8m
+
+---------------GNGGA---------------
+Time: 16:46:48 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 327.8m
+
+---------------GNGGA---------------
+Time: 16:46:50 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 321.7m
+
+---------------GNGGA---------------
+Time: 16:46:51 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 318.7m
+
+---------------GNGGA---------------
+Time: 16:46:53 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 312.7m
+
+---------------GNGGA---------------
+Time: 16:46:55 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 306.7m
+
+---------------GNGGA---------------
+Time: 16:46:56 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 303.7m
+
+---------------GNGGA---------------
+Time: 16:46:58 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404888°W
+Satellites: 12
+Altitude: 297.6m
+
+---------------GNGGA---------------
+Time: 16:47:00 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 291.6m
+
+---------------GNGGA---------------
+Time: 16:47:01 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 2883m
+
+---------------GNGGA---------------
+Time: 16:47:03 (UTC Time)
+Latitude: 43.70887°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 282.5m
+
+---------------GNGGA---------------
+Time: 16:47:05 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 276.5m
+
+---------------GNGGA---------------
+Time: 16:47:08 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404885°W
+Satellites: 12
+Altitude: 267.4m
+
+---------------GNGGA---------------
+Time: 16:47:10 (UTC Time)
+Latitude: 43.70887°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 261.3m
+
+---------------GNGGA---------------
+Time: 16:47:12 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 255.3m
+
+---------------GNGGA---------------
+Time: 16:47:14 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404878°W
+Satellites: 12
+Altitude: 249.4m
+
+---------------GNGGA---------------
+Time: 16:47:15 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 246.3m
+
+---------------GNGGA---------------
+Time: 16:47:17 (UTC Time)
+Latitude: 43.70887°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 240.3m
+
+---------------GNGGA---------------
+Time: 16:47:18 (UTC Time)
+Latitude: 43.70887°N
+Longitude: N/A°W71
+Satellites: 003
+Altitude: 72m
+
+---------------GNGGA---------------
+Time: 16:47:20 (UTC Time)
+Latitude: 43.70887°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 231.1m
+
+---------------GNGGA---------------
+Time: 16:47:22 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 225.1m
+
+---------------GNGGA---------------
+Time: 16:47:27 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.40488°W
+Satellites: 12
+Altitude: 210.0m
+
+---------------GNGGA---------------
+Time: 16:47:29 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 203.9m
+
+---------------GNGGA---------------
+Time: 16:47:31 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 197.8m
+
+---------------GNGGA---------------
+Time: 16:47:32 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 194.7m
+
+---------------GNGGA---------------
+Time: 16:47:34 (UTC Time)
+Latitude: 43.708865°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 188.2m
+
+---------------GNGGA---------------
+Time: 16:47:37 (UTC Time)
+Latitude: 43.708967°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 180.0m
+
+---------------GNGGA---------------
+Time: 16:47:39 (UTC Time)
+Latitude: N/A°A
+Longitude: 43.709025°N
+Satellites: W
+Altitude: 349.78m
+
+---------------GNGGA---------------
+Time: 16:47:41 (UTC Time)
+Latitude: 43.709025°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 168.6m
+
+---------------GNGGA---------------
+Time: 16:47:42 (UTC Time)
+Latitude: 43.709057°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 166.1m
+
+---------------GNGGA---------------
+Time: 16:47:44 (UTC Time)
+Latitude: 43.709124°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:47:49 (UTC Time)
+Latitude: 43.709139°N
+Longitude: -79.404945°W
+Satellites: 12
+Altitude: 158.4m
+
+---------------GNGGA---------------
+Time: 16:47:51 (UTC Time)
+Latitude: N/A°
+Longitude: N/A°
+Satellites: 0.420
+Altitude: 0.778m
+
+---------------GNGGA---------------
+Time: 16:47:53 (UTC Time)
+Latitude: 43.709149°N
+Longitude: -79.404939°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:47:56 (UTC Time)
+Latitude: 43.709152°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:47:58 (UTC Time)
+Latitude: 43.709156°N
+Longitude: -79.404941°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:48:01 (UTC Time)
+Latitude: 43.709162°N
+Longitude: -79.404928°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:48:03 (UTC Time)
+Latitude: 43.709164°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: Nm
+
+---------------GNGGA---------------
+Time: 16:48:05 (UTC Time)
+Latitude: 43.709165°N
+Longitude: -79.404926°W
+Satellites: 12
+Altitude: 158.4m
+
+---------------GNGGA---------------
+Time: 16:48:07 (UTC Time)
+Latitude: 43.709166°N
+Longitude: -79.404929°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:48:08 (UTC Time)
+Latitude: 43.709171°N
+Longitude: -79.404936°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:48:10 (UTC Time)
+Latitude: 43.709191°N
+Longitude: -79.40492°W
+Satellites: 12
+Altitude: 158.9m
+
+---------------GNGGA---------------
+Time: 16:48:12 (UTC Time)
+Latitude: 43.709197°N
+Longitude: -79.404903°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:48:15 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 157.9m
+
+---------------GNGGA---------------
+Time: 16:48:17 (UTC Time)
+Latitude: 43.709222°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:48:19 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:48:20 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:48:22 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404885°W
+Satellites: 12
+Altitude: 159.8m
+
+---------------GNGGA---------------
+Time: 16:48:24 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:48:25 (UTC Time)
+Latitude: N/A°00
+Longitude: N/A°4342.55307
+Satellites: 07924.29275
+Altitude: 0.088m
+
+---------------GNGGA---------------
+Time: 16:48:27 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:48:30 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:48:32 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 161.7m
+
+---------------GNGGA---------------
+Time: 16:48:34 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 162.0m
+
+---------------GNGGA---------------
+Time: 16:48:35 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 162.1m
+
+---------------GNGGA---------------
+Time: 16:48:37 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404875°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:48:39 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:48:40 (UTC Time)
+Latitude: 43.709208°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 162.1m
+
+---------------GNGGA---------------
+Time: 16:48:42 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:48:44 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 162.9m
+
+---------------GNGGA---------------
+Time: 16:48:45 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 162.9m
+
+---------------GNGGA---------------
+Time: 16:48:47 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:48:49 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404871°W
+Satellites: 12
+Altitude: 162.7m
+
+---------------GNGGA---------------
+Time: 16:48:50 (UTC Time)
+Latitude: 43.70921°N
+Longitude: N/A°A
+Satellites: N
+Altitude: Wm
+
+---------------GNGGA---------------
+Time: 16:48:52 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404857°W
+Satellites: 12
+Altitude: 162.4m
+
+---------------GNGGA---------------
+Time: 16:48:54 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404858°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:48:55 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404859°W
+Satellites: 12
+Altitude: m
+
+---------------GNGGA---------------
+Time: 16:48:57 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404859°W
+Satellites: 12
+Altitude: 161.8m
+
+---------------GNGGA---------------
+Time: 16:48:59 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404859°W
+Satellites: 12
+Altitude: 161.8m
+
+---------------GNGGA---------------
+Time: 16:31:35 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404773°W
+Satellites: 10
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:31:37 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404842°W
+Satellites: 10
+Altitude: 165.7m
+
+---------------GNGGA---------------
+Time: 16:31:40 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404851°W
+Satellites: 09
+Altitude: 164.9m
+
+---------------GNGGA---------------
+Time: 16:31:42 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404872°W
+Satellites: 09
+Altitude: 165.6m
+
+---------------GNGGA---------------
+Time: 16:31:44 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404859°W
+Satellites: 10
+Altitude: 165.1m
+
+---------------GNGGA---------------
+Time: 16:31:46 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404866°W
+Satellites: 10
+Altitude: 165.8m
+
+---------------GNGGA---------------
+Time: 16:31:48 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404866°W
+Satellites: 10
+Altitude: 165.7m
+
+---------------GNGGA---------------
+Time: 16:31:58 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404894°W
+Satellites: 10
+Altitude: 169.1m
+
+---------------GNGGA---------------
+Time: 16:32:00 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404896°W
+Satellites: 10
+Altitude: 168.9m
+
+---------------GNGGA---------------
+Time: 16:32:02 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404897°W
+Satellites: 10
+Altitude: 168.1m
+
+---------------GNGGA---------------
+Time: 16:32:04 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.4049°W
+Satellites: 10
+Altitude: 167.7m
+
+---------------GNGGA---------------
+Time: 16:32:06 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404904°W
+Satellites: 10
+Altitude: 168.2m
+
+---------------GNGGA---------------
+Time: 16:32:08 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404906°W
+Satellites: 10
+Altitude: 167.9m
+
+---------------GNGGA---------------
+Time: 16:32:10 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404912°W
+Satellites: 10
+Altitude: 168.5m
+
+---------------GNGGA---------------
+Time: 16:32:11 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404913°W
+Satellites: 10
+Altitude: 168.6m
+
+---------------GNGGA---------------
+Time: 16:32:13 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404915°W
+Satellites: 10
+Altitude: 168.3m
+
+---------------GNGGA---------------
+Time: 16:32:15 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404918°W
+Satellites: 09
+Altitude: 167.2m
+
+---------------GNGGA---------------
+Time: 16:32:17 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404915°W
+Satellites: 09
+Altitude: 166.4m
+
+---------------GNGGA---------------
+Time: 16:32:18 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404915°W
+Satellites: 10
+Altitude: 166.4m
+
+---------------GNGGA---------------
+Time: 16:32:20 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404917°W
+Satellites: 10
+Altitude: 166.3m
+
+---------------GNGGA---------------
+Time: 16:32:22 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404917°W
+Satellites: 10
+Altitude: 165.7m
+
+---------------GNGGA---------------
+Time: 16:32:24 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404913°W
+Satellites: 09
+Altitude: 165.5m
+
+---------------GNGGA---------------
+Time: 16:32:25 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404914°W
+Satellites: 09
+Altitude: 165.4m
+
+---------------GNGGA---------------
+Time: 16:32:27 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404918°W
+Satellites: 09
+Altitude: 165.4m
+
+---------------GNGGA---------------
+Time: 16:32:29 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404912°W
+Satellites: 09
+Altitude: 165.3m
+
+---------------GNGGA---------------
+Time: 16:32:31 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404912°W
+Satellites: 10
+Altitude: 164.8m
+
+---------------GNGGA---------------
+Time: 16:32:33 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404913°W
+Satellites: 10
+Altitude: 164.9m
+
+---------------GNGGA---------------
+Time: 16:32:36 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404911°W
+Satellites: 10
+Altitude: 164.3m
+
+---------------GNGGA---------------
+Time: 16:32:38 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404905°W
+Satellites: 10
+Altitude: 164.4m
+
+---------------GNGGA---------------
+Time: 16:32:42 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404911°W
+Satellites: 09
+Altitude: 164.7m
+
+---------------GNGGA---------------
+Time: 16:32:44 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404915°W
+Satellites: 09
+Altitude: 164.7m
+
+---------------GNGGA---------------
+Time: 16:32:46 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404911°W
+Satellites: 10
+Altitude: 164.7m
+
+---------------GNGGA---------------
+Time: 16:32:47 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.40491°W
+Satellites: 10
+Altitude: 163.8m
+
+---------------GNGGA---------------
+Time: 16:32:49 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404905°W
+Satellites: 10
+Altitude: 163.1m
+
+---------------GNGGA---------------
+Time: 16:32:51 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404901°W
+Satellites: 10
+Altitude: 161.9m
+
+---------------GNGGA---------------
+Time: 16:32:53 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404898°W
+Satellites: 10
+Altitude: 161.9m
+
+---------------GNGGA---------------
+Time: 16:32:54 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404897°W
+Satellites: 10
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:32:56 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404899°W
+Satellites: 10
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:32:58 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404904°W
+Satellites: 10
+Altitude: 161.8m
+
+---------------GNGGA---------------
+Time: 16:32:59 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404904°W
+Satellites: 10
+Altitude: 162.5m
+
+---------------GNGGA---------------
+Time: 16:33:01 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404905°W
+Satellites: 09
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:33:03 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404904°W
+Satellites: 10
+Altitude: 163.5m
+
+---------------GNGGA---------------
+Time: 16:33:04 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404905°W
+Satellites: 10
+Altitude: 164.0m
+
+---------------GNGGA---------------
+Time: N/A (UTC Time)
+Latitude: N/A°
+Longitude: N/A°25
+Satellites: 066
+Altitude: 26m
+
+---------------GNGGA---------------
+Time: 16:33:08 (UTC Time)
+Latitude: N/A°A
+Longitude: N/A°32
+Satellites: 25
+Altitude: 26m
+
+---------------GNGGA---------------
+Time: 16:33:10 (UTC Time)
+Latitude: 115.375878°N
+Longitude: -79.404909°W
+Satellites: 10
+Altitude: 165.2m
+
+---------------GNGGA---------------
+Time: 16:33:12 (UTC Time)
+Latitude: N/A°31
+Longitude: N/A°25
+Satellites: 27
+Altitude: 84m
+
+---------------GNGGA---------------
+Time: 16:33:13 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404903°W
+Satellites: 11
+Altitude: 164.5m
+
+---------------GNGGA---------------
+Time: 16:33:15 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404897°W
+Satellites: 11
+Altitude: 164.3m
+
+---------------GNGGA---------------
+Time: 16:33:17 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404897°W
+Satellites: 11
+Altitude: 164.7m
+
+---------------GNGGA---------------
+Time: 16:33:19 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 164.6m
+
+---------------GNGGA---------------
+Time: 16:33:22 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 163.5m
+
+---------------GNGGA---------------
+Time: 16:33:24 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 163.8m
+
+---------------GNGGA---------------
+Time: 16:33:26 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404888°W
+Satellites: 12
+Altitude: 164.0m
+
+---------------GNGGA---------------
+Time: 16:33:28 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404886°W
+Satellites: 11
+Altitude: 164.2m
+
+---------------GNGGA---------------
+Time: 16:33:31 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 164.2m
+
+---------------GNGGA---------------
+Time: 16:33:33 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 16Wm
+
+---------------GNGGA---------------
+Time: 16:33:35 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 163.7m
+
+---------------GNGGA---------------
+Time: 16:33:40 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404862°W
+Satellites: 11
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:33:42 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404856°W
+Satellites: 12
+Altitude: 162.4m
+
+---------------GNGGA---------------
+Time: 16:33:44 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404855°W
+Satellites: 12
+Altitude: 162.5m
+
+---------------GNGGA---------------
+Time: 16:33:47 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404854°W
+Satellites: 11
+Altitude: 162.4m
+
+---------------GNGGA---------------
+Time: 16:33:49 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404854°W
+Satellites: 10
+Altitude: 162.6m
+
+---------------GNGGA---------------
+Time: 16:33:51 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 162.7m
+
+---------------GNGGA---------------
+Time: 16:33:53 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 162.4m
+
+---------------GNGGA---------------
+Time: 16:33:54 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:33:56 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404855°W
+Satellites: 12
+Altitude: 162.2m
+
+---------------GNGGA---------------
+Time: 16:33:58 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404858°W
+Satellites: 12
+Altitude: 162.1m
+
+---------------GNGGA---------------
+Time: 16:34:03 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404861°W
+Satellites: 12
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:34:05 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404865°W
+Satellites: 11
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:34:07 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 160.6m
+
+---------------GNGGA---------------
+Time: 16:34:10 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:34:12 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404866°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:34:14 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:34:16 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404865°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:34:19 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404866°W
+Satellites: 11
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:34:21 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404859°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:34:23 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404864°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:34:28 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404864°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:34:30 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404867°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:34:27 (UTC Time)
+Latitude: 43.709229°N
+Longitude: 22.404926°N
+Satellites: W
+Altitude: m
+
+---------------GNGGA---------------
+Time: 16:34:32 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404871°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:34:35 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404871°W
+Satellites: 12
+Altitude: 038m
+
+---------------GNGGA---------------
+Time: 16:34:37 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:34:39 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404874°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:34:41 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:34:42 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404878°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:34:44 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:34:46 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:34:47 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:34:49 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:34:51 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:34:52 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:34:54 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 158.9m
+
+---------------GNGGA---------------
+Time: 16:34:56 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:35:01 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:35:03 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:35:05 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404911°W
+Satellites: 12
+Altitude: 160.4m
+
+---------------GNGGA---------------
+Time: 16:35:06 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 160.4m
+
+---------------GNGGA---------------
+Time: 16:35:08 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:35:10 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 160.0m
+
+---------------GNGGA---------------
+Time: 16:35:13 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:35:15 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404913°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:35:16 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:35:18 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:35:20 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 160.8m
+
+---------------GNGGA---------------
+Time: 16:35:23 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:35:25 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:35:27 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404885°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:35:29 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:35:30 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 158.8m
+
+---------------GNGGA---------------
+Time: 16:35:32 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:35:34 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:35:35 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:35:37 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 159.3m
+
+---------------GNGGA---------------
+Time: 16:35:39 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404903°W
+Satellites: 12
+Altitude: 159.8m
+
+---------------GNGGA---------------
+Time: 16:35:42 (UTC Time)
+Latitude: 43.709208°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:35:44 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:35:45 (UTC Time)
+Latitude: 43.709208°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:35:47 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:35:49 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:35:52 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 037m
+
+---------------GNGGA---------------
+Time: 16:35:54 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404903°W
+Satellites: 12
+Altitude: 160.3m
+
+---------------GNGGA---------------
+Time: 16:35:56 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:35:40 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:35:58 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:35:59 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 159.8m
+
+---------------GNGGA---------------
+Time: 16:36:01 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:36:03 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:36:04 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 159.3m
+
+---------------GNGGA---------------
+Time: 16:36:06 (UTC Time)
+Latitude: 43.709208°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 159.2m
+
+---------------GNGGA---------------
+Time: 16:36:08 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 159.5m
+
+---------------GNGGA---------------
+Time: 16:36:09 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:36:11 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.4049°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:36:13 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:36:18 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 161.2m
+
+---------------GNGGA---------------
+Time: 16:36:20 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:36:22 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 160.8m
+
+---------------GNGGA---------------
+Time: 16:36:23 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:36:25 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:36:27 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 159.2m
+
+---------------GNGGA---------------
+Time: 16:36:30 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 159.2m
+
+---------------GNGGA---------------
+Time: 16:36:32 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:36:34 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 158.8m
+
+---------------GNGGA---------------
+Time: 16:36:36 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:36:37 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 158.8m
+
+---------------GNGGA---------------
+Time: 16:36:39 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 158.4m
+
+---------------GNGGA---------------
+Time: 16:36:41 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404907°W
+Satellites: 12
+Altitude: 159.3m
+
+---------------GNGGA---------------
+Time: 16:36:43 (UTC Time)
+Latitude: 43.709198°N
+Longitude: -79.404914°W
+Satellites: 12
+Altitude: 159.8m
+
+---------------GNGGA---------------
+Time: 16:36:44 (UTC Time)
+Latitude: 43.709197°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 160.3m
+
+---------------GNGGA---------------
+Time: 16:36:46 (UTC Time)
+Latitude: 43.709197°N
+Longitude: -79.404914°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:36:48 (UTC Time)
+Latitude: 43.709196°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:36:50 (UTC Time)
+Latitude: 43.709194°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:36:55 (UTC Time)
+Latitude: 43.709193°N
+Longitude: -79.404926°W
+Satellites: 12
+Altitude: 162.0m
+
+---------------GNGGA---------------
+Time: 16:36:57 (UTC Time)
+Latitude: 43.709193°N
+Longitude: -79.40493°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:36:59 (UTC Time)
+Latitude: 43.709194°N
+Longitude: -79.404931°W
+Satellites: 12
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:37:01 (UTC Time)
+Latitude: 43.709195°N
+Longitude: -79.404926°W
+Satellites: 12
+Altitude: 161.9m
+
+---------------GNGGA---------------
+Time: 16:37:03 (UTC Time)
+Latitude: 43.709195°N
+Longitude: -79.404927°W
+Satellites: 12
+Altitude: 162.0m
+
+---------------GNGGA---------------
+Time: 16:37:04 (UTC Time)
+Latitude: 43.709196°N
+Longitude: -79.404925°W
+Satellites: 12
+Altitude: 161.8m
+
+---------------GNGGA---------------
+Time: 16:37:06 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:37:08 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.40492°W
+Satellites: 12
+Altitude: 160.4m
+
+---------------GNGGA---------------
+Time: 16:37:09 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 201m
+
+---------------GNGGA---------------
+Time: 16:37:11 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 161.1m
+
+---------------GNGGA---------------
+Time: 16:37:13 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:37:15 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 161.2m
+
+---------------GNGGA---------------
+Time: 16:37:16 (UTC Time)
+Latitude: 43.709199°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 161.1m
+
+---------------GNGGA---------------
+Time: 16:37:18 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.40492°W
+Satellites: 12
+Altitude: 160.8m
+
+---------------GNGGA---------------
+Time: 16:37:20 (UTC Time)
+Latitude: 43.709201°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:37:22 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404921°W
+Satellites: 12
+Altitude: 160.6m
+
+---------------GNGGA---------------
+Time: 16:37:24 (UTC Time)
+Latitude: 43.709202°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:37:25 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:37:27 (UTC Time)
+Latitude: 43.709203°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 161.1m
+
+---------------GNGGA---------------
+Time: 16:37:29 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 161.0m
+
+---------------GNGGA---------------
+Time: 16:37:30 (UTC Time)
+Latitude: 43.709204°N
+Longitude: N/A°07
+Satellites: 49
+Altitude: 23m
+
+---------------GNGGA---------------
+Time: 16:37:32 (UTC Time)
+Latitude: 43.709204°N
+Longitude: -79.404922°W
+Satellites: 12
+Altitude: 160.4m
+
+---------------GNGGA---------------
+Time: 16:37:34 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:37:36 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.40492°W
+Satellites: 12
+Altitude: 160.3m
+
+---------------GNGGA---------------
+Time: 16:37:39 (UTC Time)
+Latitude: 43.709214°N
+Longitude: N/A°76
+Satellites: 31
+Altitude: 32m
+
+---------------GNGGA---------------
+Time: 16:37:41 (UTC Time)
+Latitude: 43.709212°N
+Longitude: -79.404913°W
+Satellites: 12
+Altitude: 160.6m
+
+---------------GNGGA---------------
+Time: 16:37:43 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 159.8m
+
+---------------GNGGA---------------
+Time: 16:37:48 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:37:50 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:37:52 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 157.9m
+
+---------------GNGGA---------------
+Time: 16:37:53 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 157.8m
+
+---------------GNGGA---------------
+Time: 16:37:55 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404885°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:37:57 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:37:59 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:38:00 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:38:02 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:38:04 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:38:06 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.40488°W
+Satellites: 12
+Altitude: 160.5m
+
+---------------GNGGA---------------
+Time: 16:38:07 (UTC Time)
+Latitude: 43.709222°N
+Longitude: -79.404878°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:38:09 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404874°W
+Satellites: 12
+Altitude: 161.4m
+
+---------------GNGGA---------------
+Time: 16:38:11 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404871°W
+Satellites: 12
+Altitude: 161.3m
+
+---------------GNGGA---------------
+Time: 16:38:13 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404868°W
+Satellites: 12
+Altitude: 161.1m
+
+---------------GNGGA---------------
+Time: 16:38:15 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404866°W
+Satellites: 12
+Altitude: 161.4m
+
+---------------GNGGA---------------
+Time: 16:38:16 (UTC Time)
+Latitude: 43.709212°N
+Longitude: N/A°21
+Satellites: 
+Altitude: m
+
+---------------GNGGA---------------
+Time: 16:38:18 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404867°W
+Satellites: 11
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:38:20 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404866°W
+Satellites: 11
+Altitude: 162.5m
+
+---------------GNGGA---------------
+Time: 16:38:22 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404864°W
+Satellites: 12
+Altitude: 163.8m
+
+---------------GNGGA---------------
+Time: N/A (UTC Time)
+Latitude: N/A°80
+Longitude: N/A°037
+Satellites: 87
+Altitude: 291m
+
+---------------GNGGA---------------
+Time: 16:38:27 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404862°W
+Satellites: 12
+Altitude: 168.2m
+
+---------------GNGGA---------------
+Time: 16:38:31 (UTC Time)
+Latitude: 43.709195°N
+Longitude: -79.404856°W
+Satellites: 12
+Altitude: 166.3m
+
+---------------GNGGA---------------
+Time: 16:38:33 (UTC Time)
+Latitude: 43.709158°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 165.5m
+
+---------------GNGGA---------------
+Time: 16:38:34 (UTC Time)
+Latitude: 43.709142°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 163.6m
+
+---------------GNGGA---------------
+Time: 16:38:36 (UTC Time)
+Latitude: 43.709168°N
+Longitude: -79.405009°W
+Satellites: 12
+Altitude: 160.1m
+
+---------------GNGGA---------------
+Time: 16:38:38 (UTC Time)
+Latitude: 43.709177°N
+Longitude: -79.405028°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:38:40 (UTC Time)
+Latitude: 43.709174°N
+Longitude: -79.405034°W
+Satellites: 12
+Altitude: 159.9m
+
+---------------GNGGA---------------
+Time: 16:38:41 (UTC Time)
+Latitude: 43.709174°N
+Longitude: -79.405035°W
+Satellites: 12
+Altitude: 159.6m
+
+---------------GNGGA---------------
+Time: 16:38:43 (UTC Time)
+Latitude: 43.709175°N
+Longitude: -79.405038°W
+Satellites: 12
+Altitude: 159.3m
+
+---------------GNGGA---------------
+Time: 16:38:45 (UTC Time)
+Latitude: 43.709176°N
+Longitude: -79.405039°W
+Satellites: 12
+Altitude: 159.2m
+
+---------------GNGGA---------------
+Time: 16:38:47 (UTC Time)
+Latitude: 43.709177°N
+Longitude: -79.405041°W
+Satellites: 12
+Altitude: 158.7m
+
+---------------GNGGA---------------
+Time: 16:38:48 (UTC Time)
+Latitude: 43.709177°N
+Longitude: -79.405042°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:38:50 (UTC Time)
+Latitude: 43.709175°N
+Longitude: -79.405043°W
+Satellites: 12
+Altitude: 158.9m
+
+---------------GNGGA---------------
+Time: 16:38:52 (UTC Time)
+Latitude: 43.709173°N
+Longitude: -79.40503°W
+Satellites: 12
+Altitude: 159.7m
+
+---------------GNGGA---------------
+Time: 16:38:53 (UTC Time)
+Latitude: 43.709173°N
+Longitude: -79.40503°W
+Satellites: 12
+Altitude: 159.5m
+
+---------------GNGGA---------------
+Time: 16:38:55 (UTC Time)
+Latitude: 43.70918°N
+Longitude: -79.405009°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:38:57 (UTC Time)
+Latitude: 43.709191°N
+Longitude: -79.404978°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:38:59 (UTC Time)
+Latitude: 43.709206°N
+Longitude: -79.404954°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:39:00 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:39:02 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404925°W
+Satellites: 12
+Altitude: 158.5m
+
+---------------GNGGA---------------
+Time: 16:39:04 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404915°W
+Satellites: 12
+Altitude: 158.2m
+
+---------------GNGGA---------------
+Time: 16:39:09 (UTC Time)
+Latitude: 43.709222°N
+Longitude: -79.404918°W
+Satellites: 12
+Altitude: 158.1m
+
+---------------GNGGA---------------
+Time: 16:39:11 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404918°W
+Satellites: 12
+Altitude: 157.9m
+
+---------------GNGGA---------------
+Time: 16:39:13 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404919°W
+Satellites: 12
+Altitude: 157.8m
+
+---------------GNGGA---------------
+Time: 16:39:15 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 157.6m
+
+---------------GNGGA---------------
+Time: 16:39:16 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404916°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:39:22 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 156.5m
+
+---------------GNGGA---------------
+Time: 16:39:24 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 156.3m
+
+---------------GNGGA---------------
+Time: 16:39:26 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 156.2m
+
+---------------GNGGA---------------
+Time: 16:39:28 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.4049°W
+Satellites: 12
+Altitude: 156.5m
+
+---------------GNGGA---------------
+Time: 16:39:29 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404903°W
+Satellites: 12
+Altitude: 156.4m
+
+---------------GNGGA---------------
+Time: 16:39:31 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:39:33 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 156.5m
+
+---------------GNGGA---------------
+Time: 16:39:35 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:39:36 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 156.201m
+
+---------------GNGGA---------------
+Time: 16:39:38 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:39:40 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404906°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:39:42 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404907°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:39:45 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:39:47 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:39:49 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 157.0m
+
+---------------GNGGA---------------
+Time: 16:39:52 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 156.6m
+
+---------------GNGGA---------------
+Time: 16:39:54 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:39:56 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 156.9m
+
+---------------GNGGA---------------
+Time: 16:39:58 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 156.9m
+
+---------------GNGGA---------------
+Time: 16:40:01 (UTC Time)
+Latitude: 43.709223°N
+Longitude: -79.404908°W
+Satellites: 12
+Altitude: 156.7m
+
+---------------GNGGA---------------
+Time: 16:40:03 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404907°W
+Satellites: 12
+Altitude: 156.3m
+
+---------------GNGGA---------------
+Time: 16:40:05 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404905°W
+Satellites: 12
+Altitude: 155.7m
+
+---------------GNGGA---------------
+Time: 16:40:07 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 154.9m
+
+---------------GNGGA---------------
+Time: 16:40:08 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 154.6m
+
+---------------GNGGA---------------
+Time: 16:40:10 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 154.2m
+
+---------------GNGGA---------------
+Time: 16:40:12 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 154.2m
+
+---------------GNGGA---------------
+Time: 16:40:13 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 154.2m
+
+---------------GNGGA---------------
+Time: 16:40:15 (UTC Time)
+Latitude: 43.709234°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 155.0m
+
+---------------GNGGA---------------
+Time: 16:40:17 (UTC Time)
+Latitude: 43.709234°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 154.9m
+
+---------------GNGGA---------------
+Time: 16:40:18 (UTC Time)
+Latitude: 43.709233°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 154.9m
+
+---------------GNGGA---------------
+Time: 16:40:20 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 155.2m
+
+---------------GNGGA---------------
+Time: 16:40:22 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 155.4m
+
+---------------GNGGA---------------
+Time: 16:40:25 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 155.6m
+
+---------------GNGGA---------------
+Time: 16:40:27 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 155.4m
+
+---------------GNGGA---------------
+Time: 16:40:29 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 155.4m
+
+---------------GNGGA---------------
+Time: 16:40:30 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 155.5m
+
+---------------GNGGA---------------
+Time: 16:40:32 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 155.7m
+
+---------------GNGGA---------------
+Time: 16:40:34 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 155.9m
+
+---------------GNGGA---------------
+Time: 16:40:35 (UTC Time)
+Latitude: 43.70923°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 156.1m
+
+---------------GNGGA---------------
+Time: 16:40:37 (UTC Time)
+Latitude: 43.709229°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 156.5m
+
+---------------GNGGA---------------
+Time: 16:40:39 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 156.8m
+
+---------------GNGGA---------------
+Time: 16:40:41 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 157.1m
+
+---------------GNGGA---------------
+Time: 16:40:42 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:40:44 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:40:46 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 157.7m
+
+---------------GNGGA---------------
+Time: 16:40:48 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404896°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:40:49 (UTC Time)
+Latitude: 43.709227°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:40:51 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:40:53 (UTC Time)
+Latitude: 43.709225°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 157.7m
+
+---------------GNGGA---------------
+Time: 16:40:54 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 157.8m
+
+---------------GNGGA---------------
+Time: 16:40:56 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 157.6m
+
+---------------GNGGA---------------
+Time: 16:40:58 (UTC Time)
+Latitude: 43.709224°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:41:00 (UTC Time)
+Latitude: 43.709219°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:41:01 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 157.9m
+
+---------------GNGGA---------------
+Time: 16:41:03 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404895°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:41:05 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 157.5m
+
+---------------GNGGA---------------
+Time: 16:41:08 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404904°W
+Satellites: 12
+Altitude: 158.2m
+
+---------------GNGGA---------------
+Time: 16:41:10 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404909°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:41:12 (UTC Time)
+Latitude: 43.709232°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 158.8m
+
+---------------GNGGA---------------
+Time: 16:41:14 (UTC Time)
+Latitude: 43.709234°N
+Longitude: -79.404912°W
+Satellites: 12
+Altitude: 163.7m
+
+---------------GNGGA---------------
+Time: 16:41:15 (UTC Time)
+Latitude: 43.70924°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 165.8m
+
+---------------GNGGA---------------
+Time: 16:41:17 (UTC Time)
+Latitude: 43.709252°N
+Longitude: -79.4049°W
+Satellites: 12
+Altitude: 170.6m
+
+---------------GNGGA---------------
+Time: 16:41:19 (UTC Time)
+Latitude: 43.709266°N
+Longitude: -79.404888°W
+Satellites: 12
+Altitude: 176.6m
+
+---------------GNGGA---------------
+Time: 16:41:21 (UTC Time)
+Latitude: 43.709278°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 183.5m
+
+---------------GNGGA---------------
+Time: 16:41:22 (UTC Time)
+Latitude: 43.70929°N
+Longitude: -79.404868°W
+Satellites: 12
+Altitude: 187.5m
+
+---------------GNGGA---------------
+Time: 16:41:24 (UTC Time)
+Latitude: 43.709292°N
+Longitude: -79.404858°W
+Satellites: 12
+Altitude: 193.1m
+
+---------------GNGGA---------------
+Time: 16:41:26 (UTC Time)
+Latitude: 43.709288°N
+Longitude: -79.404861°W
+Satellites: 12
+Altitude: 199.7m
+
+---------------GNGGA---------------
+Time: 16:41:31 (UTC Time)
+Latitude: 43.709273°N
+Longitude: -79.404853°W
+Satellites: 12
+Altitude: 212.0m
+
+---------------GNGGA---------------
+Time: 16:41:33 (UTC Time)
+Latitude: 43.709274°N
+Longitude: -79.404844°W
+Satellites: 12
+Altitude: 212.7m
+
+---------------GNGGA---------------
+Time: 16:41:36 (UTC Time)
+Latitude: 43.709261°N
+Longitude: -79.404829°W
+Satellites: 12
+Altitude: 214.2m
+
+---------------GNGGA---------------
+Time: 16:41:38 (UTC Time)
+Latitude: 43.709263°N
+Longitude: -79.404824°W
+Satellites: 12
+Altitude: 210.0m
+
+---------------GNGGA---------------
+Time: 16:41:40 (UTC Time)
+Latitude: 43.709255°N
+Longitude: -79.404826°W
+Satellites: 12
+Altitude: 207.3m
+
+---------------GNGGA---------------
+Time: 16:41:42 (UTC Time)
+Latitude: 43.709259°N
+Longitude: -79.404823°W
+Satellites: 11
+Altitude: 204.7m
+
+---------------GNGGA---------------
+Time: 16:41:43 (UTC Time)
+Latitude: 43.709258°N
+Longitude: -79.404823°W
+Satellites: 12
+Altitude: 203.8m
+
+---------------GNGGA---------------
+Time: 16:41:45 (UTC Time)
+Latitude: 43.709264°N
+Longitude: -79.404824°W
+Satellites: 12
+Altitude: 204.6m
+
+---------------GNGGA---------------
+Time: 16:41:47 (UTC Time)
+Latitude: 43.709263°N
+Longitude: -79.404826°W
+Satellites: 12
+Altitude: 206.9m
+
+---------------GNGGA---------------
+Time: 16:41:50 (UTC Time)
+Latitude: 43.709259°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 218.7m
+
+---------------GNGGA---------------
+Time: 16:41:52 (UTC Time)
+Latitude: 43.709256°N
+Longitude: -79.404853°W
+Satellites: 12
+Altitude: 224.5m
+
+---------------GNGGA---------------
+Time: 16:41:54 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404853°W
+Satellites: 12
+Altitude: 227.9m
+
+---------------GNGGA---------------
+Time: 16:41:56 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.40485°W
+Satellites: 12
+Altitude: 224.2m
+
+---------------GNGGA---------------
+Time: 16:41:57 (UTC Time)
+Latitude: 43.709255°N
+Longitude: -79.404851°W
+Satellites: 12
+Altitude: 221.3m
+
+---------------GNGGA---------------
+Time: 16:41:59 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404858°W
+Satellites: 12
+Altitude: 215.9m
+
+---------------GNGGA---------------
+Time: 16:42:01 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404866°W
+Satellites: 12
+Altitude: 210.3m
+
+---------------GNGGA---------------
+Time: 16:42:02 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404869°W
+Satellites: 12
+Altitude: 207.4m
+
+---------------GNGGA---------------
+Time: 16:42:04 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404874°W
+Satellites: 12
+Altitude: 204.4m
+
+---------------GNGGA---------------
+Time: 16:42:06 (UTC Time)
+Latitude: 43.70925°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 201.6m
+
+---------------GNGGA---------------
+Time: 16:42:08 (UTC Time)
+Latitude: 43.709249°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 200.8m
+
+---------------GNGGA---------------
+Time: 16:42:09 (UTC Time)
+Latitude: 43.709248°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 200.8m
+
+---------------GNGGA---------------
+Time: 16:42:11 (UTC Time)
+Latitude: 43.709247°N
+Longitude: -79.404874°W
+Satellites: 12
+Altitude: 199.8m
+
+---------------GNGGA---------------
+Time: 16:42:14 (UTC Time)
+Latitude: 43.709244°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 203.4m
+
+---------------GNGGA---------------
+Time: 16:42:16 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 208.8m
+
+---------------GNGGA---------------
+Time: 16:42:19 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 217.4m
+
+---------------GNGGA---------------
+Time: 16:42:21 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 224.8m
+
+---------------GNGGA---------------
+Time: 16:42:23 (UTC Time)
+Latitude: 43.709241°N
+Longitude: -79.404898°W
+Satellites: 12
+Altitude: 231.9m
+
+---------------GNGGA---------------
+Time: 16:42:24 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404899°W
+Satellites: 12
+Altitude: 235.4m
+
+---------------GNGGA---------------
+Time: 16:42:26 (UTC Time)
+Latitude: 43.709241°N
+Longitude: -79.404901°W
+Satellites: 12
+Altitude: 241.6m
+
+---------------GNGGA---------------
+Time: 16:42:28 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404911°W
+Satellites: 12
+Altitude: 248.3m
+
+---------------GNGGA---------------
+Time: 16:42:30 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 255.2m
+
+---------------GNGGA---------------
+Time: 16:42:35 (UTC Time)
+Latitude: 43.709246°N
+Longitude: -79.404928°W
+Satellites: 12
+Altitude: 271.4m
+
+---------------GNGGA---------------
+Time: 16:42:37 (UTC Time)
+Latitude: 43.709249°N
+Longitude: -79.404931°W
+Satellites: 12
+Altitude: 277.8m
+
+---------------GNGGA---------------
+Time: 16:42:39 (UTC Time)
+Latitude: 43.709253°N
+Longitude: -79.404935°W
+Satellites: 12
+Altitude: 284.4m
+
+---------------GNGGA---------------
+Time: 16:42:41 (UTC Time)
+Latitude: 43.709255°N
+Longitude: -79.404936°W
+Satellites: 12
+Altitude: 290.6m
+
+---------------GNGGA---------------
+Time: 16:42:42 (UTC Time)
+Latitude: 43.709257°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 293.8m
+
+---------------GNGGA---------------
+Time: 16:42:44 (UTC Time)
+Latitude: 43.709261°N
+Longitude: -79.40494°W
+Satellites: 12
+Altitude: 300.1m
+
+---------------GNGGA---------------
+Time: 16:42:46 (UTC Time)
+Latitude: 43.709263°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 306.4m
+
+---------------GNGGA---------------
+Time: 16:42:48 (UTC Time)
+Latitude: 43.709265°N
+Longitude: -79.404943°W
+Satellites: 12
+Altitude: 312.8m
+
+---------------GNGGA---------------
+Time: 16:42:49 (UTC Time)
+Latitude: 43.709267°N
+Longitude: -79.404946°W
+Satellites: 12
+Altitude: 316.0m
+
+---------------GNGGA---------------
+Time: 16:42:51 (UTC Time)
+Latitude: 43.70927°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 322.3m
+
+---------------GNGGA---------------
+Time: 16:42:53 (UTC Time)
+Latitude: 43.709272°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 328.6m
+
+---------------GNGGA---------------
+Time: 16:42:56 (UTC Time)
+Latitude: 43.709273°N
+Longitude: -79.404955°W
+Satellites: 12
+Altitude: 338.1m
+
+---------------GNGGA---------------
+Time: 16:42:58 (UTC Time)
+Latitude: 43.709274°N
+Longitude: -79.404956°W
+Satellites: 12
+Altitude: 344.3m
+
+---------------GNGGA---------------
+Time: 16:43:00 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404956°W
+Satellites: 12
+Altitude: 350.4m
+
+---------------GNGGA---------------
+Time: 16:43:03 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404958°W
+Satellites: 12
+Altitude: 359.7m
+
+---------------GNGGA---------------
+Time: 16:43:05 (UTC Time)
+Latitude: 43.709276°N
+Longitude: -79.404958°W
+Satellites: 12
+Altitude: 366.0m
+
+---------------GNGGA---------------
+Time: 16:43:07 (UTC Time)
+Latitude: 43.709275°N
+Longitude: -79.404957°W
+Satellites: 12
+Altitude: 372.0m
+
+---------------GNGGA---------------
+Time: 16:43:10 (UTC Time)
+Latitude: 43.709277°N
+Longitude: N/A°4342.55656
+Satellites: 07924.29761
+Altitude: 164309.00m
+
+---------------GNGGA---------------
+Time: 16:43:12 (UTC Time)
+Latitude: 43.709278°N
+Longitude: -79.404962°W
+Satellites: 12
+Altitude: 387.6m
+
+---------------GNGGA---------------
+Time: 16:43:14 (UTC Time)
+Latitude: 43.709278°N
+Longitude: -79.40496°W
+Satellites: 12
+Altitude: 393.7m
+
+---------------GNGGA---------------
+Time: 16:43:16 (UTC Time)
+Latitude: 43.709274°N
+Longitude: -79.404953°W
+Satellites: 12
+Altitude: 399.5m
+
+---------------GNGGA---------------
+Time: 16:43:17 (UTC Time)
+Latitude: 43.709271°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 402.4m
+
+---------------GNGGA---------------
+Time: 16:43:19 (UTC Time)
+Latitude: 43.70927°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 410.0m
+
+---------------GNGGA---------------
+Time: 16:43:21 (UTC Time)
+Latitude: 43.709268°N
+Longitude: -79.404948°W
+Satellites: 12
+Altitude: 419.4m
+
+---------------GNGGA---------------
+Time: 16:43:26 (UTC Time)
+Latitude: 43.70926°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 444.1m
+
+---------------GNGGA---------------
+Time: 16:43:28 (UTC Time)
+Latitude: 43.709257°N
+Longitude: -79.404948°W
+Satellites: 12924.29671
+Altitude: 0.033m
+
+---------------GNGGA---------------
+Time: 16:43:30 (UTC Time)
+Latitude: 43.709254°N
+Longitude: -79.404945°W
+Satellites: 12
+Altitude: 462.6m
+
+---------------GNGGA---------------
+Time: 16:43:31 (UTC Time)
+Latitude: 43.709252°N
+Longitude: -79.404944°W
+Satellites: 12
+Altitude: 467.3m
+
+---------------GNGGA---------------
+Time: 16:43:33 (UTC Time)
+Latitude: 43.709248°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 476.3m
+
+---------------GNGGA---------------
+Time: 16:43:36 (UTC Time)
+Latitude: 43.709244°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 489.2m
+
+---------------GNGGA---------------
+Time: 16:43:38 (UTC Time)
+Latitude: 43.709243°N
+Longitude: -79.404937°W
+Satellites: 12
+Altitude: 497.4m
+
+---------------GNGGA---------------
+Time: 16:43:40 (UTC Time)
+Latitude: 43.709242°N
+Longitude: -79.404934°W
+Satellites: 12
+Altitude: 505.2m
+
+---------------GNGGA---------------
+Time: 16:43:43 (UTC Time)
+Latitude: 43.70924°N
+Longitude: -79.404929°W
+Satellites: 12
+Altitude: 517.3m
+
+---------------GNGGA---------------
+Time: 16:43:45 (UTC Time)
+Latitude: 43.709237°N
+Longitude: -79.404927°W
+Satellites: 12
+Altitude: 525.1m
+
+---------------GNGGA---------------
+Time: 16:43:47 (UTC Time)
+Latitude: 43.709232°N
+Longitude: -79.404928°W
+Satellites: 12
+Altitude: 532.5m
+
+---------------GNGGA---------------
+Time: 16:43:48 (UTC Time)
+Latitude: 43.709231°N
+Longitude: -79.404931°W
+Satellites: 12
+Altitude: 536.1m
+
+---------------GNGGA---------------
+Time: 16:43:50 (UTC Time)
+Latitude: 43.709228°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 543.1m
+
+---------------GNGGA---------------
+Time: 16:43:55 (UTC Time)
+Latitude: 43.709226°N
+Longitude: -79.40495°W
+Satellites: 12
+Altitude: 560.6m
+
+---------------GNGGA---------------
+Time: 16:44:00 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404934°W
+Satellites: 12
+Altitude: 581.9m
+
+---------------GNGGA---------------
+Time: 16:44:02 (UTC Time)
+Latitude: 43.709196°N
+Longitude: -79.404925°W
+Satellites: 12
+Altitude: 590.7m
+
+---------------GNGGA---------------
+Time: 16:44:05 (UTC Time)
+Latitude: 43.709122°N
+Longitude: -79.405089°W
+Satellites: 12
+Altitude: 601.2m
+
+---------------GNGGA---------------
+Time: 16:44:07 (UTC Time)
+Latitude: 43.709081°N
+Longitude: -79.405219°W
+Satellites: 12
+Altitude: 606.7m
+
+---------------GNGGA---------------
+Time: 16:44:09 (UTC Time)
+Latitude: 43.709077°N
+Longitude: -79.405237°W
+Satellites: 12
+Altitude: 607.2m
+
+---------------GNGGA---------------
+Time: 16:44:14 (UTC Time)
+Latitude: 43.709087°N
+Longitude: -79.405224°W
+Satellites: 12
+Altitude: 612.7m
+
+---------------GNGGA---------------
+Time: 16:44:16 (UTC Time)
+Latitude: 43.709089°N
+Longitude: -79.405225°W
+Satellites: 12
+Altitude: 619.2m
+
+---------------GNGGA---------------
+Time: 16:44:18 (UTC Time)
+Latitude: 43.709091°N
+Longitude: -79.405229°W
+Satellites: 12
+Altitude: 628.2m
+
+---------------GNGGA---------------
+Time: 16:44:21 (UTC Time)
+Latitude: 43.709088°N
+Longitude: -79.405229°W
+Satellites: 12
+Altitude: 642.1m
+
+---------------GNGGA---------------
+Time: 16:44:23 (UTC Time)
+Latitude: 43.709086°N
+Longitude: -79.405217°W
+Satellites: 12
+Altitude: 650.4m
+
+---------------GNGGA---------------
+Time: 16:44:24 (UTC Time)
+Latitude: 43.709083°N
+Longitude: -79.405211°W
+Satellites: 12
+Altitude: 652.7m
+
+---------------GNGGA---------------
+Time: 16:44:26 (UTC Time)
+Latitude: 43.709071°N
+Longitude: -79.405211°W
+Satellites: 12
+Altitude: 655.8m
+
+---------------GNGGA---------------
+Time: 16:44:28 (UTC Time)
+Latitude: 43.709058°N
+Longitude: -79.405219°W
+Satellites: 12
+Altitude: 658.3m
+
+---------------GNGGA---------------
+Time: 16:44:31 (UTC Time)
+Latitude: 43.709059°N
+Longitude: -79.405231°W
+Satellites: 12
+Altitude: 662.4m
+
+---------------GNGGA---------------
+Time: 16:44:33 (UTC Time)
+Latitude: 43.70906°N
+Longitude: -79.405234°W
+Satellites: 12
+Altitude: 664.5m
+
+---------------GNGGA---------------
+Time: 16:44:35 (UTC Time)
+Latitude: 43.709061°N
+Longitude: -79.405237°W
+Satellites: 12
+Altitude: 666.4m
+
+---------------GNGGA---------------
+Time: 16:44:36 (UTC Time)
+Latitude: 43.709062°N
+Longitude: -79.40524°W
+Satellites: 12
+Altitude: 667.1m
+
+---------------GNGGA---------------
+Time: 16:44:38 (UTC Time)
+Latitude: 43.709057°N
+Longitude: -79.405238°W
+Satellites: 12
+Altitude: 667.3m
+
+---------------GNGGA---------------
+Time: 16:44:41 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405225°W
+Satellites: 12
+Altitude: 664.9m
+
+---------------GNGGA---------------
+Time: 16:44:43 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405219°W
+Satellites: 12
+Altitude: 663.5m
+
+---------------GNGGA---------------
+Time: 16:44:45 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405214°W
+Satellites: 12
+Altitude: 662.1m
+
+---------------GNGGA---------------
+Time: 16:44:46 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405212°W
+Satellites: 12
+Altitude: 6681m
+
+---------------GNGGA---------------
+Time: 16:44:48 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.40521°W
+Satellites: 12
+Altitude: 660.4D*3Dm
+
+---------------GNGGA---------------
+Time: 16:44:50 (UTC Time)
+Latitude: 43.709054°N
+Longitude: -79.405207°W
+Satellites: 12
+Altitude: 659.m
+
+---------------GNGGA---------------
+Time: 16:44:51 (UTC Time)
+Latitude: 43.709053°N
+Longitude: -79.405206°W
+Satellites: 12
+Altitude: 658.9m
+
+---------------GNGGA---------------
+Time: 16:44:53 (UTC Time)
+Latitude: 43.709052°N
+Longitude: -79.405203°W
+Satellites: 12
+Altitude: 658.2m
+
+---------------GNGGA---------------
+Time: 16:44:55 (UTC Time)
+Latitude: 43.709052°N
+Longitude: -79.405203°W
+Satellites: 12
+Altitude: 657.4m
+
+---------------GNGGA---------------
+Time: 16:45:00 (UTC Time)
+Latitude: 43.709051°N
+Longitude: -79.405198°W
+Satellites: 12
+Altitude: 655.9m
+
+---------------GNGGA---------------
+Time: 16:45:02 (UTC Time)
+Latitude: 43.709051°N
+Longitude: -79.405195°W
+Satellites: 12
+Altitude: 655.5m
+
+---------------GNGGA---------------
+Time: 16:45:03 (UTC Time)
+Latitude: 43.709051°N
+Longitude: -79.405194°W
+Satellites: 12
+Altitude: 655.3m
+
+---------------GNGGA---------------
+Time: 16:45:05 (UTC Time)
+Latitude: 43.709049°N
+Longitude: -79.40519°W
+Satellites: 12
+Altitude: 648.8m
+
+---------------GNGGA---------------
+Time: 16:45:12 (UTC Time)
+Latitude: 43.708788°N
+Longitude: -79.404851°W
+Satellites: 12
+Altitude: 617.9m
+
+---------------GNGGA---------------
+Time: 16:45:19 (UTC Time)
+Latitude: 43.708767°N
+Longitude: -79.40483°W
+Satellites: 12
+Altitude: 594.2m
+
+---------------GNGGA---------------
+Time: 16:45:21 (UTC Time)
+Latitude: 43.708767°N
+Longitude: -79.404831°W
+Satellites: 12
+Altitude: 587.7m
+
+---------------GNGGA---------------
+Time: 16:45:23 (UTC Time)
+Latitude: 43.708805°N
+Longitude: -79.404844°W
+Satellites: 12
+Altitude: 581.5m
+
+---------------GNGGA---------------
+Time: 16:45:30 (UTC Time)
+Latitude: 43.708801°N
+Longitude: -79.404845°W
+Satellites: 12
+Altitude: 559.9m
+
+---------------GNGGA---------------
+Time: 16:45:32 (UTC Time)
+Latitude: 43.708801°N
+Longitude: -79.404845°W
+Satellites: 12
+Altitude: 553.8m
+
+---------------GNGGA---------------
+Time: 16:45:34 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 547.7m
+
+---------------GNGGA---------------
+Time: 16:45:35 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 544.6m
+
+---------------GNGGA---------------
+Time: 16:45:37 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 538.6m
+
+---------------GNGGA---------------
+Time: 16:45:39 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 532.5m
+
+---------------GNGGA---------------
+Time: 16:45:40 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 529.4m
+
+---------------GNGGA---------------
+Time: 16:45:42 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 523.3m
+
+---------------GNGGA---------------
+Time: 16:45:47 (UTC Time)
+Latitude: 43.708804°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 508.1m
+
+---------------GNGGA---------------
+Time: 16:45:49 (UTC Time)
+Latitude: 43.708804°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 502.0m
+
+---------------GNGGA---------------
+Time: 16:45:51 (UTC Time)
+Latitude: 43.708803°N
+Longitude: -79.404851°W
+Satellites: 12
+Altitude: 495.9m
+
+---------------GNGGA---------------
+Time: 16:45:52 (UTC Time)
+Latitude: 43.708801°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 492.8m
+
+---------------GNGGA---------------
+Time: 16:45:54 (UTC Time)
+Latitude: 43.708792°N
+Longitude: -79.404854°W
+Satellites: 12
+Altitude: 486.9m
+
+---------------GNGGA---------------
+Time: 16:45:56 (UTC Time)
+Latitude: 43.708793°N
+Longitude: -79.404849°W
+Satellites: 12
+Altitude: 481.1m
+
+---------------GNGGA---------------
+Time: 16:45:57 (UTC Time)
+Latitude: 43.708796°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 478.3m
+
+---------------GNGGA---------------
+Time: 16:45:59 (UTC Time)
+Latitude: 43.708797°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 472.6m
+
+---------------GNGGA---------------
+Time: 16:46:01 (UTC Time)
+Latitude: 43.708796°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 467.0m
+
+---------------GNGGA---------------
+Time: 16:46:02 (UTC Time)
+Latitude: 43.708797°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 464.0m
+
+---------------GNGGA---------------
+Time: 16:46:04 (UTC Time)
+Latitude: 43.708799°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 458.0m
+
+---------------GNGGA---------------
+Time: 16:46:06 (UTC Time)
+Latitude: 43.7088°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 452.0m
+
+---------------GNGGA---------------
+Time: 16:46:07 (UTC Time)
+Latitude: 43.708801°N
+Longitude: -79.404848°W
+Satellites: 12
+Altitude: 449.1m
+
+---------------GNGGA---------------
+Time: 16:46:09 (UTC Time)
+Latitude: 43.708802°N
+Longitude: -79.40485°W
+Satellites: 12
+Altitude: 443.2m
+
+---------------GNGGA---------------
+Time: 16:46:11 (UTC Time)
+Latitude: 43.708862°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 437.6m
+
+---------------GNGGA---------------
+Time: 16:46:12 (UTC Time)
+Latitude: 43.708889°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 434.9m
+
+---------------GNGGA---------------
+Time: 16:46:14 (UTC Time)
+Latitude: 43.708888°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 429.2m
+
+---------------GNGGA---------------
+Time: 16:46:16 (UTC Time)
+Latitude: 43.708881°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 423.3m
+
+---------------GNGGA---------------
+Time: 16:46:19 (UTC Time)
+Latitude: 43.708874°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 414.5m
+
+---------------GNGGA---------------
+Time: 16:46:21 (UTC Time)
+Latitude: 43.708873°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 408.5m
+
+---------------GNGGA---------------
+Time: 16:46:23 (UTC Time)
+Latitude: 43.708874°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 402.6m
+
+---------------GNGGA---------------
+Time: 16:46:24 (UTC Time)
+Latitude: 43.708874°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 399.6m
+
+---------------GNGGA---------------
+Time: 16:46:26 (UTC Time)
+Latitude: 43.708873°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 393.7m
+
+---------------GNGGA---------------
+Time: 16:46:28 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 387.7m
+
+---------------GNGGA---------------
+Time: 16:46:29 (UTC Time)
+Latitude: 43.708872°N
+Longitude: N/A°121
+Satellites: 71
+Altitude: 003m
+
+---------------GNGGA---------------
+Time: 16:46:31 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 378.5m
+
+---------------GNGGA---------------
+Time: 16:46:33 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 372.5m
+
+---------------GNGGA---------------
+Time: 16:46:36 (UTC Time)
+Latitude: 43.708873°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 363.5m
+
+---------------GNGGA---------------
+Time: 16:46:38 (UTC Time)
+Latitude: 43.708873°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 357.6m
+
+---------------GNGGA---------------
+Time: 16:46:40 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 351.6m
+
+---------------GNGGA---------------
+Time: 16:46:43 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 342.7m
+
+---------------GNGGA---------------
+Time: 16:46:45 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404894°W
+Satellites: 12
+Altitude: 336.8m
+
+---------------GNGGA---------------
+Time: 16:46:46 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404893°W
+Satellites: 12
+Altitude: 333.8m
+
+---------------GNGGA---------------
+Time: 16:46:48 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 327.8m
+
+---------------GNGGA---------------
+Time: 16:46:50 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 321.7m
+
+---------------GNGGA---------------
+Time: 16:46:51 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 318.7m
+
+---------------GNGGA---------------
+Time: 16:46:53 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.40489°W
+Satellites: 12
+Altitude: 312.7m
+
+---------------GNGGA---------------
+Time: 16:46:55 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 306.7m
+
+---------------GNGGA---------------
+Time: 16:46:56 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404889°W
+Satellites: 12
+Altitude: 303.7m
+
+---------------GNGGA---------------
+Time: 16:46:58 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404888°W
+Satellites: 12
+Altitude: 297.6m
+
+---------------GNGGA---------------
+Time: 16:47:00 (UTC Time)
+Latitude: 43.708872°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 291.6m
+
+---------------GNGGA---------------
+Time: 16:47:01 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404886°W
+Satellites: 12
+Altitude: 2883m
+
+---------------GNGGA---------------
+Time: 16:47:03 (UTC Time)
+Latitude: 43.70887°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 282.5m
+
+---------------GNGGA---------------
+Time: 16:47:05 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404887°W
+Satellites: 12
+Altitude: 276.5m
+
+---------------GNGGA---------------
+Time: 16:47:08 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404885°W
+Satellites: 12
+Altitude: 267.4m
+
+---------------GNGGA---------------
+Time: 16:47:10 (UTC Time)
+Latitude: 43.70887°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 261.3m
+
+---------------GNGGA---------------
+Time: 16:47:12 (UTC Time)
+Latitude: 43.708871°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 255.3m
+
+---------------GNGGA---------------
+Time: 16:47:14 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404878°W
+Satellites: 12
+Altitude: 249.4m
+
+---------------GNGGA---------------
+Time: 16:47:15 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 246.3m
+
+---------------GNGGA---------------
+Time: 16:47:17 (UTC Time)
+Latitude: 43.70887°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 240.3m
+
+---------------GNGGA---------------
+Time: 16:47:18 (UTC Time)
+Latitude: 43.70887°N
+Longitude: N/A°W71
+Satellites: 003
+Altitude: 72m
+
+---------------GNGGA---------------
+Time: 16:47:20 (UTC Time)
+Latitude: 43.70887°N
+Longitude: -79.404883°W
+Satellites: 12
+Altitude: 231.1m
+
+---------------GNGGA---------------
+Time: 16:47:22 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 225.1m
+
+---------------GNGGA---------------
+Time: 16:47:27 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.40488°W
+Satellites: 12
+Altitude: 210.0m
+
+---------------GNGGA---------------
+Time: 16:47:29 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 203.9m
+
+---------------GNGGA---------------
+Time: 16:47:31 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 197.8m
+
+---------------GNGGA---------------
+Time: 16:47:32 (UTC Time)
+Latitude: 43.708869°N
+Longitude: -79.404882°W
+Satellites: 12
+Altitude: 194.7m
+
+---------------GNGGA---------------
+Time: 16:47:34 (UTC Time)
+Latitude: 43.708865°N
+Longitude: -79.404884°W
+Satellites: 12
+Altitude: 188.2m
+
+---------------GNGGA---------------
+Time: 16:47:37 (UTC Time)
+Latitude: 43.708967°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 180.0m
+
+---------------GNGGA---------------
+Time: 16:47:39 (UTC Time)
+Latitude: 43.709005°N
+Longitude: -79.40491°W
+Satellites: 12
+Altitude: 174.0m
+
+---------------GNGGA---------------
+Time: 16:47:41 (UTC Time)
+Latitude: 43.709025°N
+Longitude: -79.404917°W
+Satellites: 12
+Altitude: 168.6m
+
+---------------GNGGA---------------
+Time: 16:47:42 (UTC Time)
+Latitude: 43.709057°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 166.1m
+
+---------------GNGGA---------------
+Time: 16:47:44 (UTC Time)
+Latitude: 43.709124°N
+Longitude: -79.404938°W
+Satellites: 12
+Altitude: 161.6m
+
+---------------GNGGA---------------
+Time: 16:47:49 (UTC Time)
+Latitude: 43.709139°N
+Longitude: -79.404945°W
+Satellites: 12
+Altitude: 158.4m
+
+---------------GNGGA---------------
+Time: 16:47:51 (UTC Time)
+Latitude: 43.709148°N
+Longitude: -79.404942°W
+Satellites: 12
+Altitude: 158.2m
+
+---------------GNGGA---------------
+Time: 16:47:53 (UTC Time)
+Latitude: 43.709149°N
+Longitude: -79.404939°W
+Satellites: 12
+Altitude: 157.2m
+
+---------------GNGGA---------------
+Time: 16:47:56 (UTC Time)
+Latitude: N/A°A
+Longitude: N/A°7
+Satellites: N
+Altitude: Wm
+
+---------------GNGGA---------------
+Time: 16:47:58 (UTC Time)
+Latitude: 43.709156°N
+Longitude: N/A°A
+Satellites: N
+Altitude: Wm
+
+---------------GNGGA---------------
+Time: 16:48:01 (UTC Time)
+Latitude: 43.709162°N
+Longitude: -79.404928°W
+Satellites: 12
+Altitude: 157.4m
+
+---------------GNGGA---------------
+Time: 16:48:03 (UTC Time)
+Latitude: 43.709164°N
+Longitude: -79.404923°W
+Satellites: 12
+Altitude: 157.3m
+
+---------------GNGGA---------------
+Time: 16:48:05 (UTC Time)
+Latitude: 43.709165°N
+Longitude: -79.404926°W
+Satellites: 12
+Altitude: 158.4m
+
+---------------GNGGA---------------
+Time: 16:48:07 (UTC Time)
+Latitude: 43.709166°N
+Longitude: -79.404929°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:48:08 (UTC Time)
+Latitude: 43.709171°N
+Longitude: -79.404936°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:48:10 (UTC Time)
+Latitude: 43.709191°N
+Longitude: -79.40492°W
+Satellites: 12
+Altitude: 158.9m
+
+---------------GNGGA---------------
+Time: 16:48:12 (UTC Time)
+Latitude: 43.709197°N
+Longitude: -79.404903°W
+Satellites: 12
+Altitude: 158.3m
+
+---------------GNGGA---------------
+Time: 16:48:15 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404902°W
+Satellites: 12
+Altitude: 157.9m
+
+---------------GNGGA---------------
+Time: 16:48:17 (UTC Time)
+Latitude: 43.709222°N
+Longitude: -79.404897°W
+Satellites: 12
+Altitude: 158.6m
+
+---------------GNGGA---------------
+Time: 16:48:19 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404892°W
+Satellites: 12
+Altitude: 159.1m
+
+---------------GNGGA---------------
+Time: 16:48:20 (UTC Time)
+Latitude: 43.709221°N
+Longitude: -79.404891°W
+Satellites: 12
+Altitude: 159.4m
+
+---------------GNGGA---------------
+Time: 16:48:22 (UTC Time)
+Latitude: 43.70922°N
+Longitude: -79.404885°W
+Satellites: V
+Altitude: 3m
+
+---------------GNGGA---------------
+Time: 16:48:25 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.40488°W
+Satellites: 12
+Altitude: 160.0m
+
+---------------GNGGA---------------
+Time: 16:48:27 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404879°W
+Satellites: 12
+Altitude: 160.2m
+
+---------------GNGGA---------------
+Time: 16:48:29 (UTC Time)
+Latitude: 43.709218°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 160.7m
+
+---------------GNGGA---------------
+Time: 16:48:30 (UTC Time)
+Latitude: 43.709217°N
+Longitude: -79.404877°W
+Satellites: 12
+Altitude: 160.9m
+
+---------------GNGGA---------------
+Time: 16:48:32 (UTC Time)
+Latitude: 43.709216°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 161.7m
+
+---------------GNGGA---------------
+Time: 16:48:34 (UTC Time)
+Latitude: 43.709215°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 162.0m
+
+---------------GNGGA---------------
+Time: 16:48:35 (UTC Time)
+Latitude: 43.709214°N
+Longitude: -79.404876°W
+Satellites: 12
+Altitude: 162.1m
+
+---------------GNGGA---------------
+Time: 16:48:37 (UTC Time)
+Latitude: 43.709213°N
+Longitude: -79.404875°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:48:39 (UTC Time)
+Latitude: 43.709211°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:48:40 (UTC Time)
+Latitude: 43.709208°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 162.1m
+
+---------------GNGGA---------------
+Time: 16:48:42 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:48:44 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 162.9m
+
+---------------GNGGA---------------
+Time: 16:48:45 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404873°W
+Satellites: 12
+Altitude: 162.9m
+
+---------------GNGGA---------------
+Time: 16:48:47 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404872°W
+Satellites: 12
+Altitude: 162.8m
+
+---------------GNGGA---------------
+Time: 16:48:49 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404871°W
+Satellites: 12
+Altitude: 162.7m
+
+---------------GNGGA---------------
+Time: 16:48:50 (UTC Time)
+Latitude: 43.70921°N
+Longitude: -79.404868°W
+Satellites: 12
+Altitude: 162.6m
+
+---------------GNGGA---------------
+Time: 16:48:52 (UTC Time)
+Latitude: 43.709209°N
+Longitude: -79.404857°W
+Satellites: 12
+Altitude: 162.4m
+
+---------------GNGGA---------------
+Time: 16:48:54 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404858°W
+Satellites: 12
+Altitude: 162.3m
+
+---------------GNGGA---------------
+Time: 16:48:55 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404859°W
+Satellites: 12
+Altitude: 162.2m
+
+---------------GNGGA---------------
+Time: 16:48:57 (UTC Time)
+Latitude: 43.709205°N
+Longitude: -79.404859°W
+Satellites: 12
+Altitude: 161.8m
+
+---------------GNGGA---------------
+Time: 16:48:59 (UTC Time)
+Latitude: 43.709207°N
+Longitude: -79.404859°W
+Satellites: 12
+Altitude: 161.8m
+
