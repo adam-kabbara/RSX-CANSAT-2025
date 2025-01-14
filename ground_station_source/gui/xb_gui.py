@@ -2,7 +2,7 @@ import sys
 from datetime import datetime, timezone
 from collections import deque
 import numpy as np
-import random
+from dataclasses import dataclass
 import re
 import time
 import contextlib
@@ -27,6 +27,34 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QComboBox,
 )
+
+@dataclass(frozen=True)
+class TelemetryData:
+    TEAM_ID: int
+    MISSION_TIME: str
+    PACKET_COUNT: str
+    MODE: str
+    STATE: str
+    ALTITUDE: float
+    TEMPERATURE: float
+    PRESSURE: float
+    VOLTAGE: float
+    GYRO_R: int
+    GYRO_P: int
+    GYRO_Y: int
+    ACCEL_R: int
+    ACCEL_P: int
+    ACCEL_Y: int
+    MAG_R: int
+    MAG_P: int
+    MAG_Y: int
+    AUTO_GYRO_ROTATION_RATE: int
+    GPS_TIME: str
+    GPS_ALTITUDE: float
+    GPS_LATITUDE: float
+    GPS_LONGITUDE: float
+    GPS_SATS: str
+    CMD_ECHO: str
 
 class DynamicPlotter:
 
@@ -69,6 +97,92 @@ class DynamicPlotter:
         self.curve.setData(self.x, self.y)
         self.last_time = None
 
+class DynamicPlotter_MultiLine:
+    def __init__(self, plot, title, timewindow, num_lines):
+        self.num_lines = num_lines
+        self.timewindow = timewindow
+        self.databuffer = [deque([0.0] * timewindow, maxlen=timewindow) for _ in range(num_lines)]
+        self.x = np.linspace(-timewindow, 0, timewindow)
+        self.y = np.zeros(shape=(self.num_lines, timewindow), dtype=float)
+
+        pen_color_list = [
+            (255, 0, 0),   # Red
+            (0, 255, 0),   # Green
+            (0, 0, 255),   # Blue
+            (255, 255, 0), # Yellow
+            (255, 165, 0), # Orange
+            (0, 255, 255), # Cyan
+            (255, 0, 255)  # Magenta
+        ]
+
+        self.plt = plot
+        self.plt.setTitle(title)
+        self.plt.showGrid(x=True, y=True)
+        self.curve = [
+            self.plt.plot(self.x, self.y[i], pen=pen_color_list[i % len(pen_color_list)])
+            for i in range(self.num_lines)
+        ]
+
+        self.last_time = None
+
+    def update_plot(self, new_vals):
+
+        current_time = time.time()
+
+        if self.last_time is None:
+            time_diff = 0
+        else:
+            time_diff = current_time - self.last_time
+            
+        self.last_time = current_time
+
+        for i in range(self.num_lines):
+            if new_vals[i] is not None:
+                self.databuffer[i].append(new_vals[i])
+                self.y[i] = self.databuffer[i]
+
+        self.x = np.roll(self.x, -1)
+        self.x[-1] = self.x[-2] + time_diff
+
+        for i in range(self.num_lines):
+            self.curve[i].setData(self.x, self.y[i])
+    
+    def reset_plot(self):
+        self.databuffer = [deque([0.0] * self.timewindow, maxlen=self.timewindow) for _ in range(self.num_lines)]
+        self.x = np.linspace(-self.timewindow, 0, self.timewindow)
+        self.y = np.zeros(shape=(self.num_lines, self.databuffer.maxlen), dtype=float)
+        for i in range(self.num_lines):
+            self.curve[i].setData(self.x, self.y[i])
+        self.last_time = None
+
+class DynamicPlotter_2d:
+    def __init__(self, plot, title, timewindow):
+        self.timewindow = timewindow
+        self.databuffer_x = deque([0.0] * timewindow, maxlen=timewindow)
+        self.databuffer_y = deque([0.0] * timewindow, maxlen=timewindow)
+        self.x = np.zeros(self.databuffer_x.maxlen, dtype=float)
+        self.y = np.zeros(self.databuffer_y.maxlen, dtype=float)
+
+        self.plt = plot
+        self.plt.setTitle(title)
+        self.plt.showGrid(x=True, y=True)
+        self.curve = self.plt.plot(self.x, self.y, pen=(255, 0, 0))
+
+    def update_plot(self, new_val_x, new_val_y):
+
+        self.databuffer_x.append(new_val_x)
+        self.databuffer_y.append(new_val_y)
+        self.x[:] = self.databuffer_x
+        self.y[:] = self.databuffer_y
+
+        self.curve.setData(self.x, self.y)
+    
+    def reset_plot(self):
+        self.databuffer_x = deque([0.0] * timewindow, maxlen=timewindow)
+        self.databuffer_y = deque([0.0] * timewindow, maxlen=timewindow)
+        self.x = np.zeros(self.databuffer_x.maxlen, dtype=float)
+        self.y = np.zeros(self.databuffer_y.maxlen, dtype=float)
+        self.curve.setData(self.x, self.y)
 
 class GroundStationApp(QMainWindow):
 
@@ -265,12 +379,11 @@ class GroundStationApp(QMainWindow):
                                               </span><span style="color:RED;">NONE</span>')
         
         self.team_id_editor = QHBoxLayout()
-        self.team_id_label = QLabel("TEAM ID: ")
+        self.team_id_label = QLabel("TEAM ID: UNKNOWN (Send new ID->)")
         self.team_id_label.setFont(command_status_font)
         self.team_id_field = QLineEdit()
         self.team_id_field.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.team_id_field.setMaxLength(9)
-        self.team_id_field.setText(f'{0}')
         self.team_id_field.setStyleSheet("""
             QLineEdit {
                 background-color: #f0f0f0;
@@ -359,19 +472,31 @@ class GroundStationApp(QMainWindow):
         self.graphs = []
         self.plotters = []
 
-        graph_titles = [
-            "Altitude + GPS Altitude [m]",
-            "Temperature [°C]",
-            "Pressure [kPa]",
-            "Voltage [V]",
-            "Gyro [deg/s]",
-            "Accelerometer [deg/s^2]",
-            "Magnetometer [G]",
-            "Rotation [deg/s]",
-            "GPS Latitude v Longitude",
+        graph_info = [
+            {"title": "Altitude + GPS Altitude [m]", "lines": 2, "2d": False},
+            {"title": "Temperature [°C]", "lines": 1, "2d": False},
+            {"title": "Pressure [kPa]", "lines": 1, "2d": False},
+            {"title": "Voltage [V]", "lines": 1, "2d": False},
+            {"title": "Gyro [deg/s]", "lines": 3, "2d": False},
+            {"title": "Accelerometer [deg/s^2]", "lines": 3, "2d": False},
+            {"title": "Magnetometer [G]", "lines": 3, "2d": False},
+            {"title": "Rotation [deg/s]", "lines": 1, "2d": False},
+            {"title": "GPS Latitude v Longitude", "lines": 1, "2d": True},
         ]
 
-        for i in range(9):
+        self.graph_title_to_index = {
+            "ALTITUDE" : 0,
+            "TEMPERATURE" : 1,
+            "PRESSURE" : 2,
+            "VOLTAGE" : 3,
+            "GYRO" : 4,
+            "ACCEL" : 5,
+            "MAG" : 6,
+            "ROTATION" : 7,
+            "GPS" : 8,
+        }
+
+        for i, entry in enumerate(graph_info):
             graph = pg.PlotWidget()
             graph.setBackground('w')
             graph.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -379,8 +504,13 @@ class GroundStationApp(QMainWindow):
 
             self.graphs.append(graph)
 
-            # Create a DynamicPlotter for this graph
-            plotter = DynamicPlotter(graph, title=graph_titles[i], timewindow=20)
+            if entry["lines"] == 1 and entry["2d"] is False:
+                plotter = DynamicPlotter(graph, title=entry["title"], timewindow=20)
+            elif entry["lines"] > 1 and entry["2d"] is False:
+                plotter = DynamicPlotter_MultiLine(graph, title=entry["title"], timewindow=20, num_lines=entry["lines"])
+            else:
+                plotter = DynamicPlotter_2d(graph, title=entry["title"], timewindow=20)
+
             self.plotters.append(plotter)
 
         graphs_group_box.setLayout(graphs_layout)
@@ -631,52 +761,103 @@ class GroundStationApp(QMainWindow):
             self.cmd_ret_label.setText("GUI MSG: AMBIENCE ON")
     
     def parse_telemetry_string(self, msg):
+        self.__packet_recv_count += 1
+        self.label_packet_count_recv.setText(f'<span style="color:black;">PACKETS RECEIVED: \
+                                            </span><span style="color:BLUE;">{self.__packet_recv_count}</span>')
+        
+        data = self.extract_data_str(msg)
+
+        # Update graphs
+        new_alt_data = [data.ALTITUDE, data.GPS_ALTITUDE]
+        self.plotters[self.graph_title_to_index.get("ALTITUDE")].update_plot(new_alt_data)
+
+        if data.TEMPERATURE is not None:
+            self.plotters[self.graph_title_to_index.get("TEMPERATURE")].update_plot(data.TEMPERATURE)
+
+        if data.PRESSURE is not None:
+            self.plotters[self.graph_title_to_index.get("PRESSURE")].update_plot(data.PRESSURE)
+        
+        if data.VOLTAGE is not None:
+            self.plotters[self.graph_title_to_index.get("VOLTAGE")].update_plot(data.VOLTAGE)
+
+        new_gyro_data = [data.GYRO_R, data.GYRO_P, data.GYRO_Y]
+        self.plotters[self.graph_title_to_index.get("GYRO")].update_plot(new_gyro_data)
+
+        new_accel_data = [data.ACCEL_R, data.ACCEL_P, data.ACCEL_Y]
+        self.plotters[self.graph_title_to_index.get("ACCEL")].update_plot(new_accel_data)
+
+        new_mag_data = [data.MAG_R, data.MAG_P, data.MAG_Y]
+        self.plotters[self.graph_title_to_index.get("MAG")].update_plot(new_mag_data)
+        
+        if data.AUTO_GYRO_ROTATION_RATE is not None:
+            self.plotters[self.graph_title_to_index.get("ROTATION")].update_plot(data.AUTO_GYRO_ROTATION_RATE)
+
+        if data.GPS_LATITUDE is not None and data.GPS_LONGITUDE is not None:
+            self.plotters[self.graph_title_to_index.get("GPS")].update_plot(data.GPS_LATITUDE, data.GPS_LONGITUDE)
+
+        # TODO: save to csv file
+
+        # Update labels
+        if data.TEAM_ID is not None: 
+            self.team_id_label.setText(f"TEAM ID: {data.TEAM_ID}")
+        
+        if data.MISSION_TIME is not None:
+            self.label_mission_time.setText(f'<span style="color:black;">MISSION TIME: \
+                                                </span><span style="color:BLUE;">{data.MISSION_TIME}</span>')
+        if data.PACKET_COUNT is not None:
+            self.label_packet_count_sent.setText(f'<span style="color:black;">PACKETS SENT: \
+                                              </span><span style="color:BLUE;">{data.PACKET_COUNT}</span>')
+        if data.MODE is not None:
+            self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
+                                              </span><span style="color:RED;">{data.MODE}</span>')
+        if data.STATE is not None:
+            self.label_remote_state.setText(f'<span style="color:black;">CANSAT STATE: \
+                                              </span><span style="color:BLUE;">{data.STATE}</span>')
+        if data.GPS_TIME is not None:
+            self.label_gps_time.setText(f'<span style="color:black;">GPS TIME: \
+                                              </span><span style="color:BLUE;">{data.GPS_TIME}</span>')
+        if data.GPS_SATS is not None:
+            self.label_packet_count.setText(f'<span style="color:black;">SATELLITES: \
+                                              </span><span style="color:BLUE;">{data.GPS_SATS}</span>')
+        if data.CMD_ECHO is not None:
+            self.label_remote_msg.setText(f'<span style="color:black;">CMD ECHO: \
+                                              </span><span style="color:BLUE;">{data.CMD_ECHO}</span>')
+    
+    def extract_data_str(msg: str) -> TelemetryData:
         # EXPECTED FORMAT:
         # "TEAM_ID, MISSION_TIME, PACKET_COUNT, MODE, STATE, ALTITUDE, TEMPERATURE, PRESSURE, 
         # VOLTAGE, GYRO_R, GYRO_P, GYRO_Y, ACCEL_R, ACCEL_P, ACCEL_Y, MAG_R, MAG_P, MAG_Y, AUTO_GYRO_ROTATION_RATE, 
         # GPS_TIME, GPS_ALTITUDE, GPS_LATITUDE, GPS_LONGITUDE, GPS_SATS, CMD_ECHO"
-        self.__packet_recv_count += 1
-        self.label_packet_count_recv.setText(f'<span style="color:black;">PACKETS RECEIVED: \
-                                            </span><span style="color:BLUE;">{self.__packet_recv_count}</span>')
-
         fields = [value.strip() for value in msg.split(',')]
+        telemetry_data = TelemetryData(
+            TEAM_ID      = int(fields[0]) if fields else None,
+            MISSION_TIME = fields[1] if 0 <= 1 < len(fields) else None,
+            PACKET_COUNT = fields[2] if 0 <= 2 < len(fields) else None,
+            MODE         = fields[3] if 0 <= 3 < len(fields) else None,
+            STATE        = fields[4] if 0 <= 4 < len(fields) else None,
+            ALTITUDE     = float(fields[5]) if 0 <= 5 < len(fields) else None,
+            TEMPERATURE  = float(fields[6]) if 0 <= 6 < len(fields) else None,
+            PRESSURE     = float(fields[7]) if 0 <= 7 < len(fields) else None,
+            VOLTAGE      = float(fields[8]) if 0 <= 8 < len(fields) else None,
+            GYRO_R       = int(fields[9]) if 0 <= 9 < len(fields) else None,
+            GYRO_P       = int(fields[10]) if 0 <= 10 < len(fields) else None,
+            GYRO_Y       = int(fields[11]) if 0 <= 11 < len(fields) else None,
+            ACCEL_R      = int(fields[12]) if 0 <= 12 < len(fields) else None,
+            ACCEL_P      = int(fields[13]) if 0 <= 13 < len(fields) else None,
+            ACCEL_Y      = int(fields[14]) if 0 <= 14 < len(fields) else None,
+            MAG_R        = int(fields[15]) if 0 <= 15 < len(fields) else None,
+            MAG_P        = int(fields[16]) if 0 <= 16 < len(fields) else None,
+            MAG_Y        = int(fields[17]) if 0 <= 17 < len(fields) else None,
+            AUTO_GYRO_ROTATION_RATE = int(fields[18]) if 0 <= 18 < len(fields) else None,
+            GPS_TIME     = fields[19] if 0 <= 19 < len(fields) else None,
+            GPS_ALTITUDE = float(fields[20]) if 0 <= 20 < len(fields) else None,
+            GPS_LATITUDE = float(fields[21]) if 0 <= 21 < len(fields) else None,
+            GPS_LONGITUDE= float(fields[22]) if 0 <= 22 < len(fields) else None,
+            GPS_SATS     = fields[23] if 0 <= 23 < len(fields) else None,
+            CMD_ECHO     = fields[24] if 0 <= 24 < len(fields) else None,
+        )
 
-        if(1 <= len(fields)):
-            self.label_mission_time.setText(f'<span style="color:black;">MISSION TIME: \
-                                              </span><span style="color:BLUE;">{fields[1]}</span>')
-        if(2 <= len(fields)):
-            self.label_packet_count_sent.setText(f'<span style="color:black;">PACKETS SENT: \
-                                              </span><span style="color:BLUE;">{fields[2]}</span>')
-        if(3 <= len(fields)):
-            self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
-                                              </span><span style="color:RED;">{fields[3]}</span>')
-        if(4 <= len(fields)):
-            self.label_remote_state.setText(f'<span style="color:black;">CANSAT STATE: \
-                                              </span><span style="color:BLUE;">{fields[4]}</span>')
-        if(19 <= len(fields)):
-            self.label_gps_time.setText(f'<span style="color:black;">GPS TIME: \
-                                              </span><span style="color:BLUE;">{fields[19]}</span>')
-        if(23 <= len(fields)):
-            self.label_packet_count.setText(f'<span style="color:black;">SATELLITES: \
-                                              </span><span style="color:BLUE;">{fields[23]}</span>')
-        if(24 <= len(fields)):
-            self.label_remote_msg.setText(f'<span style="color:black;">CMD ECHO: \
-                                              </span><span style="color:BLUE;">{fields[25]}</span>')
-        for i in range(5,22):
-            if i == 10 or i == 11 or i == 13 or i == 14 or i == 16 or i == 17 or i == 19 or i == 20:
-                continue
-            if i <= 9:
-                index = i - 5
-            elif i == 12:
-                index = 6
-            elif i == 15:
-                index = 7
-            elif i == 18:
-                index = 8
-            elif i == 21:
-                index = 9
-            if(i <= len(fields)):
-                self.plotters[index].update_plot(float(fields[i]))
+        return telemetry_data
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
