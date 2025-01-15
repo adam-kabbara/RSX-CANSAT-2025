@@ -178,8 +178,8 @@ class DynamicPlotter_2d:
         self.curve.setData(self.x, self.y)
     
     def reset_plot(self):
-        self.databuffer_x = deque([0.0] * timewindow, maxlen=timewindow)
-        self.databuffer_y = deque([0.0] * timewindow, maxlen=timewindow)
+        self.databuffer_x = deque([0.0] * self.timewindow, maxlen=self.timewindow)
+        self.databuffer_y = deque([0.0] * self.timewindow, maxlen=self.timewindow)
         self.x = np.zeros(self.databuffer_x.maxlen, dtype=float)
         self.y = np.zeros(self.databuffer_y.maxlen, dtype=float)
         self.curve.setData(self.x, self.y)
@@ -199,6 +199,7 @@ class GroundStationApp(QMainWindow):
         self.__CMD_GROUP_WINDOW_ADV         = 2
         self.__CMD_GROUP_WINDOW_SNC         = 3
         self.__CMD_GROUP_WINDOW_CONNECTION  = 4
+        self.__CURRENT_CMD_WINDOW           = None
         self.__recveived_data               = "NONE"
         self.__available_ports              = None
         self.__PORT_SELECTED_INFO           = None
@@ -352,6 +353,44 @@ class GroundStationApp(QMainWindow):
 
         grid_layout.addWidget(commands_group_box, 0, 0)
         grid_layout.setAlignment(commands_group_box, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+
+        # Store buttons in groups so we can control them later
+        self.buttons_main = [
+            self.button_advanced,
+            self.button_connection_group,
+            self.button_mode,
+            self.button_sensor_control,
+            self.button_transmit,
+        ]
+        
+        self.buttons_adv = [
+            self.button_set_time,
+            self.button_reset_mission,
+            self.button_back,
+            self.button_fun,
+        ]
+
+        self.buttons_mode = [
+            self.button_sim_mode_enable,
+            self.button_sim_mode_disable,
+            self.button_sim_mode_activate,
+            self.button_back,
+        ]
+
+        self.buttons_sensor = [
+            self.button_back,
+            self.button_altitude_cal,
+            self.button_activate_sensor_ex,
+        ]
+
+        self.buttons_connection = [
+            self.button_test_connection,
+            self.button_back,
+            self.button_connect,
+            self.combo_select_port,
+            self.combo_select_port,
+            self.button_refresh_ports,
+        ]
         # ------ END COMMANDS GROUP ------ #
 
         # ------ DATA 1 GROUP ------ #
@@ -520,74 +559,47 @@ class GroundStationApp(QMainWindow):
         self.showMaximized()
 
     def command_group_change_buttons(self, mode):
-        # Hide/show buttons based on mode
-        # TODO: should probably clean this
         if mode == self.__CMD_GROUP_WINDOW_ADV:
-            self.button_advanced.hide()
-            self.button_connection_group.hide()
-            self.button_mode.hide()
-            self.button_transmit.hide()
-            self.button_sensor_control.hide()
-            self.button_set_time.show()
-            self.button_reset_mission.show()
-            self.button_back.show()
-            self.button_fun.show()
+            self.control_buttons(self.buttons_main, hide=True)
+            self.control_buttons(self.buttons_adv)
+            self.__CURRENT_CMD_WINDOW = self.__CMD_GROUP_WINDOW_ADV
 
         elif mode == self.__CMD_GROUP_WINDOW_CHANGE_MODE:
-            self.button_advanced.hide()
-            self.button_connection_group.hide()
-            self.button_mode.hide()
-            self.button_transmit.hide()
-            self.button_sensor_control.hide()
-            self.button_sim_mode_enable.show()
-            self.button_sim_mode_disable.show()
-            self.button_sim_mode_activate.show()
-            self.button_back.show()
+            self.control_buttons(self.buttons_main, hide=True)
+            self.control_buttons(self.buttons_mode)
+            self.__CURRENT_CMD_WINDOW = self.__CMD_GROUP_WINDOW_CHANGE_MODE
 
         elif mode == self.__CMD_GROUP_WINDOW_MAIN:
-            self.button_advanced.show()
-            self.button_connection_group.show()
-            self.button_mode.show()
-            self.button_sensor_control.show()
-            self.button_transmit.show()
-            self.button_set_time.hide()
-            self.button_reset_mission.hide()
-            self.button_back.hide()
-            self.button_fun.hide()
-            self.button_sim_mode_activate.hide()
-            self.button_sim_mode_disable.hide()
-            self.button_sim_mode_enable.hide()
-            self.combo_select_port.hide()
-            self.button_test_connection.hide()
-            self.button_connect.hide()
-            self.button_refresh_ports.hide()
-            self.button_altitude_cal.hide()
-            self.button_activate_sensor_ex.hide()
+            match self.__CURRENT_CMD_WINDOW:
+                case self.__CMD_GROUP_WINDOW_ADV:
+                    self.control_buttons(self.buttons_adv, hide=True)
+                case self.__CMD_GROUP_WINDOW_CHANGE_MODE:
+                    self.control_buttons(self.buttons_mode, hide=True)
+                case self.__CMD_GROUP_WINDOW_CONNECTION:
+                    self.control_buttons(self.buttons_connection, hide=True)
+                case self.__CMD_GROUP_WINDOW_SNC:
+                    self.control_buttons(self.buttons_sensor, hide=True)
+            self.control_buttons(self.buttons_main)
         
         elif mode == self.__CMD_GROUP_WINDOW_SNC:
-            self.button_sensor_control.hide()
-            self.button_advanced.hide()
-            self.button_connection_group.hide()
-            self.button_mode.hide()
-            self.button_transmit.hide()
-            self.button_back.show()
-            self.button_altitude_cal.show()
-            self.button_activate_sensor_ex.show()
+            self.control_buttons(self.buttons_main, hide=True)
+            self.control_buttons(self.buttons_sensor)
+            self.__CURRENT_CMD_WINDOW = self.__CMD_GROUP_WINDOW_SNC
         
         elif mode == self.__CMD_GROUP_WINDOW_CONNECTION:
-            self.button_sensor_control.hide()
-            self.button_advanced.hide()
-            self.button_connection_group.hide()
-            self.button_mode.hide()
-            self.button_transmit.hide()
-            self.button_test_connection.show()
-            self.button_back.show()
-            self.button_connect.show()
             self.combo_select_port.clear()
             self.combo_select_port.setPlaceholderText("SELECT PORT")
             self.refresh_ports(False)
-            self.combo_select_port.show()
-            self.button_refresh_ports.show()
+            self.control_buttons(self.buttons_main, hide=True)
+            self.control_buttons(self.buttons_connection)
+            self.__CURRENT_CMD_WINDOW = self.__CMD_GROUP_WINDOW_CONNECTION
+        
+    def control_buttons(self, buttons, hide=False):
+        for button in buttons:
+            if hide:
+                button.hide()
+            else:
+                button.show()
             
     def refresh_ports(self, b_print):
         self.combo_select_port.clear()
