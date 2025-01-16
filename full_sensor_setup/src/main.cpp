@@ -15,8 +15,8 @@
 // ESP32 pins
 #define HALL_SENSOR_PIN 23
 #define ONBOARD_LED_PIN 2
-#define ESP32_RX 16
-#define ESP32_TX 17
+#define ESP32_RX 9
+#define ESP32_TX 10
 
 // Standard atmospheric pressure is 1013.25 hPa --> https://en.wikipedia.org/wiki/Atmospheric_pressure, https://www.noaa.gov/jetstream/atmosphere/air-pressure
 #define SEALEVELPRESSURE_HPA (1013.25)
@@ -44,7 +44,7 @@ unsigned long pulseInterval = 0;
 struct SensorData {
     char rpm[15];                                                                       // Hall Sensor data
     char temp[15], pressure[15], baroAltitude[15], humidity[15];                        // Barometer data
-    char utcTime[15], latitude[15], longitude[15], satellites[15], gpsAltitude[15];     // GPS data
+    char utcTime[20], latitude[20], longitude[20], satellites[20], gpsAltitude[20];     // GPS data
 };
 
 Adafruit_BME280 bme;
@@ -96,11 +96,11 @@ void gpsSetup() {
     GPS_Serial.begin(9600, SERIAL_8N1, ESP32_RX, ESP32_TX);
 
     // Initializing GPS values before valid connections
-    strcpy(sensorData.utcTime, "n/a");
-    strcpy(sensorData.latitude, "n/a");
-    strcpy(sensorData.longitude, "n/a");
-    strcpy(sensorData.satellites, "n/a");
-    strcpy(sensorData.gpsAltitude, "n/a");
+    // strcpy(sensorData.utcTime, "n/a");
+    // strcpy(sensorData.latitude, "n/a");
+    // strcpy(sensorData.longitude, "n/a");
+    // strcpy(sensorData.satellites, "n/a");
+    // strcpy(sensorData.gpsAltitude, "n/a");
 }
 
 void hallSensorLoop() {
