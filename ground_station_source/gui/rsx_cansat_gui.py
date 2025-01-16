@@ -9,9 +9,8 @@ import contextlib
 with contextlib.redirect_stdout(None):
     from pygame import mixer
 import pyqtgraph as pg
-from PyQt6 import QtCore
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
-from PyQt6.QtCore import QSize, Qt, QRect, QThread, QObject, pyqtSignal, QIODevice
+from PyQt6.QtCore import Qt, pyqtSignal, QIODevice
 from PyQt6.QtGui import QFont, QIcon, QIntValidator
 from PyQt6.QtWidgets import (
     QApplication,
@@ -26,6 +25,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QComboBox,
+    QSystemTrayIcon,
 )
 
 @dataclass(frozen=True)
@@ -213,7 +213,12 @@ class GroundStationApp(QMainWindow):
         self.__serial.readyRead.connect(self.recv_data)
 
         self.setWindowTitle("CANSAT Ground Station")
-        self.setWindowIcon(QIcon('media/icon.png'))
+        self.setWindowIcon(QIcon('icon.png'))
+
+        tray = QSystemTrayIcon()
+        tray.setIcon(QIcon('icon.png'))
+        tray.setVisible(True)
+        tray.show()
 
         # ------ FONTS ------ #
         button_font = QFont()
