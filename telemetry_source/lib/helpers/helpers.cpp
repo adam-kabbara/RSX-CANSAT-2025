@@ -101,14 +101,38 @@ char* build_data_str(struct transmission_packet *packet)
 {
     static char buff[DATA_BUFF_SIZE];
 
-    // Format the struct values into a single string with comma separation
-    sprintf(buff, "%d,%s,%d,%s,%s,%.1f,%.1f,%.1f,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%.1f,%.4f,%.4f,%d,%s",
-            packet->TEAM_ID, packet->MISSION_TIME, packet->PACKET_COUNT, packet->MODE, packet->STATE, 
-            packet->ALTITUDE, packet->TEMPERATURE, (packet->PRESSURE)/1000, packet->VOLTAGE, packet->GYRO_R, 
-            packet->GYRO_P, packet->GYRO_Y, packet->ACCEL_R, packet->ACCEL_P, packet->ACCEL_Y, 
-            packet->MAG_R, packet->MAG_P, packet->MAG_Y, packet->AUTO_GYRO_ROTATION_RATE, 
-            packet->GPS_TIME, packet->GPS_ALTITUDE, packet->GPS_LATITUDE, packet->GPS_LONGITUDE, 
-            packet->GPS_SATS, packet->CMD_ECHO);
+    snprintf(buff, DATA_BUFF_SIZE,
+        "%d,%s,%d,%s,%s," //5
+        "%.1f,%.1f,%.1f,%.1f," //4
+        "%d,%d,%d,%d,%d," //5
+        "%d,%d,%d,%d,%d," //5
+        "%s,%.4f,%.4f," //3
+        "%.4f,%d,%s", //3
+        packet->TEAM_ID, 
+        packet->MISSION_TIME, 
+        packet->PACKET_COUNT, 
+        packet->MODE, 
+        packet->STATE,
+        packet->ALTITUDE, 
+        packet->TEMPERATURE, 
+        (packet->PRESSURE) / 1000, 
+        packet->VOLTAGE, 
+        packet->GYRO_R, 
+        packet->GYRO_P, 
+        packet->GYRO_Y, 
+        packet->ACCEL_R, 
+        packet->ACCEL_P, 
+        packet->ACCEL_Y, 
+        packet->MAG_R, 
+        packet->MAG_P, 
+        packet->MAG_Y, 
+        packet->AUTO_GYRO_ROTATION_RATE, 
+        packet->GPS_TIME, //20 
+        packet->GPS_ALTITUDE, 
+        packet->GPS_LATITUDE, 
+        packet->GPS_LONGITUDE, 
+        packet->GPS_SATS, 
+        packet->CMD_ECHO);
     
     return buff;
 }

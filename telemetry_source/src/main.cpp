@@ -24,19 +24,21 @@ void do_give_status(const char *data);
 
 /*------- VARIABLES ------*/
 hw_timer_t *send_timer = NULL;
+int send_flag = 0;
 char cmd_buff[CMD_BUFF_SIZE];
 Preferences preferences;
 int TRANSMISSION_ON = 0;
 int SIMP_DATA = 0;
 char *data_buff;
 struct mission_info mission_info_live;
-struct transmission_packet send_packet;
 TaskHandle_t recv_main;
 TaskHandle_t send_main;
 /*------- VARIABLES ------*/
 
 void setup() 
 {
+
+  // TODO: send info msg on processor reset
 
   // Set timer to transmit at 1Hz
   send_timer = timerBegin(0, 80, true);
@@ -65,8 +67,6 @@ void setup()
   // XBee Hardware serial
   Serial2.begin(XBEE_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
   delay(1000);
-
-  Serial2.println("$I SETUP OK!");
 
   xTaskCreatePinnedToCore(
     receive_commands,      // Function to be performed when the task is called 
@@ -110,6 +110,7 @@ void send_data(void *pvParameters)
     while(TRANSMISSION_ON == 1)
     {
       // Fill transmission packet
+      struct transmission_packet send_packet;
 
       // PRESSURE
       if(mission_info_live.mode_int == 1)
@@ -118,7 +119,7 @@ void send_data(void *pvParameters)
       }
       else // TODO: SENSOR DEPENDENT
       {
-        send_packet.PRESSURE = random(-10, 11);;
+        send_packet.PRESSURE = random(0, 10000);;
       }
       float pressure_drop_rate = (last_pressure - send_packet.PRESSURE);
       last_pressure = send_packet.PRESSURE;
@@ -169,6 +170,10 @@ void send_data(void *pvParameters)
         strncpy(send_packet.STATE, "LANDED", sizeof(send_packet.STATE));
         send_packet.STATE[sizeof(send_packet.STATE) - 1] = '\0'; // Ensure null-termination
       }
+      else {
+        strncpy(send_packet.STATE, "IDLE", sizeof(send_packet.STATE));
+        send_packet.STATE[sizeof(send_packet.STATE) - 1] = '\0'; // Ensure null-termination
+      }
       // TODO: Probe release
 
       // ALTITUDE
@@ -179,7 +184,8 @@ void send_data(void *pvParameters)
       const float g = 9.80665;    // Acceleration due to gravity in m/s²
 
       // Calculate altitude using the barometric formula
-      send_packet.ALTITUDE = (T0 / L) * (1 - pow((send_packet.PRESSURE / P0), (R * L) / (g)));
+      // send_packet.ALTITUDE = (T0 / L) * (1 - pow((send_packet.PRESSURE / P0), (R * L) / (g)));
+      send_packet.ALTITUDE = random(-10,11);
 
       // TODO: SENSOR DEPENDENT
       int ran_num[17];
@@ -210,6 +216,17 @@ void send_data(void *pvParameters)
       // CMD ECHO
       strncpy(send_packet.CMD_ECHO, mission_info_live.cmd_echo, sizeof(send_packet.CMD_ECHO));
       send_packet.CMD_ECHO[sizeof(send_packet.CMD_ECHO) - 1] = '\0'; // Ensure null-termination
+
+      if(send_flag == 1)
+      {
+        mission_info_live.packet_count++;
+        send_packet.PACKET_COUNT = mission_info_live.packet_count;
+        data_buff = build_data_str(&send_packet);
+        send_flag = 0;
+        Serial2.println(data_buff);
+        Serial.println("just send some data!");
+      }
+      vTaskDelay(pdMS_TO_TICKS(10));
     }
 
     vTaskDelay(pdMS_TO_TICKS(25));
@@ -256,7 +273,7 @@ void receive_commands(void *pvParameters)
       sscanf(recv_packet.team_id, "%d", &team_id_chk_int);
       if((team_id_chk_int != mission_info_live.team_id) && (compare_strings(recv_packet.command, "RESET_TEAM_ID") == 0))
       {
-        char msg_size = snprintf(NULL, 0, "$IE MSG:REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d", mission_info_live.team_id);
+        char msg_size = snprintf(NULL, 0, "$IE MSG:REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d", mission_info_live.team_id) + 1;
         char message[msg_size];
         snprintf(message, msg_size, "$IE MSG:REJECTED INPUT: TEAM ID DOES NOT MATCH. TEAM_ID is %d", mission_info_live.team_id);
         safe_print(message);
@@ -290,7 +307,7 @@ void receive_commands(void *pvParameters)
 
 void do_give_status(const char *data)
 {
-  int msg_size = snprintf(NULL, 0, "$I MSG:TEST RECEIVED. CANSAT IS ONLINE.{%s|%s|%d}", mission_info_live.mode, mission_info_live.state, mission_info_live.team_id);
+  int msg_size = snprintf(NULL, 0, "$I MSG:TEST RECEIVED. CANSAT IS ONLINE.{%s|%s|%d}", mission_info_live.mode, mission_info_live.state, mission_info_live.team_id) + 1;
   char message[msg_size];
   snprintf(message, msg_size, "$I MSG:TEST RECEIVED. CANSAT IS ONLINE.{%s|%s|%d}", mission_info_live.mode, mission_info_live.state, mission_info_live.team_id);
   safe_print(message);
@@ -333,7 +350,6 @@ void do_cx(const char *data)
 
 void do_st(const char *data)
 {
-  safe_print("$I MSG:RECEIVED COMMAND: SET TIME");
   if(time_format_check(data) == 0)
   {
     mission_info_live.mission_time_ms = millis();
@@ -358,8 +374,6 @@ void do_st(const char *data)
 
 void do_sim(const char *data)
 {
-  safe_print("$I MSG:RECEIVED COMMAND: SIMULATION MODE CONTROL");
-
   if(TRANSMISSION_ON == 1)
   {
     safe_print("$IE MSG:SIMULATION MODE CANNOT BE CHANGED WHILE TRANSMISSION IS ON");
@@ -390,7 +404,7 @@ void do_sim(const char *data)
                   mission_info_live.mode[0] = 'S';
                   mission_info_live.mode[1] = '\0';
                   mission_info_live.mode_int = 1;
-                  safe_print("$I SET CANSAT TO SIMULATION MODE");
+                  safe_print("$I MSG:SET CANSAT TO SIMULATION MODE");
                   break;
       case mission_info::OFF:
                   safe_print("$IE MSG:SIMULATION MODE IS NOT ENABLED");
@@ -421,7 +435,7 @@ void do_sim(const char *data)
   }
   else
   {
-    int msg_size = snprintf(NULL, 0, "$IE MSG:UNRECOGNIZED SIM COMMAND: '%s'", data);
+    int msg_size = snprintf(NULL, 0, "$IE MSG:UNRECOGNIZED SIM COMMAND: '%s'", data) + 1;
     char message[msg_size];
     snprintf(message, msg_size, "$IE MSG:UNRECOGNIZED SIM COMMAND: '%s'", data);
     safe_print(message);
@@ -468,9 +482,9 @@ void do_reset_team_id(const char *data)
   mission_info_live.team_id = preferences.getInt("teamid", 1234);
   preferences.end();
 
-  int msg_size = snprintf(NULL, 0, "$I TEAM CHANGED FROM %d TO %d", old_team_id, mission_info_live.team_id);
+  int msg_size = snprintf(NULL, 0, "$I MSG:TEAM ID CHANGED FROM %d TO %d", old_team_id, mission_info_live.team_id) + 1;
   char message[msg_size];
-  snprintf(message, msg_size, "$I TEAM CHANGED FROM %d TO %d", old_team_id, mission_info_live.team_id);
+  snprintf(message, msg_size, "$I MSG:TEAM ID CHANGED FROM %d TO %d", old_team_id, mission_info_live.team_id);
   safe_print(message);
   
 } // END: do_reset_team_id()
@@ -485,8 +499,5 @@ void safe_print(const char *msg)
 
 void IRAM_ATTR send_1()
 {
-  send_packet.PACKET_COUNT = mission_info_live.packet_count;
-  data_buff = build_data_str(&send_packet);
-  Serial2.println(data_buff);
-  mission_info_live.packet_count++;
+  send_flag = 1;
 } // END: send_1()

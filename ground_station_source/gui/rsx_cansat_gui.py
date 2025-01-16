@@ -297,12 +297,12 @@ class GroundStationApp(QMainWindow):
 
         self.button_sim_mode_activate = QPushButton("SIM MODE ACTIVATE")
         self.button_sim_mode_activate.setFont(button_font)
-        self.button_sim_mode_enable.clicked.connect(lambda: self.change_sim_mode("ACTIVATE"))
+        self.button_sim_mode_activate.clicked.connect(lambda: self.change_sim_mode("ACTIVATE"))
         self.button_sim_mode_activate.hide()
 
         self.button_sim_mode_disable = QPushButton("SIM MODE DISABLE")
         self.button_sim_mode_disable.setFont(button_font)
-        self.button_sim_mode_enable.clicked.connect(lambda: self.change_sim_mode("DISABLE"))
+        self.button_sim_mode_disable.clicked.connect(lambda: self.change_sim_mode("DISABLE"))
         self.button_sim_mode_disable.hide()
 
         self.button_refresh_ports = QPushButton("REFRESH PORTS")
@@ -327,6 +327,7 @@ class GroundStationApp(QMainWindow):
         self.button_test_connection = QPushButton("CHECK CONNECTION/GET STATUS")
         self.button_test_connection.setFont(button_font)
         self.button_test_connection.clicked.connect(self.check_remote_connection)
+        self.button_test_connection.hide()
 
         self.cmd_ret_label = QLabel("GUI MSG: ")
         self.cmd_ret_label.setFont(button_font)
@@ -684,6 +685,7 @@ class GroundStationApp(QMainWindow):
             
     def send_data(self, msg):
         if self.__serial.isOpen() is True:
+            msg = msg + "\n"
             self.__serial.write(msg.encode())
         elif self.__PORT_LABEL_OPEN == True:
             self.cmd_ret_label.setText("GUI MSG: CANNOT SEND DATA - PORT WAS DISCONNECTED")
@@ -702,10 +704,9 @@ class GroundStationApp(QMainWindow):
         # Info msg
         msg = self.__recveived_data
         if(msg.startswith('$')):
-            try:
-                msg_text = re.search('MSG:(.+?)', msg).group(1)
-            except AttributeError:
-                msg_text = "FORMAT_INCORRECT"
+            msg_text = re.search('MSG:(.+)', msg).group(1)
+            if msg_text is None:
+                msg_text = "(UNEXPECTED FORMAT):" + msg
             try:
                 mission_info = re.search('{(.+?)}', msg_text).group(1)
             except AttributeError:
@@ -713,8 +714,12 @@ class GroundStationApp(QMainWindow):
             if mission_info != "NONE":
                 msg_text = re.sub(r'{.+?}', '', msg_text).strip()
                 new_mode, new_state, ret_team_id = mission_info.split('|')
-                self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
-                                              </span><span style="color:RED;">{new_mode}</span>')
+                if new_mode == "F":
+                    self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
+                                                </span><span style="color:BLUE;">FLIGHT</span>')
+                elif new_mode == "S":
+                    self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
+                                                </span><span style="color:BLUE;">SIM</span>')
                 self.label_remote_state.setText(f'<span style="color:black;">CANSAT STATE: \
                                               </span><span style="color:BLUE;">{new_state}</span>')
                 self.team_id_field.setText(f"{ret_team_id}")
@@ -724,11 +729,11 @@ class GroundStationApp(QMainWindow):
                                               </span><span style="color:red;">{msg_text}</span>')
             else:
                 self.label_ret_msg.setText(f'<span style="color:black;">RETURN MESSAGE: \
-                                              </span><span style="color:black;">{msg_text}</span>')
+                                              </span><span style="color:blue;">{msg_text}</span>')
         else: # telemetry
             self.parse_telemetry_string(msg)
             self.label_ret_msg.setText(f'<span style="color:black;">RETURN MESSAGE: \
-                                              </span><span style="color:yellow;">TELEMETRY ON, CANNOT RECEIVE MESSAGES</span>')
+                                              </span><span style="color:yellow;">RETURN MSG DISABLED DURING MISSION</span>')
             self.__transmission_on = 1
     
     def reset_mission(self):
@@ -840,7 +845,7 @@ class GroundStationApp(QMainWindow):
             self.label_remote_msg.setText(f'<span style="color:black;">CMD ECHO: \
                                               </span><span style="color:BLUE;">{data.CMD_ECHO}</span>')
     
-    def extract_data_str(msg: str) -> TelemetryData:
+    def extract_data_str(self, msg: str) -> TelemetryData:
         # EXPECTED FORMAT:
         # "TEAM_ID, MISSION_TIME, PACKET_COUNT, MODE, STATE, ALTITUDE, TEMPERATURE, PRESSURE, 
         # VOLTAGE, GYRO_R, GYRO_P, GYRO_Y, ACCEL_R, ACCEL_P, ACCEL_Y, MAG_R, MAG_P, MAG_Y, AUTO_GYRO_ROTATION_RATE, 

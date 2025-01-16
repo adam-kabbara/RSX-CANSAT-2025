@@ -8,7 +8,7 @@
 #define WORD_SIZE 64
 #define DATA_SIZE 32
 #define SENTENCE_SIZE 128
-#define DATA_BUFF_SIZE 256
+#define DATA_BUFF_SIZE 528
 
 struct mission_info {
     enum Sim_Mode_Status {
@@ -18,7 +18,7 @@ struct mission_info {
     };
     char mode[WORD_SIZE] = "F";
     int mode_int = 0; // F = 0, S = 1
-    char state[WORD_SIZE] = "UNKNOWN";
+    char state[WORD_SIZE] = "IDLE";
     Sim_Mode_Status sim_status = OFF;
     int team_id = 0;
     char mission_time[WORD_SIZE] = "00:00:00";
