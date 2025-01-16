@@ -18,7 +18,7 @@ File gpsFile;
 
 void setup() {
     Serial.begin(115200); // For monitoring
-    GPS_Serial.begin(9600, SERIAL_8N1, 16, 17); // Set baud rate and pins for GPS
+    GPS_Serial.begin(9600, SERIAL_8N1, 9, 10); // Set baud rate and pins for GPS
 
     // Initialize SPIFFS
     if (!SPIFFS.begin(true)) {
