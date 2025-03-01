@@ -1,32 +1,28 @@
-// https://dronebotworkshop.com/using-gps-modules/
-// Define SoftwareSerial Connection   
-#define swsTX 3 // Transmit FROM GPS
-#define swsRX 4 // Receive TO GPS
- 
-//GPS Baud rate
-#define GPSBaud 9600 
- 
-//Serial Monitor Baud Rate
-#define Serial_Monitor_Baud 115200   
- 
-// Include and set up the SoftwareSerial Library
-#include <SoftwareSerial.h> 
-SoftwareSerial GPSserial(swsRX, swsTX);  
- 
-void setup()
-{
- //Start Serial Monitor
- Serial.begin(Serial_Monitor_Baud); 
- 
- // Start SoftwareSerial  
- GPSserial.begin(GPSBaud);
+#include <SoftwareSerial.h>
+
+// Define RX and TX pins for GPS
+#define GPS_RX 10
+#define GPS_TX 11
+
+// Initialize SoftwareSerial for GPS communication
+SoftwareSerial gpsSerial(GPS_RX, GPS_TX);
+
+void setup() {
+  // Start the hardware Serial Monitor
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // Wait for Serial Monitor to open
+  }
+
+  // Start the GPS Serial
+  gpsSerial.begin(9600);
+  Serial.println("BN-220 GPS Module: Raw Data Display");
 }
-    
-void loop()
-{
-  // Write SoftwareSerial data to Serial Monitor
-  while (GPSserial.available() > 0)
-  Serial.write(GPSserial.read());
-  Serial.print('\n');
-  delay(1000);
+
+void loop() {
+  // Check if data is available from the GPS module
+  while (gpsSerial.available() > 0) {
+    char c = gpsSerial.read(); // Read each byte from the GPS module
+    Serial.write(c);           // Print the byte to the Serial Monitor
+  }
 }

@@ -168,3 +168,8 @@ cython_debug/
 .vscode/ipch
 .vscode
 .code-workspace
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
