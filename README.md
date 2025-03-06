@@ -2,19 +2,19 @@
 This repository is designed to manage the files made by the CanSat team under the Robotics for Space eXploration (RSX) design team at the University of Toronto. 
 
 Competition Team Members: 
-Adam Kabbara | CanSat Team Lead
-Arthur Goetzke-Coburn | Mechanical Team Lead
-Daniel Yu | Electrical Team Lead
-Luke Watson | Software Team Lead
-Gianluca Ceccacci | Mechanical Team Member
-Nour Barsoum | Electrical Team Member
-Angelique Liao | Software Team Member
-Alexey Albert | Mechanical Team Member
-Robert Saab | Electrical Team Member
+- Adam Kabbara | CanSat Team Lead
+- Arthur Goetzke-Coburn | Mechanical Team Lead
+- Daniel Yu | Electrical Team Lead
+- Luke Watson | Software Team Lead
+- Gianluca Ceccacci | Mechanical Team Member
+- Nour Barsoum | Electrical Team Member
+- Angelique Liao | Software Team Member
+- Alexey Albert | Mechanical Team Member
+- Robert Saab | Electrical Team Member
 
 CanSat Competition:
-June 5-8, 2025
-Monterey, Virginia, United States
+- June 5-8, 2025
+- Monterey, Virginia, United States
 
 ## Use Ground Station
 1. Download and run .msi file from Releases. Cannot be used on mac
