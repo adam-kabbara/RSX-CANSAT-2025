@@ -13,8 +13,8 @@ Competition Team Members:
 - Robert Saab | Electrical Team Member
 
 CanSat Competition:
-- June 5-8, 2025
-- Monterey, Virginia, United States
+- 📅 June 5-8, 2025
+- 📍 Monterey, Virginia, United States
 
 ## Use Ground Station
 1. Download and run .msi file from Releases. Cannot be used on mac
