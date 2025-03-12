@@ -1,4 +1,4 @@
-23970157126124540
+23971901464694345
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -54732,6 +54732,13 @@ GY-BNO08x_(BNO085)
 0
 10
 10
+Custom_Footprints
+SparkFun_XBee_Explorer_Regulated
+
+
+0
+22
+22
 DigiKey
 BAT_2894TR
 

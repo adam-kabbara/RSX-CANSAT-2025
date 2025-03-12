@@ -1,4 +1,4 @@
-23966674891482002
+23971901464823346
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -54705,6 +54705,13 @@ Adafruit_LIS3MDL
 6
 6
 Custom_Footprints
+ESP32-WROOM-32D_Dev_Board
+
+
+0
+38
+38
+Custom_Footprints
 Freenove_ESP32-S3-WROOM_CAM_Board
 
 
@@ -54712,12 +54719,26 @@ Freenove_ESP32-S3-WROOM_CAM_Board
 40
 40
 Custom_Footprints
+GY-521_(MPU-6050)
+
+
+0
+8
+8
+Custom_Footprints
 GY-BNO08x_(BNO085)
 
 
 0
 10
 10
+Custom_Footprints
+SparkFun_XBee_Explorer_Regulated
+
+
+0
+22
+22
 DigiKey
 BAT_2894TR
 
