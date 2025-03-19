@@ -8069,7 +8069,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "61b77f39-fcd5-4efa-9f82-e89e51447a0f")
-		(property "Reference" "PowerIndicator1"
+		(property "Reference" "LED1"
 			(at 83.185 48.26 0)
 			(effects
 				(font
@@ -8121,7 +8121,7 @@
 		(instances
 			(project ""
 				(path "/f8796b72-1214-4476-868c-7fa3fa666d69"
-					(reference "PowerIndicator1")
+					(reference "LED1")
 					(unit 1)
 				)
 			)
