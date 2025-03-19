@@ -67,6 +67,28 @@
 		)
 	)
 	(attr through_hole)
+	(fp_circle
+		(center 2 2)
+		(end 4.1 2)
+		(stroke
+			(width 0.75)
+			(type default)
+		)
+		(fill none)
+		(layer "F.Paste")
+		(uuid "27c3fb7f-61a6-49f2-b6f9-216bde1228f1")
+	)
+	(fp_circle
+		(center 18.35 2)
+		(end 20.45 2)
+		(stroke
+			(width 0.75)
+			(type default)
+		)
+		(fill none)
+		(layer "F.Paste")
+		(uuid "aca28c02-31a2-4f2d-9d69-153390b66f49")
+	)
 	(fp_rect
 		(start 0 0)
 		(end 20.35 15.65)
@@ -77,50 +99,6 @@
 		(fill none)
 		(layer "F.SilkS")
 		(uuid "3152ed48-642b-4f6f-93df-cefd94eaa920")
-	)
-	(fp_circle
-		(center 2 2)
-		(end 3.5 2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(fill none)
-		(layer "Edge.Cuts")
-		(uuid "09c06a78-d0c5-41d8-88e6-22ceb521dcaf")
-	)
-	(fp_circle
-		(center 18.35 2)
-		(end 19.85 2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(fill none)
-		(layer "Edge.Cuts")
-		(uuid "4bd1daa8-e7b3-43ca-8a7d-435f7dab20cf")
-	)
-	(fp_circle
-		(center 2 2)
-		(end 3.75 2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(fill none)
-		(layer "B.CrtYd")
-		(uuid "7e53b216-d51f-49c0-ac26-f6f2c5cd9c2b")
-	)
-	(fp_circle
-		(center 18.35 2)
-		(end 20.1 2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(fill none)
-		(layer "B.CrtYd")
-		(uuid "cd007753-c221-4b11-b530-1327c3199adc")
 	)
 	(fp_rect
 		(start -0.25 -0.25)
@@ -144,6 +122,20 @@
 				(thickness 0.15)
 			)
 		)
+	)
+	(pad "" np_thru_hole circle
+		(at 2 2)
+		(size 5.3 5.3)
+		(drill 3)
+		(layers "F.Cu" "F.Mask")
+		(uuid "24f3d3ca-6459-497d-9121-25caa6ad0f27")
+	)
+	(pad "" np_thru_hole circle
+		(at 18.35 2)
+		(size 5.3 5.3)
+		(drill 3)
+		(layers "F.Cu" "F.Mask")
+		(uuid "f6e0ec7e-def5-46fe-a5f6-7c0466e977a5")
 	)
 	(pad "1" thru_hole circle
 		(at 1.285 14.38)
