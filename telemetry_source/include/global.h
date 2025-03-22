@@ -8,11 +8,23 @@
 #define WORD_SIZE 64
 #define DATA_SIZE 32
 #define SENTENCE_SIZE 128
+#define DATA_BUFF_SIZE 528
 
-enum mode_control {
-    SIM_ON = 1,
-    SIM_OFF = 2,
-    SIM_READY = 3
+struct mission_info {
+    enum Sim_Mode_Status {
+        OFF = 0,
+        ENABLED = 1,
+        ACTIVE = 2
+    };
+    char mode[WORD_SIZE] = "F";
+    int mode_int = 0; // F = 0, S = 1
+    char state[WORD_SIZE] = "IDLE";
+    Sim_Mode_Status sim_status = OFF;
+    int team_id = 0;
+    char mission_time[WORD_SIZE] = "00:00:00";
+    unsigned long mission_time_ms = 0;
+    int packet_count = 0;
+    char cmd_echo[WORD_SIZE] = "NONE";
 };
 
 struct command_packet {
@@ -24,30 +36,30 @@ struct command_packet {
 
 struct transmission_packet {
     int TEAM_ID;
-    char MISSION_TIME;
+    char MISSION_TIME[9];
     int PACKET_COUNT;
-    char MODE[DATA_SIZE]; 
+    char MODE[1]; 
     char STATE[DATA_SIZE];
     float ALTITUDE;
-    char TEMPERATURE[DATA_SIZE];
-    char PRESSURE[DATA_SIZE];
-    char VOLTAGE[DATA_SIZE];
-    char GYRO_R[DATA_SIZE];
-    char GYRO_P[DATA_SIZE];
-    char GYRO_Y[DATA_SIZE];
-    char ACCEL_R[DATA_SIZE];
-    char ACCEL_P[DATA_SIZE];
-    char ACCEL_Y[DATA_SIZE];
-    char MAG_R[DATA_SIZE];
-    char MAG_P[DATA_SIZE];
-    char MAG_Y[DATA_SIZE];
-    char AUTO_GYRO_ROTATION_RATE[DATA_SIZE];
-    char GPS_TIME[DATA_SIZE];
-    char GPS_ALTITUDE[DATA_SIZE];
-    char GPS_LATITUDE[DATA_SIZE];
-    char GPS_LONGITUDE[DATA_SIZE];
-    char GPS_SATS[DATA_SIZE];
-    char CMD_ECHO[DATA_SIZE];
+    float TEMPERATURE;
+    float PRESSURE;
+    float VOLTAGE;
+    int GYRO_R;
+    int GYRO_P;
+    int GYRO_Y;
+    int ACCEL_R;
+    int ACCEL_P;
+    int ACCEL_Y;
+    int MAG_R;
+    int MAG_P;
+    int MAG_Y;
+    int AUTO_GYRO_ROTATION_RATE;
+    char GPS_TIME[9];
+    float GPS_ALTITUDE;
+    float GPS_LATITUDE;
+    float GPS_LONGITUDE;
+    int GPS_SATS;
+    char CMD_ECHO[WORD_SIZE];
 };
 
 #endif /* SET_VALS_H */
