@@ -1,17 +1,30 @@
+"""
+GUI for real-time CANSAT data visualisation
+
+Author: RSX
+Version: 1.3.1
+Last Updated: 2025-03-08
+Last Changes: moved return messages to gui log
+
+TODO:  
+- CSV file saving doesn't work as expected
+- graph should auto scroll and keep entire data buffer
+
+"""
+
 import sys
 from datetime import datetime, timezone
 from collections import deque
 import numpy as np
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 import re
 import time
-import contextlib
-with contextlib.redirect_stdout(None):
-    from pygame import mixer
+import csv
 import pyqtgraph as pg
+from pyqtgraph import mkPen
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
-from PyQt6.QtCore import Qt, pyqtSignal, QIODevice
-from PyQt6.QtGui import QFont, QIcon, QIntValidator
+from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTime
+from PyQt6.QtGui import QFont, QIcon, QIntValidator, QColor
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -26,8 +39,15 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QComboBox,
     QSystemTrayIcon,
+    QSizePolicy,
+    QTabWidget,
+    QFormLayout,
+    QListWidget,
+    QListWidgetItem,
+    QAbstractItemView,
 )
 
+# Structure to store packet data
 @dataclass(frozen=True)
 class TelemetryData:
     TEAM_ID: int
@@ -56,29 +76,67 @@ class TelemetryData:
     GPS_SATS: str
     CMD_ECHO: str
 
-class DynamicPlotter:
+    def to_dict(self):
+        return {key: str(value) for key, value in self.__dict__.items()}
 
-    def __init__(self, plot, title, timewindow):
+csv_fields = [field.name for field in fields(TelemetryData)]
+
+# Base graph plotting system
+# Initialize plots and set fonts/colors
+class BaseDynamicPlotter:
+
+    pen_color_list = [
+        (255, 0, 0),   # Red
+        (0, 255, 0),   # Green
+        (0, 0, 255),   # Blue
+        (255, 255, 0), # Yellow
+        (255, 165, 0), # Orange
+        (0, 255, 255), # Cyan
+        (255, 0, 255)  # Magenta
+    ]
+    
+    def __init__(self, plot, title, timewindow, unit):
         self.timewindow = timewindow
+        self.last_time = None
+        self.base_line_color_idx = 0
+        self.pen_line_size = 3
+
+        font = QFont("Roboto Mono")
+        font.setPointSize(14)
+        font.setWeight(QFont.Weight.Bold)
+
+        self.plt = plot
+        self.plt.setTitle(f'<span style="font-family: Monospace; font-size:14pt; font-weight:bold;">{title}</span>')
+        self.plt.showGrid(x=True, y=True)
+        self.plt.getAxis('bottom').setStyle(tickFont=font)
+        self.plt.getAxis('left').setStyle(tickFont=font)
+        self.plt.getAxis('left').setLabel(f'<span style="font-family: Monospace; font-size:14pt; font-weight:bold;">{unit}</span>')
+        self.plt.getViewBox().setLimits(xMin=-timewindow, xMax=5000, minXRange=5, yMin=-10000, yMax=10000, minYRange=2)
+    
+    def get_pen_color(self, index):
+        return mkPen(self.pen_color_list[index % len(self.pen_color_list)], width=self.pen_line_size)
+
+    def reset_plot(self):
+        raise NotImplementedError
+
+    def update_plot(self, *args):
+        raise NotImplementedError
+
+# Plotting system for regular graphs with 1 line
+class DynamicPlotter(BaseDynamicPlotter):
+
+    def __init__(self, plot, title, timewindow, unit):
+        super().__init__(plot, title, timewindow, unit)
         self.databuffer = deque([0.0] * timewindow, maxlen=timewindow)
         self.x = np.linspace(-timewindow, 0, timewindow)
         self.y = np.zeros(self.databuffer.maxlen, dtype=float)
-
-        self.plt = plot
-        self.plt.setTitle(title)
-        self.plt.showGrid(x=True, y=True)
-        self.curve = self.plt.plot(self.x, self.y, pen=(255, 0, 0))
-
-        self.last_time = None
+        self.curve = self.plt.plot(self.x, self.y, pen=self.get_pen_color(self.base_line_color_idx))
 
     def update_plot(self, new_val):
 
         current_time = time.time()
 
-        if self.last_time is None:
-            time_diff = 0
-        else:
-            time_diff = current_time - self.last_time
+        time_diff = (current_time - self.last_time) if self.last_time else 0
             
         self.last_time = current_time
 
@@ -92,34 +150,22 @@ class DynamicPlotter:
     
     def reset_plot(self):
         self.databuffer = deque([0.0] * self.timewindow, maxlen=self.timewindow)
-        self.x = np.linspace(0, self.timewindow, self.timewindow)
-        self.y = np.zeros(self.databuffer.maxlen, dtype=float)
+        self.x = np.linspace(-self.timewindow, 0, self.timewindow)
+        self.y[:] = 0
         self.curve.setData(self.x, self.y)
         self.last_time = None
 
-class DynamicPlotter_MultiLine:
-    def __init__(self, plot, title, timewindow, num_lines):
+# Plotting system for graphs with multiple lines
+class DynamicPlotter_MultiLine(BaseDynamicPlotter):
+    def __init__(self, plot, title, timewindow, num_lines, unit):
+        super().__init__(plot, title, timewindow, unit)
         self.num_lines = num_lines
-        self.timewindow = timewindow
         self.databuffer = [deque([0.0] * timewindow, maxlen=timewindow) for _ in range(num_lines)]
         self.x = np.linspace(-timewindow, 0, timewindow)
         self.y = np.zeros(shape=(self.num_lines, timewindow), dtype=float)
 
-        pen_color_list = [
-            (255, 0, 0),   # Red
-            (0, 255, 0),   # Green
-            (0, 0, 255),   # Blue
-            (255, 255, 0), # Yellow
-            (255, 165, 0), # Orange
-            (0, 255, 255), # Cyan
-            (255, 0, 255)  # Magenta
-        ]
-
-        self.plt = plot
-        self.plt.setTitle(title)
-        self.plt.showGrid(x=True, y=True)
         self.curve = [
-            self.plt.plot(self.x, self.y[i], pen=pen_color_list[i % len(pen_color_list)])
+            self.plt.plot(self.x, self.y[i], pen=self.get_pen_color(self.base_line_color_idx + i))
             for i in range(self.num_lines)
         ]
 
@@ -128,12 +174,7 @@ class DynamicPlotter_MultiLine:
     def update_plot(self, new_vals):
 
         current_time = time.time()
-
-        if self.last_time is None:
-            time_diff = 0
-        else:
-            time_diff = current_time - self.last_time
-            
+        time_diff = (current_time - self.last_time) if self.last_time else 0
         self.last_time = current_time
 
         for i in range(self.num_lines):
@@ -150,23 +191,21 @@ class DynamicPlotter_MultiLine:
     def reset_plot(self):
         self.databuffer = [deque([0.0] * self.timewindow, maxlen=self.timewindow) for _ in range(self.num_lines)]
         self.x = np.linspace(-self.timewindow, 0, self.timewindow)
-        self.y = np.zeros(shape=(self.num_lines, self.databuffer.maxlen), dtype=float)
+        self.y[:] = 0
         for i in range(self.num_lines):
             self.curve[i].setData(self.x, self.y[i])
         self.last_time = None
 
-class DynamicPlotter_2d:
-    def __init__(self, plot, title, timewindow):
-        self.timewindow = timewindow
+# Plotting system where both x and y axis require updates from data
+class DynamicPlotter_2d(BaseDynamicPlotter):
+    def __init__(self, plot, title, timewindow, unit):
+        super().__init__(plot, title, timewindow, unit)
         self.databuffer_x = deque([0.0] * timewindow, maxlen=timewindow)
         self.databuffer_y = deque([0.0] * timewindow, maxlen=timewindow)
         self.x = np.zeros(self.databuffer_x.maxlen, dtype=float)
         self.y = np.zeros(self.databuffer_y.maxlen, dtype=float)
 
-        self.plt = plot
-        self.plt.setTitle(title)
-        self.plt.showGrid(x=True, y=True)
-        self.curve = self.plt.plot(self.x, self.y, pen=(255, 0, 0))
+        self.curve = self.plt.plot(self.x, self.y, pen=self.get_pen_color(self.base_line_color_idx))
 
     def update_plot(self, new_val_x, new_val_y):
 
@@ -180,12 +219,14 @@ class DynamicPlotter_2d:
     def reset_plot(self):
         self.databuffer_x = deque([0.0] * self.timewindow, maxlen=self.timewindow)
         self.databuffer_y = deque([0.0] * self.timewindow, maxlen=self.timewindow)
-        self.x = np.zeros(self.databuffer_x.maxlen, dtype=float)
-        self.y = np.zeros(self.databuffer_y.maxlen, dtype=float)
+        self.x[:] = 0
+        self.y[:] = 0
         self.curve.setData(self.x, self.y)
 
+# GUI class
 class GroundStationApp(QMainWindow):
 
+    # Emit a signal when serial data is received
     __data_received = pyqtSignal()
 
     def __init__(self):
@@ -194,6 +235,7 @@ class GroundStationApp(QMainWindow):
         
         self.__data_received.connect(self.process_data)
 
+        # Define macros for some variables
         self.__CMD_GROUP_WINDOW_MAIN        = 0
         self.__CMD_GROUP_WINDOW_CHANGE_MODE = 1
         self.__CMD_GROUP_WINDOW_ADV         = 2
@@ -205,10 +247,13 @@ class GroundStationApp(QMainWindow):
         self.__PORT_SELECTED_INFO           = None
         self.__serial                       = QSerialPort()
         self.__PORT_LABEL_OPEN              = False
-        self.__TEAM_ID                      = 0
-        self.__music_status                 = 0
+        self.__TEAM_ID                      = 3114
         self.__packet_recv_count            = 0
+        self.__packet_sent_count            = 0
         self.__transmission_on              = 0
+        self.__graph_time_window            = 30
+        self.__csv_file                     = None
+        self.__csv_writer                   = None
         self.__serial.setBaudRate(57600)
         self.__serial.readyRead.connect(self.recv_data)
 
@@ -225,8 +270,17 @@ class GroundStationApp(QMainWindow):
         button_font.setPointSize(14)
         button_font.setWeight(QFont.Weight.Medium)
         command_status_font = QFont()
-        command_status_font.setPointSize(12)
-        command_status_font.setWeight(QFont.Weight.Normal)
+        command_status_font.setPointSize(14)
+        command_status_font.setWeight(QFont.Weight.Medium)
+        graph_sidebar_font = QFont()
+        graph_sidebar_font.setPointSize(14)
+        graph_sidebar_font.setWeight(QFont.Weight.DemiBold)
+        credit_font = QFont("Courier New")
+        credit_font.setPointSize(10)
+        live_graph_data_font = QFont("Roboto Mono")
+        live_graph_data_font.setPointSize(14)
+        live_graph_field_font = QFont()
+        live_graph_field_font.setPointSize(14)
         # ------ FONTS ------ #
 
         # CENTRAL WIDGET
@@ -235,12 +289,14 @@ class GroundStationApp(QMainWindow):
 
         grid_layout = QGridLayout(self.central_widget)
         grid_layout.setHorizontalSpacing(10)
-        grid_layout.setVerticalSpacing(30)
+        grid_layout.setVerticalSpacing(20)
         grid_layout.setRowStretch(0, 1)
-        grid_layout.setRowStretch(1, 3)
+        grid_layout.setRowStretch(1, 2)
 
         # ------ COMMANDS GROUP ------ #
-        commands_group_box = QGroupBox("Commands")
+        commands_group_box = QGroupBox()
+        commands_group_box.setFixedHeight(300)
+        commands_group_box.setFixedWidth(500)
         commands_layout = QVBoxLayout(commands_group_box)
 
         self.button_mode = QPushButton("CHANGE MODE")
@@ -268,11 +324,6 @@ class GroundStationApp(QMainWindow):
         self.button_back.setFont(button_font)
         self.button_back.clicked.connect(lambda: self.command_group_change_buttons(self.__CMD_GROUP_WINDOW_MAIN))
         self.button_back.hide()
-
-        self.button_fun = QPushButton("AMBIENCE")
-        self.button_fun.setFont(button_font)
-        self.button_fun.clicked.connect(self.play_space_music)
-        self.button_fun.hide()
 
         self.combo_select_port = QComboBox()
         self.combo_select_port.setPlaceholderText("SELECT PORT")
@@ -329,10 +380,33 @@ class GroundStationApp(QMainWindow):
         self.button_test_connection.clicked.connect(self.check_remote_connection)
         self.button_test_connection.hide()
 
-        self.cmd_ret_label = QLabel("GUI MSG: ")
-        self.cmd_ret_label.setFont(button_font)
-        self.cmd_ret_label.setStyleSheet("QLabel{color : blue; font-size: 10pt;}")
-        self.cmd_ret_label.setFixedHeight(20)
+        self.team_id_field = QLineEdit()
+        self.team_id_field.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+        self.team_id_field.setMaxLength(9)
+        self.team_id_field.setStyleSheet("""
+            QLineEdit {
+                background-color: #f0f0f0;
+                border: 1px solid #cccccc;
+                border-radius: 10px;
+                padding: 4px;
+                font-size: 14px;
+            }
+            
+            QLineEdit:focus {
+                border: 1px solid #0078d4;
+                background-color: #ffffff;
+            }
+        """)
+        int_validator = QIntValidator(self)
+        self.team_id_field.setValidator(int_validator)
+        self.team_id_field.editingFinished.connect(self.team_id_edited)
+        self.team_id_field_info = QLabel("Change TEAM ID (sends to CANSAT)")
+        self.team_id_field_info.setFont(button_font)
+        team_id_editing_box = QHBoxLayout()
+        team_id_editing_box.addWidget(self.team_id_field_info)
+        team_id_editing_box.addWidget(self.team_id_field)
+        self.team_id_field_info.hide()
+        self.team_id_field.hide()
 
         commands_layout.addWidget(self.button_connection_group)
         commands_layout.addWidget(self.combo_select_port)
@@ -350,15 +424,12 @@ class GroundStationApp(QMainWindow):
         commands_layout.addWidget(self.button_sim_mode_enable)
         commands_layout.addWidget(self.button_sim_mode_activate)
         commands_layout.addWidget(self.button_sim_mode_disable)
-        commands_layout.addWidget(self.button_fun)
+        commands_layout.addLayout(team_id_editing_box)
         commands_layout.addWidget(self.button_back)
-        commands_layout.addWidget(self.cmd_ret_label)
 
-        commands_group_box.setFixedWidth(500)
-        commands_group_box.setFixedHeight(300)
+        grid_layout.setColumnStretch(0,1)
 
         grid_layout.addWidget(commands_group_box, 0, 0)
-        grid_layout.setAlignment(commands_group_box, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
         # Store buttons in groups so we can control them later
         self.buttons_main = [
@@ -373,7 +444,8 @@ class GroundStationApp(QMainWindow):
             self.button_set_time,
             self.button_reset_mission,
             self.button_back,
-            self.button_fun,
+            self.team_id_field,
+            self.team_id_field_info,
         ]
 
         self.buttons_mode = [
@@ -399,171 +471,246 @@ class GroundStationApp(QMainWindow):
         ]
         # ------ END COMMANDS GROUP ------ #
 
-        # ------ DATA 1 GROUP ------ #
-        status_group_box = QGroupBox("Status")
+        # ------ DATA GROUP ------ #
+        status_group_box = QGroupBox()
         status_layout = QVBoxLayout(status_group_box)
 
         self.label_port = QLabel()
         self.label_port.setFont(command_status_font)
+        self.label_port.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         self.set_port_text_closed()
 
         self.label_remote_state = QLabel()
         self.label_remote_state.setFont(command_status_font)
-        self.label_remote_state.setText(f'<span style="color:black;">CANSAT STATE: \
+        self.label_remote_state.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.label_remote_state.setText(f'<span style="color:black;">CANSAT State: \
                                               </span><span style="color:RED;">UNKNOWN</span>')
 
         self.label_remote_mode = QLabel()
         self.label_remote_mode.setFont(command_status_font)
-        self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
+        self.label_remote_mode.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
                                               </span><span style="color:RED;">UNKNOWN</span>')
         
-        self.label_ret_msg = QLabel()
-        self.label_ret_msg.setFont(command_status_font)
-        self.label_ret_msg.setStyleSheet("QLabel{font-size: 10pt;}")
-        self.label_ret_msg.setText(f'<span style="color:black;">RETURN MESSAGE: \
-                                              </span><span style="color:RED;">NONE</span>')
-        
-        self.team_id_editor = QHBoxLayout()
-        self.team_id_label = QLabel("TEAM ID: UNKNOWN (Send new ID->)")
-        self.team_id_label.setFont(command_status_font)
-        self.team_id_field = QLineEdit()
-        self.team_id_field.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
-        self.team_id_field.setMaxLength(9)
-        self.team_id_field.setStyleSheet("""
-            QLineEdit {
-                background-color: #f0f0f0;
-                border: 1px solid #cccccc;
-                border-radius: 10px;
-                padding: 4px;
-                font-size: 14px;
-            }
-            
-            QLineEdit:focus {
-                border: 1px solid #0078d4;
-                background-color: #ffffff;
-            }
-        """)
-        int_validator = QIntValidator(self)
-        self.team_id_field.setValidator(int_validator)
-        self.team_id_field.editingFinished.connect(self.team_id_edited)
-        self.team_id_editor.addWidget(self.team_id_label)
-        self.team_id_editor.addWidget(self.team_id_field)
+        self.label_mission_time = QLabel()
+        self.label_mission_time.setFont(command_status_font)
+        self.label_mission_time.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.label_mission_time.setText(f'<span style="color:black;">Mission Time: \
+                                              </span><span style="color:RED;">N/A</span>')
 
-        status_layout.addLayout(self.team_id_editor)
+        self.label_packet_count = QLabel()
+        self.label_packet_count.setFont(command_status_font)
+        self.label_packet_count.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.label_packet_count.setText(f'<span style="color:black;">Packets Received/Sent: \
+                                              </span><span style="color:RED;">N/A</span>')
+        
+        self.label_sat = QLabel()
+        self.label_sat.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.label_sat.setFont(command_status_font)
+        self.label_sat.setText(f'<span style="color:black;">Satellites: \
+                                              </span><span style="color:RED;">N/A</span>')
+
         status_layout.addWidget(self.label_port)
         status_layout.addWidget(self.label_remote_mode)
         status_layout.addWidget(self.label_remote_state)
-        status_layout.addWidget(self.label_ret_msg)
+        status_layout.addWidget(self.label_mission_time)
+        status_layout.addWidget(self.label_sat)
+        status_layout.addWidget(self.label_packet_count)
 
-        status_group_box.setFixedWidth(500)
-        status_group_box.setFixedHeight(300)
+        grid_layout.setColumnStretch(1,1)
 
         grid_layout.addWidget(status_group_box, 0, 1)
-        grid_layout.setAlignment(status_group_box, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        # ------ END DATA 1 GROUP ------ #
+        # ------ END DATA GROUP ------ #
 
-        # ------ LIVE DATA 2 GROUP ------ #
-        data_group_box = QGroupBox("Live Data")
-        data_layout = QVBoxLayout(data_group_box)
+        # ------  LOG GROUP ------ #
+        log_widget = QWidget()
+        log_layout = QVBoxLayout(log_widget)
 
-        self.label_mission_time = QLabel()
-        self.label_mission_time.setFont(command_status_font)
-        self.label_mission_time.setText(f'<span style="color:black;">MISSION TIME: \
-                                              </span><span style="color:RED;">N/A</span>')
-        
-        self.label_gps_time = QLabel()
-        self.label_gps_time.setFont(command_status_font)
-        self.label_gps_time.setText(f'<span style="color:black;">GPS TIME: \
-                                              </span><span style="color:RED;">N/A</span>')
+        log_title = QLabel("Command Log")
+        log_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        log_title.setFont(graph_sidebar_font)
 
-        self.label_packet_count_sent = QLabel()
-        self.label_packet_count_sent.setFont(command_status_font)
-        self.label_packet_count_sent.setText(f'<span style="color:black;">PACKETS SENT: \
-                                              </span><span style="color:RED;">N/A</span>')
-        
-        self.label_packet_count_recv = QLabel()
-        self.label_packet_count_recv.setFont(command_status_font)
-        self.label_packet_count_recv.setText(f'<span style="color:black;">PACKETS RECEIVED: \
-                                              </span><span style="color:RED;">0</span>')
-        
-        self.label_packet_count = QLabel()
-        self.label_packet_count.setFont(command_status_font)
-        self.label_packet_count.setText(f'<span style="color:black;">SATELLITES: \
-                                              </span><span style="color:RED;">N/A</span>')
+        self.gui_log = QListWidget()
+        self.gui_log.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+        self.gui_log.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.gui_log.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
-        self.label_remote_msg = QLabel()
-        self.label_remote_msg.setFont(command_status_font)
-        self.label_remote_msg.setStyleSheet("QLabel{font-size: 10pt;}")
-        self.label_remote_msg.setText(f'<span style="color:black;">CMD ECHO: \
-                                              </span><span style="color:RED;">N/A</span>')
-        
-        data_layout.addWidget(self.label_mission_time)
-        data_layout.addWidget(self.label_gps_time)
-        data_layout.addWidget(self.label_packet_count_sent)
-        data_layout.addWidget(self.label_packet_count_recv)
-        data_layout.addWidget(self.label_remote_msg)
+        self.gui_log.setStyleSheet("""
+            QListWidget {
+                font-size: 18px;
+                background-color: #dcdcdc;
+                border-radius: 6px;
+                padding: 3px;
+            }
+        """)
 
-        data_group_box.setFixedWidth(500)
-        data_group_box.setFixedHeight(300)
+        log_layout.addWidget(log_title)
+        log_layout.addWidget(self.gui_log)
 
-        grid_layout.addWidget(data_group_box, 0, 2)
-        grid_layout.setAlignment(data_group_box, Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
-        # ------ END DATA 2 GROUP ------ #
+        grid_layout.setColumnStretch(2,1)
+
+        grid_layout.addWidget(log_widget, 0, 2)
+        # ------ END LOG GROUP ------ #
 
         # ------ GRAPH GROUP ------ #
-        graphs_group_box = QGroupBox()
-        graphs_layout = QGridLayout()
+        graph_parent_group = QHBoxLayout()
+        self.tab_widget = QTabWidget()
+        graph_parent_group.addWidget(self.tab_widget, stretch=8)
+
+        self.tab_widget.setStyleSheet("""
+            QTabBar::tab {
+                font-size: 14pt;
+                padding: 4px 8px;
+                background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, 
+                                    stop:0 rgba(255, 255, 255, 255), 
+                                    stop:1 rgba(240, 240, 240, 255)); 
+                border: 1px solid lightgray;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+            }
+            QTabBar::tab:selected {
+                background: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, 
+                                    stop:0 rgba(240, 240, 240, 255), 
+                                    stop:1 rgba(210, 210, 210, 255)); 
+            }
+        """)
 
         self.graphs = []
         self.plotters = []
 
         graph_info = [
-            {"title": "Altitude + GPS Altitude [m]", "lines": 2, "2d": False},
-            {"title": "Temperature [°C]", "lines": 1, "2d": False},
-            {"title": "Pressure [kPa]", "lines": 1, "2d": False},
-            {"title": "Voltage [V]", "lines": 1, "2d": False},
-            {"title": "Gyro [deg/s]", "lines": 3, "2d": False},
-            {"title": "Accelerometer [deg/s^2]", "lines": 3, "2d": False},
-            {"title": "Magnetometer [G]", "lines": 3, "2d": False},
-            {"title": "Rotation [deg/s]", "lines": 1, "2d": False},
-            {"title": "GPS Latitude v Longitude", "lines": 1, "2d": True},
+            {"title": "Altitude", "lines": 1, "2d": False, "unit": "m"},
+            {"title": "Temperature", "lines": 1, "2d": False, "unit": "°C"},
+            {"title": "Pressure", "lines": 1, "2d": False, "unit": "kPa"},
+            {"title": "Voltage", "lines": 1, "2d": False, "unit": "V"},
+            {"title": "Gyro", "lines": 3, "2d": False, "unit": "deg/s"},
+            {"title": "Accelerometer", "lines": 3, "2d": False, "unit":"deg/s^2"},
+            {"title": "Magnetometer", "lines": 3, "2d": False, "unit": "G"},
+            {"title": "Rotation", "lines": 1, "2d": False, "unit": "deg/s"},
+            {"title": "GPS Lat v Long", "lines": 1, "2d": True, "unit": ""},
+            {"title": "GPS Altitude", "lines": 1, "2d": False, "unit": "m"}
         ]
-
+        
         self.graph_title_to_index = {
-            "ALTITUDE" : 0,
-            "TEMPERATURE" : 1,
-            "PRESSURE" : 2,
-            "VOLTAGE" : 3,
-            "GYRO" : 4,
-            "ACCEL" : 5,
-            "MAG" : 6,
-            "ROTATION" : 7,
+            "Altitude" : 0,
+            "Temperature" : 1,
+            "Pressure" : 2,
+            "Voltage" : 3,
+            "Gyro" : 4,
+            "Accel" : 5,
+            "Mag" : 6,
+            "Rotation" : 7,
             "GPS" : 8,
+            "GPS Altitude": 9,
         }
 
-        for i, entry in enumerate(graph_info):
+        # Loop through each graph and create a plot using the plot classes
+        # Add the graph to a new tab and store plots for updating later
+        for entry in graph_info:
+
+            tab_content = QGroupBox()
+            tab_layout = QVBoxLayout()
+
             graph = pg.PlotWidget()
             graph.setBackground('w')
             graph.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            graphs_layout.addWidget(graph, i // 3, i % 3)
+            tab_layout.addWidget(graph)
+
+            tab_content.setLayout(tab_layout)
+
+            self.tab_widget.addTab(tab_content, entry["title"])
 
             self.graphs.append(graph)
 
             if entry["lines"] == 1 and entry["2d"] is False:
-                plotter = DynamicPlotter(graph, title=entry["title"], timewindow=20)
+                plotter = DynamicPlotter(graph, title=entry["title"], timewindow=self.__graph_time_window,unit=entry["unit"])
             elif entry["lines"] > 1 and entry["2d"] is False:
-                plotter = DynamicPlotter_MultiLine(graph, title=entry["title"], timewindow=20, num_lines=entry["lines"])
+                plotter = DynamicPlotter_MultiLine(graph, title=entry["title"], 
+                                                   timewindow=self.__graph_time_window, num_lines=entry["lines"],
+                                                   unit=entry["unit"])
             else:
-                plotter = DynamicPlotter_2d(graph, title=entry["title"], timewindow=20)
+                plotter = DynamicPlotter_2d(graph, title=entry["title"], timewindow=self.__graph_time_window,unit=entry["unit"])
 
             self.plotters.append(plotter)
 
-        graphs_group_box.setLayout(graphs_layout)
+        # Sidebar to show all current graph values
+        sidebar_widget = QWidget()
+        sidebar = QVBoxLayout(sidebar_widget)
 
-        grid_layout.addWidget(graphs_group_box, 1, 0, 1, 3)
+        self.info_label = QLabel("Live Values")
+        self.info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.info_label.setFont(graph_sidebar_font)
+
+        self.credit_label = QLabel("RSX @ University of Toronto")
+        self.credit_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.credit_label.setFont(credit_font)
+
+        self.live_graph_values = QFormLayout()
+
+        sidebar_fields_data = [
+            ("Altitude", "0.0 m"),
+            ("Temperature", "0.0 °C"),
+            ("Pressure", "0.0 kPa"),
+            ("Voltage", "0.0 V"),
+            ("Gyro R", "0 °/s"),
+            ("Gyro P", "0 °/s"),
+            ("Gyro Y", "0 °/s"),
+            ("Accel R", "0 °/s²"),
+            ("Accel P", "0 °/s²"),
+            ("Accel Y", "0 °/s²"),
+            ("Mag R", "0 G"),
+            ("Mag P", "0 G"),
+            ("Mag Y", "0 G"),
+            ("Rotation", "0 °/s"),
+            ("GPS Lat", "0.0000°"),
+            ("GPS Long", "0.0000°"),
+            ("GPS Altitude", "0.0 m"),
+            ("GPS Time", "00:00:00"),
+        ]
+
+        self.sidebar_data_labels = []
+
+        self.sidebar_data_dict = {name: idx for idx, (name, _) in enumerate(sidebar_fields_data)}
+
+        for field_name, field_value in sidebar_fields_data:
+            # Create the field label and data label
+            field_label = QLabel(f"{field_name}:")
+            data_label = QLabel(field_value)
+
+            # Set fonts
+            field_label.setFont(live_graph_field_font)
+            data_label.setFont(live_graph_data_font)
+
+            # Add them to your lists (or directly to your layout if needed)
+            self.sidebar_data_labels.append(data_label)
+
+            self.live_graph_values.addRow(field_label, data_label)
+
+        form_group = QGroupBox()
+        form_group.setLayout(self.live_graph_values)
+
+        sidebar.addWidget(self.info_label)
+        sidebar.addWidget(form_group)
+        sidebar.addStretch()
+        sidebar.addWidget(self.credit_label)
+
+        graph_parent_group.addWidget(sidebar_widget, stretch=2)
+        graph_parent_group.setSpacing(15)
+
+        grid_layout.addLayout(graph_parent_group, 1, 0, 1, 3)
         # ------ END GRAPH GROUP ------ #
-        self.showMaximized()
 
+        self.showMaximized()
+    
+    # ------ FUNCTIONS ------ #
+
+    def update_gui_log(self, msg, color="black"):
+        log_item = QListWidgetItem(f"{QTime.currentTime().toString('h:mm AP')}     {msg}")
+        log_item.setForeground(QColor(color))
+        self.gui_log.addItem(log_item)
+        self.gui_log.scrollToBottom()
+
+    # Change what buttons are shown in the commands box
     def command_group_change_buttons(self, mode):
         if mode == self.__CMD_GROUP_WINDOW_ADV:
             self.control_buttons(self.buttons_main, hide=True)
@@ -607,92 +754,106 @@ class GroundStationApp(QMainWindow):
             else:
                 button.show()
             
+    # Refresh available ports connected to the computer
     def refresh_ports(self, b_print):
         self.combo_select_port.clear()
         self.combo_select_port.setPlaceholderText("SELECT PORT")
         self.__available_ports = QSerialPortInfo.availablePorts()
         for port in self.__available_ports:
-            self.combo_select_port.addItem(port.portName())
+            port_name = port.portName() + ": " + port.description()
+            self.combo_select_port.addItem(port_name)
         if len(self.__available_ports) == 0:
             self.combo_select_port.addItem("No available ports")
         if(b_print == True):
-            self.cmd_ret_label.setText("GUI MSG: REFRESHING PORTS")
+            self.update_gui_log("PORTS REFRESHED")
 
     def port_selected(self):
         if len(self.__available_ports) != 0:
             self.__PORT_SELECTED_INFO = self.__available_ports[self.combo_select_port.currentIndex()]
-            self.cmd_ret_label.setText("GUI MSG: SELECTED PORT %s" % self.combo_select_port.currentText())
+            self.update_gui_log("SELECTED PORT %s" % self.combo_select_port.currentText())
     
+    # Open selected port or close it if it's open
     def open_close_port(self):
         if self.__serial.isOpen() is True:
             self.__serial.close()
             if self.__serial.isOpen():
-                self.cmd_ret_label.setText("GUI MSG: PORT WAS OPEN, DISCONNECTED")
+                self.update_gui_log("COULD NOT CLOSE PORT", "red")
+            else:
+                self.update_gui_log("GROUND PORT CLOSED")
                 self.__PORT_LABEL_OPEN = False
                 self.set_port_text_closed()
-            else:
-                self.cmd_ret_label.setText("GUI MSG: PORT DISCONNECT WAS UNSUCCESFUL")
         elif self.__PORT_SELECTED_INFO is not None:
             self.__serial.setPort(self.__PORT_SELECTED_INFO)
             if self.__serial.open(QIODevice.OpenModeFlag.ReadWrite):
                 self.__PORT_LABEL_OPEN = True
                 self.set_port_text_open()
-                self.cmd_ret_label.setText("GUI MSG: OPENED PORT")
+                self.update_gui_log("GROUND PORT OPENED")
             else:
-                self.cmd_ret_label.setText(f"GUI MSG: ERROR - FAILED TO OPEN PORT \
+                self.update_gui_log(f"GUI: FAILED TO OPEN PORT \
                                             {self.__PORT_SELECTED_INFO.portName()}: {self.serial.errorString()}!")
         else:
-            self.cmd_ret_label.setText("GUI MSG: ERROR - SELECT PORT BEFORE ATTEMPTING TO CONNECT!")
+            self.update_gui_log("SELECT PORT BEFORE CONNECTING", "red")
 
     def check_remote_connection(self):
-        self.cmd_ret_label.setText("GUI MSG: SENT TEST MESSAGE")
-        self.send_data("CMD,%d,TEST,X" % self.__TEAM_ID)
+        if(self.send_data("CMD,%d,TEST,X" % self.__TEAM_ID)):
+            self.update_gui_log("SENT TEST MESSAGE")
     
     def send_time(self):
         utc_time = datetime.now(timezone.utc)
         time_str = utc_time.strftime("%H:%M:%S")
-        self.send_data("CMD,%d,ST,%s" % (self.__TEAM_ID, time_str))
+        if(self.send_data("CMD,%d,ST,%s" % (self.__TEAM_ID, time_str))):
+            self.update_gui_log(f"SENT NEW MISSION TIME={time_str}")
     
     def change_sim_mode(self, mode):
-        self.send_data("CMD,%d,SIM,%s" % (self.__TEAM_ID, mode))
+        if(self.send_data("CMD,%d,SIM,%s" % (self.__TEAM_ID, mode))):
+            self.update_gui_log(f"SENT SIMULATION MODE={mode}")
     
     def altitude_cal(self):
-        self.send_data("CMD,%d,CAL,X" % self.__TEAM_ID)
+        if(self.send_data("CMD,%d,CAL,X" % self.__TEAM_ID)):
+            self.update_gui_log(f"SENT ALTITUDE CALIBRATION COMMAND")
     
     def activate_sensor_ex(self):
         # TODO: Need one for each device on/off
-        self.send_data("CMD,%d,MEC,X:ON" % self.__TEAM_ID)
+        if(self.send_data("CMD,%d,MEC,X:ON" % self.__TEAM_ID)):
+            self.update_gui_log("SENT SENSOR ACTIVATION COMMAND (DOES NOTHING)")
     
     def toggle_transmission(self):
         if self.__transmission_on == 0:
-            self.cmd_ret_label.setText("GUI MSG: SENT TRANSMISSION ON CMD")
-            self.send_data("CMD,%d,CX,ON" % self.__TEAM_ID)
-            self.__transmission_on = 1
+            self.__csv_file = open("cansat_data.csv", "w", newline="")
+            self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
+            self.__csv_writer.writeheader()
+            self.__csv_file = open("cansat_data.csv", "a", newline="")
+            self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
+            if(self.send_data("CMD,%d,CX,ON" % self.__TEAM_ID)):
+                self.update_gui_log("SENT TRANSMISSION ON COMMAND")
+                self.__transmission_on = 1
         else:
-            self.cmd_ret_label.setText("GUI MSG: SENT TRANSMISSION OFF CMD")
-            self.send_data("CMD,%d,CX,OFF" % self.__TEAM_ID)
-            self.__transmission_on = 0
+            if(self.send_data("CMD,%d,CX,OFF" % self.__TEAM_ID)):
+                self.update_gui_log("SENT TRANSMISSION OFF COMMAND")
+                self.__packet_recv_count = 0
+                self.__transmission_on = 0
+                if not self.__csv_file.closed:
+                    self.__csv_file.close()
 
     def team_id_edited(self):
-        # TODO: esc unfocuses
         self.team_id_field.clearFocus()
         self.__TEAM_ID = int(self.team_id_field.text())
-        if isinstance(self.__TEAM_ID, int) and self.__TEAM_ID >= 0 and len(str(self.__TEAM_ID)) <= 10:
-            self.cmd_ret_label.setText("GUI MSG: SENDING NEW TEAM ID...")
-            self.send_data("CMD,%d,RESET_TEAM_ID,%d" % (self.__TEAM_ID, self.__TEAM_ID))
-        else:
-            self.cmd_ret_label.setText("GUI MSG: ERROR - TEAM ID MUST BE A WHOLE NUMBER UNDER 10 CHARACTERS")
+        if(self.send_data("CMD,%d,RESET_TEAM_ID,%d" % (self.__TEAM_ID, self.__TEAM_ID))):
+            self.update_gui_log(f"SENT NEW TEAM ID {self.__TEAM_ID}")
             
     def send_data(self, msg):
         if self.__serial.isOpen() is True:
             msg = msg + "\n"
             self.__serial.write(msg.encode())
+            return 1
         elif self.__PORT_LABEL_OPEN == True:
-            self.cmd_ret_label.setText("GUI MSG: CANNOT SEND DATA - PORT WAS DISCONNECTED")
+            self.update_gui_log("ERROR: GUI ATTEMPTED TO SEND DATA WITH NO OPEN PORT", "red")
             self.__PORT_LABEL_OPEN = False
             self.set_port_text_closed()
+            return 0
         else:
-            self.cmd_ret_label.setText("GUI MSG: ERROR - OPEN PORT BEFORE SENDING DATA")
+            self.update_gui_log("OPEN PORT BEFORE SENDING DATA", "red")
+            return 0
 
     def recv_data(self):
         while self.__serial.canReadLine():
@@ -715,25 +876,20 @@ class GroundStationApp(QMainWindow):
                 msg_text = re.sub(r'{.+?}', '', msg_text).strip()
                 new_mode, new_state, ret_team_id = mission_info.split('|')
                 if new_mode == "F":
-                    self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
+                    self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
                                                 </span><span style="color:BLUE;">FLIGHT</span>')
                 elif new_mode == "S":
-                    self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
+                    self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
                                                 </span><span style="color:BLUE;">SIM</span>')
-                self.label_remote_state.setText(f'<span style="color:black;">CANSAT STATE: \
+                self.label_remote_state.setText(f'<span style="color:black;">CANSAT State: \
                                               </span><span style="color:BLUE;">{new_state}</span>')
-                self.team_id_field.setText(f"{ret_team_id}")
 
             if msg.startswith("$IE"):
-                self.label_ret_msg.setText(f'<span style="color:black;">RETURN MESSAGE: \
-                                              </span><span style="color:red;">{msg_text}</span>')
+                self.update_gui_log(f"-> CANSAT: {msg_text}", "red")
             else:
-                self.label_ret_msg.setText(f'<span style="color:black;">RETURN MESSAGE: \
-                                              </span><span style="color:blue;">{msg_text}</span>')
+                self.update_gui_log(f"-> CANSAT: {msg_text}", "blue")
         else: # telemetry
             self.parse_telemetry_string(msg)
-            self.label_ret_msg.setText(f'<span style="color:black;">RETURN MESSAGE: \
-                                              </span><span style="color:yellow;">RETURN MSG DISABLED DURING MISSION</span>')
             self.__transmission_on = 1
     
     def reset_mission(self):
@@ -744,106 +900,113 @@ class GroundStationApp(QMainWindow):
         msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         msg_box.setDefaultButton(QMessageBox.StandardButton.No)
 
-        # Check the user's response
         response = msg_box.exec()
         if response == QMessageBox.StandardButton.Yes:
             self.__packet_recv_count = 0
-            self.label_packet_count_recv.setText(f'<span style="color:black;">PACKETS RECEIVED: \
-                                                </span><span style="color:RED;">{self.__packet_recv_count}</span>')
+            
             for plotter in self.plotters:
                 plotter.reset_plot()
+            
+            self.gui_log.clear()
 
     def set_port_text_closed(self):
-         self.label_port.setText(f'<span style="color:black;">GROUND PORT: \
+         self.label_port.setText(f'<span style="color:black;">Ground Port: \
                                               </span><span style="color:RED;">CLOSED</span>')
         
     def set_port_text_open(self):
-        open_msg = "OPEN ON: " + self.__PORT_SELECTED_INFO.portName()
-        self.label_port.setText(f'<span style="color:black;">GROUND PORT: \
+        open_msg = "OPEN ON: " + self.__PORT_SELECTED_INFO.portName() + self.__PORT_SELECTED_INFO.description()
+        self.label_port.setText(f'<span style="color:black;">Ground Port: \
                                               </span><span style="color:GREEN;">{open_msg}</span>')
 
+    # Close port on app exit
     def closeEvent(self, event):
         if self.__serial.isOpen() is True:
             self.__serial.close()
-        
-    def play_space_music(self):
-        if(self.__music_status == 0):
-            mixer.init()
-            mixer.music.load("media/space.wav")
-            mixer.music.play(loops=-1)
-            self.__music_status = 1
-            self.cmd_ret_label.setText("GUI MSG: AMBIENCE ON")
-        elif self.__music_status == 1:
-            mixer.music.pause()
-            self.__music_status = 2
-            self.cmd_ret_label.setText("GUI MSG: AMBIENCE OFF")
-        else:
-            mixer.music.unpause()
-            self.__music_status = 1
-            self.cmd_ret_label.setText("GUI MSG: AMBIENCE ON")
+
+    def update_packet_label(self):
+        self.label_packet_count.setText(f'<span style="color:black;">Packets Received: \
+                                            </span><span style="color:RED;"> \
+                                            {self.__packet_recv_count}/{self.__packet_sent_count}</span>')
     
+    # Upon receiving telemetry string, extract contents and update fields
     def parse_telemetry_string(self, msg):
         self.__packet_recv_count += 1
-        self.label_packet_count_recv.setText(f'<span style="color:black;">PACKETS RECEIVED: \
-                                            </span><span style="color:BLUE;">{self.__packet_recv_count}</span>')
+        self.update_packet_label()
         
         data = self.extract_data_str(msg)
 
-        # Update graphs
-        new_alt_data = [data.ALTITUDE, data.GPS_ALTITUDE]
-        self.plotters[self.graph_title_to_index.get("ALTITUDE")].update_plot(new_alt_data)
-
+        # Update graphs and live data values
+        if data.ALTITUDE is not None:
+            self.plotters[self.graph_title_to_index.get("Altitude")].update_plot(data.ALTITUDE)
+            self.sidebar_data_labels[self.sidebar_data_dict.get("Altitude")].setText(f"{data.ALTITUDE} m")
+        
         if data.TEMPERATURE is not None:
-            self.plotters[self.graph_title_to_index.get("TEMPERATURE")].update_plot(data.TEMPERATURE)
+            self.plotters[self.graph_title_to_index.get("Temperature")].update_plot(data.TEMPERATURE)
+            self.sidebar_data_labels[self.sidebar_data_dict.get("Temperature")].setText(f"{data.TEMPERATURE} °C")
 
         if data.PRESSURE is not None:
-            self.plotters[self.graph_title_to_index.get("PRESSURE")].update_plot(data.PRESSURE)
+            self.plotters[self.graph_title_to_index.get("Pressure")].update_plot(data.PRESSURE)
+            self.sidebar_data_labels[self.sidebar_data_dict.get("Pressure")].setText(f"{data.PRESSURE} kPa")
         
         if data.VOLTAGE is not None:
-            self.plotters[self.graph_title_to_index.get("VOLTAGE")].update_plot(data.VOLTAGE)
+            self.plotters[self.graph_title_to_index.get("Voltage")].update_plot(data.VOLTAGE)
+            self.sidebar_data_labels[self.sidebar_data_dict.get("Voltage")].setText(f"{data.PRESSURE} V")
 
         new_gyro_data = [data.GYRO_R, data.GYRO_P, data.GYRO_Y]
-        self.plotters[self.graph_title_to_index.get("GYRO")].update_plot(new_gyro_data)
+        self.plotters[self.graph_title_to_index.get("Gyro")].update_plot(new_gyro_data)
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Gyro R")].setText(f"{data.GYRO_R} °/s")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Gyro P")].setText(f"{data.GYRO_P} °/s")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Gyro Y")].setText(f"{data.GYRO_Y} °/s")
 
         new_accel_data = [data.ACCEL_R, data.ACCEL_P, data.ACCEL_Y]
-        self.plotters[self.graph_title_to_index.get("ACCEL")].update_plot(new_accel_data)
+        self.plotters[self.graph_title_to_index.get("Accel")].update_plot(new_accel_data)
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel R")].setText(f"{data.ACCEL_R} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel P")].setText(f"{data.ACCEL_P} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{data.ACCEL_Y} °/s²")
 
         new_mag_data = [data.MAG_R, data.MAG_P, data.MAG_Y]
-        self.plotters[self.graph_title_to_index.get("MAG")].update_plot(new_mag_data)
+        self.plotters[self.graph_title_to_index.get("Mag")].update_plot(new_mag_data)
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Mag R")].setText(f"{data.MAG_R} G")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Mag P")].setText(f"{data.MAG_P} G")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Mag Y")].setText(f"{data.MAG_Y} G")
         
         if data.AUTO_GYRO_ROTATION_RATE is not None:
-            self.plotters[self.graph_title_to_index.get("ROTATION")].update_plot(data.AUTO_GYRO_ROTATION_RATE)
+            self.plotters[self.graph_title_to_index.get("Rotation")].update_plot(data.AUTO_GYRO_ROTATION_RATE)
+            self.sidebar_data_labels[self.sidebar_data_dict.get("Rotation")].setText(f"{data.AUTO_GYRO_ROTATION_RATE} °/s")
 
         if data.GPS_LATITUDE is not None and data.GPS_LONGITUDE is not None:
             self.plotters[self.graph_title_to_index.get("GPS")].update_plot(data.GPS_LATITUDE, data.GPS_LONGITUDE)
-
-        # TODO: save to csv file
-
-        # Update labels
-        if data.TEAM_ID is not None: 
-            self.team_id_label.setText(f"TEAM ID: {data.TEAM_ID}")
+            self.sidebar_data_labels[self.sidebar_data_dict.get("GPS Lat")].setText(f"{data.GPS_LATITUDE}°")
+            self.sidebar_data_labels[self.sidebar_data_dict.get("GPS Long")].setText(f"{data.GPS_LONGITUDE}°")
+        
+        if data.GPS_ALTITUDE is not None:
+            self.plotters[self.graph_title_to_index.get("GPS Altitude")].update_plot(data.GPS_ALTITUDE)
+            self.sidebar_data_labels[self.sidebar_data_dict.get("GPS Altitude")].setText(f"{data.GPS_ALTITUDE} m")
         
         if data.MISSION_TIME is not None:
-            self.label_mission_time.setText(f'<span style="color:black;">MISSION TIME: \
+            self.label_mission_time.setText(f'<span style="color:black;">Mission Time: \
                                                 </span><span style="color:BLUE;">{data.MISSION_TIME}</span>')
         if data.PACKET_COUNT is not None:
-            self.label_packet_count_sent.setText(f'<span style="color:black;">PACKETS SENT: \
-                                              </span><span style="color:BLUE;">{data.PACKET_COUNT}</span>')
+            self.__packet_sent_count = data.PACKET_COUNT
+            self.update_packet_label()
+
         if data.MODE is not None:
-            self.label_remote_mode.setText(f'<span style="color:black;">CANSAT MODE: \
+            self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
                                               </span><span style="color:RED;">{data.MODE}</span>')
         if data.STATE is not None:
-            self.label_remote_state.setText(f'<span style="color:black;">CANSAT STATE: \
+            self.label_remote_state.setText(f'<span style="color:black;">CANSAT State: \
                                               </span><span style="color:BLUE;">{data.STATE}</span>')
         if data.GPS_TIME is not None:
-            self.label_gps_time.setText(f'<span style="color:black;">GPS TIME: \
-                                              </span><span style="color:BLUE;">{data.GPS_TIME}</span>')
+            self.sidebar_data_labels[self.sidebar_data_dict.get("GPS Time")].setText(f"{data.GPS_TIME}")
+
         if data.GPS_SATS is not None:
-            self.label_packet_count.setText(f'<span style="color:black;">SATELLITES: \
+            self.label_sat.setText(f'<span style="color:black;">Satellites: \
                                               </span><span style="color:BLUE;">{data.GPS_SATS}</span>')
         if data.CMD_ECHO is not None:
-            self.label_remote_msg.setText(f'<span style="color:black;">CMD ECHO: \
-                                              </span><span style="color:BLUE;">{data.CMD_ECHO}</span>')
+            self.update_gui_log(f"-> CANSAT: '{data.CMD_ECHO}'", "red")
+            
+        data_dict = data.to_dict()
+        self.__csv_writer.writerow(data_dict)
     
     def extract_data_str(self, msg: str) -> TelemetryData:
         # EXPECTED FORMAT:
@@ -884,5 +1047,5 @@ class GroundStationApp(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
-    window = GroundStationApp()
+    window=GroundStationApp()
     app.exec()
