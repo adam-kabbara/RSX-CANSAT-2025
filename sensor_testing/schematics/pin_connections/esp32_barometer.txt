@@ -1,0 +1,6 @@
+Barometer Pin Connections on the ESP32:
+
+- Barometer VIN --> 3V3
+- Barometer GND --> GND
+- Barometer SCK --> GPIO22
+- Barometer SDI --> GPIO21
