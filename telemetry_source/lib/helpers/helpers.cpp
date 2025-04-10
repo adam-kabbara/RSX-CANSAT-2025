@@ -60,41 +60,109 @@ int compare_strings(const char *a, const char *b)
     {  
        if(a[i]!=b[i])  
        {  
-           return 0;
+           return 1;
        }  
        i++; 
     } 
 
     if(a[i] !='\0' || b[i] != '\0')
     {
-       return 0;
+       return 1;
     }
     
-    return 1;
+    return 0;
 }
 
-int time_format_check(const char *time_utc)
+int set_time_from_str(const char *time_utc)
 {
-    // Check string is in format 'hh:mm:ss'
-    for(int i = 0; i < 8; i++)
-    {
-        if(time_utc[i] == '\0') return 1;
-    }
-    if(time_utc[8] != '\0') return 1;
+    struct tm tm = {0};
+    int hours, mins, secs;
 
-    for(int i = 0; i < 8; i++)
+    if(sscanf(time_utc, "%d:%d:%d", &hours, &mins, &secs) != 3)
     {
-        if(i != 2 && i != 5)
-        {
-            if(!isdigit(time_utc[i])) return 1;
-        }
-        else
-        {
-            if(time_utc[i] != ':') return 1;
-        }
+        return 1;
+    }
+
+    tm.tm_hour = hours;
+    tm.tm_min = mins;
+    tm.tm_sec = secs;
+
+    setenv("TZ", "UTC0", 1);
+    tzset();
+
+    time_t t = mktime(&tm);
+
+    struct timeval tv;
+    tv.tv_sec = t;
+
+    if(settimeofday(&tv, NULL) != 0)
+    {
+        return 1;
     }
 
     return 0;
+}
+
+const char* op_state_to_string(mission_info_struct::OperatingState state) 
+{
+    static const char* states[] = {
+        "LAUNCH_PAD",
+        "ASCENT",
+        "APOGEE",
+        "DESCENT",
+        "PROBE_RELEASE",
+        "LANDED",
+        "IDLE"
+    };
+
+    return states[state];
+
+}
+
+const char* op_mode_to_string(mission_info_struct::OperatingMode mode, int full) 
+{
+    if (full == 1)
+    {
+        if(mode == mission_info_struct::OperatingMode::FLIGHT)
+        {
+            return "FLIGHT";
+        }
+        else
+        {
+            return "SIM";
+        }
+    }
+    else
+    {
+        if(mode == mission_info_struct::OperatingMode::FLIGHT)
+        {
+            return "F";
+        }
+        else
+        {
+            return "S";
+        }
+    }
+}
+
+
+void cmd_buff_to_echo(char *cmd_buff, char *cmd_echo) 
+{
+    int i = 0;
+    
+    while (cmd_buff[i] != '\0') 
+    {
+        if (cmd_buff[i] == ',') 
+        {
+            cmd_echo[i] = '-';
+        } else 
+        {
+            cmd_echo[i] = cmd_buff[i];
+        }
+        i++;
+    }
+    
+    cmd_echo[i] = '\0';
 }
 
 char* build_data_str(struct transmission_packet *packet)
@@ -106,7 +174,7 @@ char* build_data_str(struct transmission_packet *packet)
         "%.1f,%.1f,%.1f,%.1f," //4
         "%d,%d,%d,%d,%d," //5
         "%d,%d,%d,%d,%d," //5
-        "%s,%.4f,%.4f," //3
+        "%s,%.1f,%.4f," //3
         "%.4f,%d,%s", //3
         packet->TEAM_ID, 
         packet->MISSION_TIME, 

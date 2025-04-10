@@ -2,6 +2,7 @@
 #define SET_VALS_H
 
 #include <Arduino.h>
+#include <time.h>
 
 #define XBEE_BAUD_RATE 57600
 #define CMD_BUFF_SIZE 128
@@ -10,21 +11,31 @@
 #define SENTENCE_SIZE 128
 #define DATA_BUFF_SIZE 528
 
-struct mission_info {
-    enum Sim_Mode_Status {
+struct mission_info_struct {
+    enum SimModeStatus {
         OFF = 0,
         ENABLED = 1,
         ACTIVE = 2
     };
-    char mode[WORD_SIZE] = "F";
-    int mode_int = 0; // F = 0, S = 1
-    char state[WORD_SIZE] = "IDLE";
-    Sim_Mode_Status sim_status = OFF;
-    int team_id = 0;
-    char mission_time[WORD_SIZE] = "00:00:00";
-    unsigned long mission_time_ms = 0;
-    int packet_count = 0;
-    char cmd_echo[WORD_SIZE] = "NONE";
+    enum OperatingMode {
+        FLIGHT = 0,
+        SIM = 1
+    };
+    enum OperatingState {
+        LAUNCH_PAD = 0,
+        ASCENT = 1,
+        APOGEE = 2,
+        DESCENT = 3,
+        PROBE_RELEASE = 4,
+        LANDED = 5,
+        IDLE = 6
+    };
+    OperatingState op_state = IDLE;
+    SimModeStatus sim_status = OFF;
+    OperatingMode op_mode = FLIGHT;
+    int team_id = 3114;
+    int packet_count = 100;
+    float launch_altitude = 0.0;
 };
 
 struct command_packet {
@@ -36,9 +47,9 @@ struct command_packet {
 
 struct transmission_packet {
     int TEAM_ID;
-    char MISSION_TIME[9];
+    char MISSION_TIME[DATA_SIZE];
     int PACKET_COUNT;
-    char MODE[1]; 
+    char MODE[2]; 
     char STATE[DATA_SIZE];
     float ALTITUDE;
     float TEMPERATURE;
@@ -54,12 +65,12 @@ struct transmission_packet {
     int MAG_P;
     int MAG_Y;
     int AUTO_GYRO_ROTATION_RATE;
-    char GPS_TIME[9];
+    char GPS_TIME[DATA_SIZE];
     float GPS_ALTITUDE;
     float GPS_LATITUDE;
     float GPS_LONGITUDE;
     int GPS_SATS;
-    char CMD_ECHO[WORD_SIZE];
+    char CMD_ECHO[CMD_BUFF_SIZE];
 };
 
 #endif /* SET_VALS_H */

@@ -2,14 +2,14 @@
 GUI for real-time CANSAT data visualisation
 
 Author: RSX
-Version: 1.3.1
-Last Updated: 2025-03-08
-Last Changes: moved return messages to gui log
+Version: 1.3.2
 
 TODO:  
-- CSV file saving doesn't work as expected
 - graph should auto scroll and keep entire data buffer
-
+- graph should reset when restarting telemetry
+- calibrate altitude in simulation mode
+- stop sending simp data in some cases
+- remove command log horizontal scrolling
 """
 
 import sys
@@ -22,9 +22,10 @@ import time
 import csv
 import pyqtgraph as pg
 from pyqtgraph import mkPen
+from enum import Enum
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
-from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTime
-from PyQt6.QtGui import QFont, QIcon, QIntValidator, QColor
+from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTimer, QTime, pyqtSlot
+from PyQt6.QtGui import QFont, QIcon, QIntValidator, QColor, QPalette
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -45,6 +46,7 @@ from PyQt6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
     QAbstractItemView,
+    QApplication,
 )
 
 # Structure to store packet data
@@ -223,7 +225,14 @@ class DynamicPlotter_2d(BaseDynamicPlotter):
         self.y[:] = 0
         self.curve.setData(self.x, self.y)
 
-# GUI class
+class CommandButtonGroup(Enum):
+    MAIN = 0
+    MODE = 1
+    ADVANCED = 2
+    SENSORS = 3
+    CONNECTION = 4
+    TELEMETRY = 5
+
 class GroundStationApp(QMainWindow):
 
     # Emit a signal when serial data is received
@@ -236,26 +245,25 @@ class GroundStationApp(QMainWindow):
         self.__data_received.connect(self.process_data)
 
         # Define macros for some variables
-        self.__CMD_GROUP_WINDOW_MAIN        = 0
-        self.__CMD_GROUP_WINDOW_CHANGE_MODE = 1
-        self.__CMD_GROUP_WINDOW_ADV         = 2
-        self.__CMD_GROUP_WINDOW_SNC         = 3
-        self.__CMD_GROUP_WINDOW_CONNECTION  = 4
         self.__CURRENT_CMD_WINDOW           = None
         self.__recveived_data               = "NONE"
         self.__available_ports              = None
+        self.__cansat_mode                  = "FLIGHT"
         self.__PORT_SELECTED_INFO           = None
         self.__serial                       = QSerialPort()
-        self.__PORT_LABEL_OPEN              = False
-        self.__TEAM_ID                      = 3114
+        self.__TEAM_ID                      = 1334
         self.__packet_recv_count            = 0
         self.__packet_sent_count            = 0
-        self.__transmission_on              = 0
         self.__graph_time_window            = 30
         self.__csv_file                     = None
         self.__csv_writer                   = None
         self.__serial.setBaudRate(57600)
         self.__serial.readyRead.connect(self.recv_data)
+        self.__serial.errorOccurred.connect(self.handle_serial_error)
+        self.simp_timer = QTimer()
+        self.simp_timer.timeout.connect(self.send_simp_data)
+        self.simp_data                      = []
+        self.current_simp_idx               = 0
 
         self.setWindowTitle("CANSAT Ground Station")
         self.setWindowIcon(QIcon('icon.png'))
@@ -301,28 +309,38 @@ class GroundStationApp(QMainWindow):
 
         self.button_mode = QPushButton("CHANGE MODE")
         self.button_mode.setFont(button_font)
-        self.button_mode.clicked.connect(lambda: self.command_group_change_buttons(self.__CMD_GROUP_WINDOW_CHANGE_MODE))
+        self.button_mode.clicked.connect(lambda: self.command_group_change_buttons(CommandButtonGroup.MODE))
 
         self.button_connection_group = QPushButton("CONNECTION")
         self.button_connection_group.setFont(button_font)
-        self.button_connection_group.clicked.connect(lambda: self.command_group_change_buttons(self.__CMD_GROUP_WINDOW_CONNECTION))
+        self.button_connection_group.clicked.connect(lambda: self.command_group_change_buttons(CommandButtonGroup.CONNECTION))
 
         self.button_connect = QPushButton("OPEN/CLOSE GROUND PORT")
         self.button_connect.setFont(button_font)
         self.button_connect.clicked.connect(self.open_close_port)
         self.button_connect.hide()
 
-        self.button_transmit = QPushButton("BEGIN/END TRANSMISSION")
-        self.button_transmit.setFont(button_font)
-        self.button_transmit.clicked.connect(self.toggle_transmission)
+        self.button_telemetry = QPushButton("TELEMETRY")
+        self.button_telemetry.setFont(button_font)
+        self.button_telemetry.clicked.connect(lambda: self.command_group_change_buttons(CommandButtonGroup.TELEMETRY))
+
+        self.button_transmit_on = QPushButton("TRANSMISSION ON")
+        self.button_transmit_on.setFont(button_font)
+        self.button_transmit_on.clicked.connect(lambda: self.toggle_transmission(1))
+        self.button_transmit_on.hide()
+
+        self.button_transmit_off = QPushButton("TRANSMISSION OFF")
+        self.button_transmit_off.setFont(button_font)
+        self.button_transmit_off.clicked.connect(lambda: self.toggle_transmission(0))
+        self.button_transmit_off.hide()
 
         self.button_advanced = QPushButton("ADVANCED")
         self.button_advanced.setFont(button_font)
-        self.button_advanced.clicked.connect(lambda: self.command_group_change_buttons(self.__CMD_GROUP_WINDOW_ADV))
+        self.button_advanced.clicked.connect(lambda: self.command_group_change_buttons(CommandButtonGroup.ADVANCED))
 
         self.button_back = QPushButton("BACK")
         self.button_back.setFont(button_font)
-        self.button_back.clicked.connect(lambda: self.command_group_change_buttons(self.__CMD_GROUP_WINDOW_MAIN))
+        self.button_back.clicked.connect(lambda: self.command_group_change_buttons(CommandButtonGroup.MAIN))
         self.button_back.hide()
 
         self.combo_select_port = QComboBox()
@@ -330,6 +348,11 @@ class GroundStationApp(QMainWindow):
         self.combo_select_port.setFont(button_font)
         self.combo_select_port.activated.connect(self.port_selected)
         self.combo_select_port.hide()
+
+        self.button_restart = QPushButton("RESTART PROCESSOR")
+        self.button_restart.setFont(button_font)
+        self.button_restart.clicked.connect(self.send_restart)
+        self.button_restart.hide()
 
         self.button_set_time = QPushButton("SET TIME")
         self.button_set_time.setFont(button_font)
@@ -363,7 +386,7 @@ class GroundStationApp(QMainWindow):
 
         self.button_sensor_control = QPushButton("SENSOR CONTROL")
         self.button_sensor_control.setFont(button_font)
-        self.button_sensor_control.clicked.connect(lambda: self.command_group_change_buttons(self.__CMD_GROUP_WINDOW_SNC))
+        self.button_sensor_control.clicked.connect(lambda: self.command_group_change_buttons(CommandButtonGroup.SENSORS))
 
         self.button_altitude_cal = QPushButton("CALIBRATE ALTITUDE")
         self.button_altitude_cal.setFont(button_font)
@@ -375,7 +398,7 @@ class GroundStationApp(QMainWindow):
         self.button_activate_sensor_ex.clicked.connect(self.activate_sensor_ex)
         self.button_activate_sensor_ex.hide()
 
-        self.button_test_connection = QPushButton("CHECK CONNECTION/GET STATUS")
+        self.button_test_connection = QPushButton("CHECK CONNECTION")
         self.button_test_connection.setFont(button_font)
         self.button_test_connection.clicked.connect(self.check_remote_connection)
         self.button_test_connection.hide()
@@ -413,9 +436,12 @@ class GroundStationApp(QMainWindow):
         commands_layout.addWidget(self.button_connect)
         commands_layout.addWidget(self.button_refresh_ports)
         commands_layout.addWidget(self.button_test_connection)
-        commands_layout.addWidget(self.button_transmit)
-        commands_layout.addWidget(self.button_mode)
+        commands_layout.addWidget(self.button_telemetry)
+        commands_layout.addWidget(self.button_transmit_on)
+        commands_layout.addWidget(self.button_transmit_off)
+        commands_layout.addWidget(self.button_restart)
         commands_layout.addWidget(self.button_sensor_control)
+        commands_layout.addWidget(self.button_mode)
         commands_layout.addWidget(self.button_altitude_cal)
         commands_layout.addWidget(self.button_activate_sensor_ex)
         commands_layout.addWidget(self.button_advanced)
@@ -437,15 +463,21 @@ class GroundStationApp(QMainWindow):
             self.button_connection_group,
             self.button_mode,
             self.button_sensor_control,
-            self.button_transmit,
+            self.button_telemetry,
         ]
         
         self.buttons_adv = [
-            self.button_set_time,
             self.button_reset_mission,
             self.button_back,
             self.team_id_field,
             self.team_id_field_info,
+        ]
+
+        self.buttons_telemetry = [
+            self.button_transmit_on,
+            self.button_transmit_off,
+            self.button_restart,
+            self.button_back,
         ]
 
         self.buttons_mode = [
@@ -456,6 +488,7 @@ class GroundStationApp(QMainWindow):
         ]
 
         self.buttons_sensor = [
+            self.button_set_time,
             self.button_back,
             self.button_altitude_cal,
             self.button_activate_sensor_ex,
@@ -465,7 +498,6 @@ class GroundStationApp(QMainWindow):
             self.button_test_connection,
             self.button_back,
             self.button_connect,
-            self.combo_select_port,
             self.combo_select_port,
             self.button_refresh_ports,
         ]
@@ -509,6 +541,12 @@ class GroundStationApp(QMainWindow):
         self.label_sat.setFont(command_status_font)
         self.label_sat.setText(f'<span style="color:black;">Satellites: \
                                               </span><span style="color:RED;">N/A</span>')
+        
+        self.label_cmd_echo = QLabel()
+        self.label_cmd_echo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.label_cmd_echo.setFont(command_status_font)
+        self.label_cmd_echo.setText(f'<span style="color:black;">CMD ECHO: \
+                                              </span><span style="color:RED;">N/A</span>')
 
         status_layout.addWidget(self.label_port)
         status_layout.addWidget(self.label_remote_mode)
@@ -516,6 +554,7 @@ class GroundStationApp(QMainWindow):
         status_layout.addWidget(self.label_mission_time)
         status_layout.addWidget(self.label_sat)
         status_layout.addWidget(self.label_packet_count)
+        status_layout.addWidget(self.label_cmd_echo)
 
         grid_layout.setColumnStretch(1,1)
 
@@ -712,40 +751,47 @@ class GroundStationApp(QMainWindow):
 
     # Change what buttons are shown in the commands box
     def command_group_change_buttons(self, mode):
-        if mode == self.__CMD_GROUP_WINDOW_ADV:
+        if mode == CommandButtonGroup.TELEMETRY:
             self.control_buttons(self.buttons_main, hide=True)
-            self.control_buttons(self.buttons_adv)
-            self.__CURRENT_CMD_WINDOW = self.__CMD_GROUP_WINDOW_ADV
+            self.control_buttons(self.buttons_telemetry)
+            self.__CURRENT_CMD_WINDOW = CommandButtonGroup.TELEMETRY
 
-        elif mode == self.__CMD_GROUP_WINDOW_CHANGE_MODE:
-            self.control_buttons(self.buttons_main, hide=True)
-            self.control_buttons(self.buttons_mode)
-            self.__CURRENT_CMD_WINDOW = self.__CMD_GROUP_WINDOW_CHANGE_MODE
-
-        elif mode == self.__CMD_GROUP_WINDOW_MAIN:
+        elif mode == CommandButtonGroup.MAIN:
             match self.__CURRENT_CMD_WINDOW:
-                case self.__CMD_GROUP_WINDOW_ADV:
+                case CommandButtonGroup.ADVANCED:
                     self.control_buttons(self.buttons_adv, hide=True)
-                case self.__CMD_GROUP_WINDOW_CHANGE_MODE:
+                case CommandButtonGroup.MODE:
                     self.control_buttons(self.buttons_mode, hide=True)
-                case self.__CMD_GROUP_WINDOW_CONNECTION:
+                case CommandButtonGroup.CONNECTION:
                     self.control_buttons(self.buttons_connection, hide=True)
-                case self.__CMD_GROUP_WINDOW_SNC:
+                case CommandButtonGroup.SENSORS:
                     self.control_buttons(self.buttons_sensor, hide=True)
+                case CommandButtonGroup.TELEMETRY:
+                    self.control_buttons(self.buttons_telemetry, hide=True)
             self.control_buttons(self.buttons_main)
         
-        elif mode == self.__CMD_GROUP_WINDOW_SNC:
+        elif mode == CommandButtonGroup.ADVANCED:
+            self.control_buttons(self.buttons_main, hide=True)
+            self.control_buttons(self.buttons_adv)
+            self.__CURRENT_CMD_WINDOW = CommandButtonGroup.ADVANCED
+
+        elif mode == CommandButtonGroup.MODE:
+            self.control_buttons(self.buttons_main, hide=True)
+            self.control_buttons(self.buttons_mode)
+            self.__CURRENT_CMD_WINDOW = CommandButtonGroup.MODE
+        
+        elif mode == CommandButtonGroup.SENSORS:
             self.control_buttons(self.buttons_main, hide=True)
             self.control_buttons(self.buttons_sensor)
-            self.__CURRENT_CMD_WINDOW = self.__CMD_GROUP_WINDOW_SNC
+            self.__CURRENT_CMD_WINDOW = CommandButtonGroup.SENSORS
         
-        elif mode == self.__CMD_GROUP_WINDOW_CONNECTION:
+        elif mode == CommandButtonGroup.CONNECTION:
             self.combo_select_port.clear()
             self.combo_select_port.setPlaceholderText("SELECT PORT")
             self.refresh_ports(False)
             self.control_buttons(self.buttons_main, hide=True)
             self.control_buttons(self.buttons_connection)
-            self.__CURRENT_CMD_WINDOW = self.__CMD_GROUP_WINDOW_CONNECTION
+            self.__CURRENT_CMD_WINDOW = CommandButtonGroup.CONNECTION
         
     def control_buttons(self, buttons, hide=False):
         for button in buttons:
@@ -765,95 +811,134 @@ class GroundStationApp(QMainWindow):
         if len(self.__available_ports) == 0:
             self.combo_select_port.addItem("No available ports")
         if(b_print == True):
-            self.update_gui_log("PORTS REFRESHED")
+            self.update_gui_log("Attempted port refresh")
 
     def port_selected(self):
         if len(self.__available_ports) != 0:
             self.__PORT_SELECTED_INFO = self.__available_ports[self.combo_select_port.currentIndex()]
-            self.update_gui_log("SELECTED PORT %s" % self.combo_select_port.currentText())
+            self.update_gui_log("Selected port: %s" % self.combo_select_port.currentText())
     
     # Open selected port or close it if it's open
     def open_close_port(self):
         if self.__serial.isOpen() is True:
             self.__serial.close()
             if self.__serial.isOpen():
-                self.update_gui_log("COULD NOT CLOSE PORT", "red")
+                self.update_gui_log("ERROR: Could not close port!", "red")
             else:
-                self.update_gui_log("GROUND PORT CLOSED")
-                self.__PORT_LABEL_OPEN = False
+                self.update_gui_log("Ground port was closed")
                 self.set_port_text_closed()
         elif self.__PORT_SELECTED_INFO is not None:
             self.__serial.setPort(self.__PORT_SELECTED_INFO)
             if self.__serial.open(QIODevice.OpenModeFlag.ReadWrite):
-                self.__PORT_LABEL_OPEN = True
                 self.set_port_text_open()
-                self.update_gui_log("GROUND PORT OPENED")
+                self.update_gui_log("Ground port opened")
             else:
-                self.update_gui_log(f"GUI: FAILED TO OPEN PORT \
-                                            {self.__PORT_SELECTED_INFO.portName()}: {self.serial.errorString()}!")
+                self.update_gui_log(f"FAILED to open port: {self.__PORT_SELECTED_INFO.portName()}!")
         else:
-            self.update_gui_log("SELECT PORT BEFORE CONNECTING", "red")
+            self.update_gui_log("Select port before connecting!", "red")
 
     def check_remote_connection(self):
         if(self.send_data("CMD,%d,TEST,X" % self.__TEAM_ID)):
-            self.update_gui_log("SENT TEST MESSAGE")
+            self.update_gui_log("Sent test message")
     
     def send_time(self):
         utc_time = datetime.now(timezone.utc)
         time_str = utc_time.strftime("%H:%M:%S")
         if(self.send_data("CMD,%d,ST,%s" % (self.__TEAM_ID, time_str))):
-            self.update_gui_log(f"SENT NEW MISSION TIME={time_str}")
+            self.update_gui_log(f"Sent new mission time '{time_str}'")
+
+    def send_restart(self):
+        if(self.send_data("CMD,%d,RR,X" % self.__TEAM_ID)):
+            self.update_gui_log("Sent restart signal")
     
     def change_sim_mode(self, mode):
         if(self.send_data("CMD,%d,SIM,%s" % (self.__TEAM_ID, mode))):
-            self.update_gui_log(f"SENT SIMULATION MODE={mode}")
+            self.update_gui_log(f"Sent simulation mode '{mode}'")
     
     def altitude_cal(self):
         if(self.send_data("CMD,%d,CAL,X" % self.__TEAM_ID)):
-            self.update_gui_log(f"SENT ALTITUDE CALIBRATION COMMAND")
+            self.update_gui_log(f"Sent altitude calibration command")
     
     def activate_sensor_ex(self):
         # TODO: Need one for each device on/off
         if(self.send_data("CMD,%d,MEC,X:ON" % self.__TEAM_ID)):
-            self.update_gui_log("SENT SENSOR ACTIVATION COMMAND (DOES NOTHING)")
+            self.update_gui_log("Sent MEC command (DOES NOTHING)")
     
-    def toggle_transmission(self):
-        if self.__transmission_on == 0:
+    def toggle_transmission(self, toggle):
+        if toggle:
             self.__csv_file = open("cansat_data.csv", "w", newline="")
             self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
             self.__csv_writer.writeheader()
             self.__csv_file = open("cansat_data.csv", "a", newline="")
             self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
             if(self.send_data("CMD,%d,CX,ON" % self.__TEAM_ID)):
+                self.__packet_recv_count = 0
                 self.update_gui_log("SENT TRANSMISSION ON COMMAND")
-                self.__transmission_on = 1
+                
+                if(self.__cansat_mode == "SIM"):
+                    try:
+                        with open("cansat_2023_simp.txt", 'r') as file:
+                            for line in file:
+                                if line.startswith("CMD,$,SIMP"):
+                                    line = line.replace('$', str(self.__TEAM_ID))
+                                    self.simp_data.append(line.strip())
+                        self.current_simp_idx = 0
+                        self.simp_timer.start(1000)
+                    except FileNotFoundError:
+                        self.update_gui_log("ERROR: Could not find SIMP data file cansat_2023_simp.txt!", "red")
+
         else:
             if(self.send_data("CMD,%d,CX,OFF" % self.__TEAM_ID)):
                 self.update_gui_log("SENT TRANSMISSION OFF COMMAND")
-                self.__packet_recv_count = 0
-                self.__transmission_on = 0
-                if not self.__csv_file.closed:
-                    self.__csv_file.close()
+                if(self.__cansat_mode == "SIM"):
+                    self.simp_timer.stop()
+                    self.current_simp_idx = 0
 
     def team_id_edited(self):
         self.team_id_field.clearFocus()
         self.__TEAM_ID = int(self.team_id_field.text())
-        if(self.send_data("CMD,%d,RESET_TEAM_ID,%d" % (self.__TEAM_ID, self.__TEAM_ID))):
-            self.update_gui_log(f"SENT NEW TEAM ID {self.__TEAM_ID}")
-            
+        if(self.send_data("CMD,%d,TMID,%d" % (self.__TEAM_ID, self.__TEAM_ID))):
+            self.update_gui_log(f"Sent new team ID '{self.__TEAM_ID}'")
+    
+    @pyqtSlot(QSerialPort.SerialPortError)
+    def handle_serial_error(self, error):
+        if error == QSerialPort.SerialPortError.ResourceError:
+            self.update_gui_log("SERIAL ERROR: Device disconnected", "red")
+            self.__serial.close()
+            self.set_port_text_closed()
+        
+        elif error == QSerialPort.SerialPortError.OpenError:
+            self.update_gui_log("SERIAL ERROR: Could not open port", "red")
+
+        elif error == QSerialPort.SerialPortError.DeviceNotFoundError:
+            self.update_gui_log("SERIAL ERROR: Device not found", "red")
+            self.__serial.close()
+            self.set_port_text_closed()
+
+        elif error != QSerialPort.SerialPortError.NoError:
+            self.update_gui_log(f"SERIAL ERROR: {error} detected")
+
     def send_data(self, msg):
         if self.__serial.isOpen() is True:
-            msg = msg + "\n"
-            self.__serial.write(msg.encode())
-            return 1
-        elif self.__PORT_LABEL_OPEN == True:
-            self.update_gui_log("ERROR: GUI ATTEMPTED TO SEND DATA WITH NO OPEN PORT", "red")
-            self.__PORT_LABEL_OPEN = False
-            self.set_port_text_closed()
-            return 0
+            try:
+                msg = msg + "\n"
+                self.__serial.write(msg.encode())
+                return 1
+            except Exception as e:
+                self.update_gui_log(f"ERROR: CANNOT SEND DATA - {e}", "red")
+                self.__serial.close()
+                self.set_port_text_closed()
         else:
-            self.update_gui_log("OPEN PORT BEFORE SENDING DATA", "red")
+            self.update_gui_log("ERROR: Open port before sending data!", "red")
             return 0
+    
+    def send_simp_data(self):
+        if(self.current_simp_idx < len(self.simp_data)):
+            line = self.simp_data[self.current_simp_idx]
+            self.send_data(str(line))
+            self.current_simp_idx += 1
+        else:
+            self.simp_timer.stop()
 
     def recv_data(self):
         while self.__serial.canReadLine():
@@ -861,6 +946,7 @@ class GroundStationApp(QMainWindow):
             self.__recveived_data = msg
             self.__data_received.emit()
 
+    @pyqtSlot()
     def process_data(self):
         # Info msg
         msg = self.__recveived_data
@@ -874,13 +960,10 @@ class GroundStationApp(QMainWindow):
                 mission_info = "NONE"
             if mission_info != "NONE":
                 msg_text = re.sub(r'{.+?}', '', msg_text).strip()
-                new_mode, new_state, ret_team_id = mission_info.split('|')
-                if new_mode == "F":
-                    self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
-                                                </span><span style="color:BLUE;">FLIGHT</span>')
-                elif new_mode == "S":
-                    self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
-                                                </span><span style="color:BLUE;">SIM</span>')
+                new_mode, new_state = mission_info.split('|')
+                self.__cansat_mode = new_mode
+                self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
+                                            </span><span style="color:BLUE;">{new_mode}</span>')
                 self.label_remote_state.setText(f'<span style="color:black;">CANSAT State: \
                                               </span><span style="color:BLUE;">{new_state}</span>')
 
@@ -890,11 +973,10 @@ class GroundStationApp(QMainWindow):
                 self.update_gui_log(f"-> CANSAT: {msg_text}", "blue")
         else: # telemetry
             self.parse_telemetry_string(msg)
-            self.__transmission_on = 1
     
     def reset_mission(self):
         msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Icon.Warning    )
+        msg_box.setIcon(QMessageBox.Icon.Warning)
         msg_box.setWindowTitle("CONFIRM RESET")
         msg_box.setText("Are you sure you want to reset mission data?")
         msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
@@ -922,6 +1004,9 @@ class GroundStationApp(QMainWindow):
     def closeEvent(self, event):
         if self.__serial.isOpen() is True:
             self.__serial.close()
+        if self.__csv_file is not None:
+            if not self.__csv_file.closed:
+                        self.__csv_file.close()
 
     def update_packet_label(self):
         self.label_packet_count.setText(f'<span style="color:black;">Packets Received: \
@@ -991,8 +1076,12 @@ class GroundStationApp(QMainWindow):
             self.update_packet_label()
 
         if data.MODE is not None:
-            self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
-                                              </span><span style="color:RED;">{data.MODE}</span>')
+            if(data.MODE == "F"):
+                self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
+                                                </span><span style="color:BLUE;">FLIGHT</span>')
+            elif(data.MODE == "S"):
+                self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
+                                                </span><span style="color:BLUE;">SIM</span>')
         if data.STATE is not None:
             self.label_remote_state.setText(f'<span style="color:black;">CANSAT State: \
                                               </span><span style="color:BLUE;">{data.STATE}</span>')
@@ -1003,7 +1092,8 @@ class GroundStationApp(QMainWindow):
             self.label_sat.setText(f'<span style="color:black;">Satellites: \
                                               </span><span style="color:BLUE;">{data.GPS_SATS}</span>')
         if data.CMD_ECHO is not None:
-            self.update_gui_log(f"-> CANSAT: '{data.CMD_ECHO}'", "red")
+            self.label_cmd_echo.setText(f'<span style="color:black;">CMD ECHO: \
+                                              </span><span style="color:RED;">{data.CMD_ECHO}</span>')
             
         data_dict = data.to_dict()
         self.__csv_writer.writerow(data_dict)
@@ -1013,39 +1103,70 @@ class GroundStationApp(QMainWindow):
         # "TEAM_ID, MISSION_TIME, PACKET_COUNT, MODE, STATE, ALTITUDE, TEMPERATURE, PRESSURE, 
         # VOLTAGE, GYRO_R, GYRO_P, GYRO_Y, ACCEL_R, ACCEL_P, ACCEL_Y, MAG_R, MAG_P, MAG_Y, AUTO_GYRO_ROTATION_RATE, 
         # GPS_TIME, GPS_ALTITUDE, GPS_LATITUDE, GPS_LONGITUDE, GPS_SATS, CMD_ECHO"
-        fields = [value.strip() for value in msg.split(',')]
+
+        fields = msg.split(',')
+
         telemetry_data = TelemetryData(
             TEAM_ID      = int(fields[0]) if fields else None,
-            MISSION_TIME = fields[1] if 0 <= 1 < len(fields) else None,
-            PACKET_COUNT = fields[2] if 0 <= 2 < len(fields) else None,
-            MODE         = fields[3] if 0 <= 3 < len(fields) else None,
-            STATE        = fields[4] if 0 <= 4 < len(fields) else None,
-            ALTITUDE     = float(fields[5]) if 0 <= 5 < len(fields) else None,
-            TEMPERATURE  = float(fields[6]) if 0 <= 6 < len(fields) else None,
-            PRESSURE     = float(fields[7]) if 0 <= 7 < len(fields) else None,
-            VOLTAGE      = float(fields[8]) if 0 <= 8 < len(fields) else None,
-            GYRO_R       = int(fields[9]) if 0 <= 9 < len(fields) else None,
-            GYRO_P       = int(fields[10]) if 0 <= 10 < len(fields) else None,
-            GYRO_Y       = int(fields[11]) if 0 <= 11 < len(fields) else None,
-            ACCEL_R      = int(fields[12]) if 0 <= 12 < len(fields) else None,
-            ACCEL_P      = int(fields[13]) if 0 <= 13 < len(fields) else None,
-            ACCEL_Y      = int(fields[14]) if 0 <= 14 < len(fields) else None,
-            MAG_R        = int(fields[15]) if 0 <= 15 < len(fields) else None,
-            MAG_P        = int(fields[16]) if 0 <= 16 < len(fields) else None,
-            MAG_Y        = int(fields[17]) if 0 <= 17 < len(fields) else None,
-            AUTO_GYRO_ROTATION_RATE = int(fields[18]) if 0 <= 18 < len(fields) else None,
-            GPS_TIME     = fields[19] if 0 <= 19 < len(fields) else None,
-            GPS_ALTITUDE = float(fields[20]) if 0 <= 20 < len(fields) else None,
-            GPS_LATITUDE = float(fields[21]) if 0 <= 21 < len(fields) else None,
-            GPS_LONGITUDE= float(fields[22]) if 0 <= 22 < len(fields) else None,
-            GPS_SATS     = fields[23] if 0 <= 23 < len(fields) else None,
-            CMD_ECHO     = fields[24] if 0 <= 24 < len(fields) else None,
+            MISSION_TIME = fields[1] if 1 < len(fields) else None,
+            PACKET_COUNT = fields[2] if 2 < len(fields) else None,
+            MODE         = fields[3] if 3 < len(fields) else None,
+            STATE        = fields[4] if 4 < len(fields) else None,
+            ALTITUDE     = float(fields[5]) if 5 < len(fields) else None,
+            TEMPERATURE  = float(fields[6]) if 6 < len(fields) else None,
+            PRESSURE     = float(fields[7]) if 7 < len(fields) else None,
+            VOLTAGE      = float(fields[8]) if 8 < len(fields) else None,
+            GYRO_R       = int(fields[9]) if 9 < len(fields) else None,
+            GYRO_P       = int(fields[10]) if 10 < len(fields) else None,
+            GYRO_Y       = int(fields[11]) if 11 < len(fields) else None,
+            ACCEL_R      = int(fields[12]) if 12 < len(fields) else None,
+            ACCEL_P      = int(fields[13]) if 13 < len(fields) else None,
+            ACCEL_Y      = int(fields[14]) if 14 < len(fields) else None,
+            MAG_R        = int(fields[15]) if 15 < len(fields) else None,
+            MAG_P        = int(fields[16]) if 16 < len(fields) else None,
+            MAG_Y        = int(fields[17]) if 17 < len(fields) else None,
+            AUTO_GYRO_ROTATION_RATE = int(fields[18]) if 18 < len(fields) else None,
+            GPS_TIME     = fields[19] if 19 < len(fields) else None,
+            GPS_ALTITUDE = float(fields[20]) if 20 < len(fields) else None,
+            GPS_LATITUDE = float(fields[21]) if 21 < len(fields) else None,
+            GPS_LONGITUDE= float(fields[22]) if 22 < len(fields) else None,
+            GPS_SATS     = fields[23] if 23 < len(fields) else None,
+            CMD_ECHO     = fields[24] if 24 < len(fields) else None
         )
 
         return telemetry_data
 
+def customPalette():
+
+    palette = QPalette()
+
+    palette.setColor(QPalette.ColorRole.WindowText, QColor("#000000"))
+    palette.setColor(QPalette.ColorRole.Button, QColor("#f0f0f0"))
+    palette.setColor(QPalette.ColorRole.Light, QColor("#ffffff"))
+    palette.setColor(QPalette.ColorRole.Midlight, QColor("#e3e3e3"))
+    palette.setColor(QPalette.ColorRole.Dark, QColor("#a0a0a0"))
+    palette.setColor(QPalette.ColorRole.Mid, QColor("#a0a0a0"))
+    palette.setColor(QPalette.ColorRole.Text, QColor("#000000"))
+    palette.setColor(QPalette.ColorRole.BrightText, QColor("#ffffff"))
+    palette.setColor(QPalette.ColorRole.ButtonText, QColor("#000000"))
+    palette.setColor(QPalette.ColorRole.Base, QColor("#ffffff"))
+    palette.setColor(QPalette.ColorRole.Window, QColor("#f0f0f0"))
+    palette.setColor(QPalette.ColorRole.Shadow, QColor("#696969"))
+    palette.setColor(QPalette.ColorRole.Highlight, QColor("#0078d7"))
+    palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#ffffff"))
+    palette.setColor(QPalette.ColorRole.Link, QColor("#006770"))
+    palette.setColor(QPalette.ColorRole.LinkVisited, QColor("#00343b"))
+    palette.setColor(QPalette.ColorRole.AlternateBase, QColor("#e9e7e3"))
+    palette.setColor(QPalette.ColorRole.ToolTipBase, QColor("#ffffdc"))
+    palette.setColor(QPalette.ColorRole.ToolTipText, QColor("#000000"))
+    palette.setColor(QPalette.ColorRole.PlaceholderText, QColor("#000000"))
+    palette.setColor(QPalette.ColorRole.Accent, QColor("#009faa"))
+
+    return palette
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
+    app.setPalette(customPalette())
     window=GroundStationApp()
     app.exec()
