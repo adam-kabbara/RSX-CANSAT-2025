@@ -1,4 +1,4 @@
-23971901464823346
+23984126512700414
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -54698,6 +54698,13 @@ Adafruit_BME280_STEMMA_QT
 7
 7
 Custom_Footprints
+Adafruit_BNO085
+
+
+0
+12
+12
+Custom_Footprints
 Adafruit_LIS3MDL
 
 
@@ -54747,6 +54754,13 @@ BAT_2894TR
 3
 3
 DigiKey
+MODULE_4754
+
+
+0
+16
+16
+DigiKey
 SOT-5X3-8_DRL_TEX
 
 TPS610333DRLR 
@@ -54767,6 +54781,20 @@ TPS610333DRLR
 0
 8
 8
+DigiKey
+WA-SMSI_9774030243
+<B>WA-SMSI SMT Steel Spacer, M2 Thread Internal<BR></B>Thread Internal M2<BR>Height = 1mm
+
+0
+1
+1
+DigiKey
+WE-LQS_4025
+
+
+0
+2
+2
 DigiKey
 XTAL_AB38T-32.768KHZ
 
@@ -57834,6 +57862,13 @@ cansat_logo
 0
 0
 Graphics
+cansat_logo_2
+
+
+0
+0
+0
+Graphics
 capybara
 
 
@@ -57863,6 +57898,20 @@ rsx_cansat_logo
 0
 Graphics
 rsx_logo
+
+
+0
+0
+0
+Graphics
+rsx_logo_2
+
+
+0
+0
+0
+Graphics
+rsx_logo_3
 
 
 0
