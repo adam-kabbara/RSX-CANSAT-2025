@@ -61,12 +61,6 @@ void showConfigVect() {
 
 void reloadConfigs() {
   while (getNextKeyVal()) updateStatus(variable, value, false);
-#if INCLUDE_MQTT
-  if (mqtt_active) {
-    buildJsonString(1);
-    mqttPublishPath("status", jsonBuff);
-  }
-#endif
 }
 
 static int getKeyPos(std::string thisKey) {
@@ -273,15 +267,6 @@ void buildJsonString(uint8_t filter) {
       for (const auto& row : configs) 
         p += sprintf(p, "\"%s\":\"%s\",", row[0].c_str(), row[1].c_str());
       p += sprintf(p, "\"logType\":\"%d\",", logType);
-#if INCLUDE_FTP_HFS
-      p += sprintf(p, "\"FS_Pass\":\"%.*s\",", strlen(FS_Pass), FILLSTAR);
-#endif
-#if INCLUDE_SMTP
-      p += sprintf(p, "\"SMTP_Pass\":\"%.*s\",", strlen(SMTP_Pass), FILLSTAR);
-#endif
-#if INCLUDE_MQTT
-      p += sprintf(p, "\"mqtt_user_Pass\":\"%.*s\",", strlen(mqtt_user_Pass), FILLSTAR);
-#endif
     }
   } else {
     // build json string for requested config group

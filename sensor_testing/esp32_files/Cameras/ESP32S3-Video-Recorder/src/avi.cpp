@@ -128,22 +128,7 @@ void buildAviHdr(uint8_t FPS, uint8_t frameType, uint16_t frameCnt, bool isTL) {
   memcpy(aviHeader+0x44, frameSizeData[frameType].frameHeight, 2);
   memcpy(aviHeader+0xAC, frameSizeData[frameType].frameHeight, 2);
 
-#if INCLUDE_AUDIO
-  uint8_t withAudio = 2; // increase number of streams for audio
-  if (isTL) memcpy(aviHeader+0x100, zeroBuf, 4); // no audio for timelapse
-  else {
-    if (haveSoundFile) memcpy(aviHeader+0x38, &withAudio, 1); 
-    memcpy(aviHeader+0x100, &audSize, 4); // audio data size
-  }
-  // apply audio details to avi header
-  memcpy(aviHeader+0xF8, &SAMPLE_RATE, 4);
-  uint32_t bytesPerSec = SAMPLE_RATE * 2;
-  memcpy(aviHeader+0x104, &bytesPerSec, 4); // suggested buffer size
-  memcpy(aviHeader+0x11C, &SAMPLE_RATE, 4);
-  memcpy(aviHeader+0x120, &bytesPerSec, 4); // bytes per sec
-#else
   memcpy(aviHeader+0x100, zeroBuf, 4);
-#endif
 
   // reset state for next recording
   moviSize[isTL] = idxPtr[isTL] = 0;
@@ -193,21 +178,6 @@ void finalizeAviIndex(uint16_t frameCnt, bool isTL) {
 bool haveWavFile(bool isTL) {
   haveSoundFile = false;
   audSize = 0;
-#if INCLUDE_AUDIO
-  if (isTL) return false;
-  // check if wave file exists
-  if (!STORAGE.exists(WAVTEMP)) return 0; 
-  // open it and get its size
-  wavFile = STORAGE.open(WAVTEMP, FILE_READ);
-  if (wavFile) {
-    // add sound file index
-    audSize = wavFile.size() - WAV_HDR_LEN;
-    buildAviIdx(audSize, false); 
-    // add sound file header    
-    wavFile.seek(WAV_HDR_LEN, SeekSet); // skip over header
-    haveSoundFile = true;
-  } 
-#endif
   return haveSoundFile;
 }
 
