@@ -5,11 +5,6 @@
 #pragma once
 #include "globals.h"
 
-/**************************************************************************
- Uncomment one only of the ESP32 or ESP32S3 camera models in the block below
- Selecting wrong model may crash your device due to pin conflict
-***************************************************************************/
-
 #define CAMERA_MODEL_FREENOVE_ESP32S3_CAM
 
 /**************************************************************************/

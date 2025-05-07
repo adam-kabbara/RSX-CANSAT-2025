@@ -42,6 +42,9 @@
 #include <esp_http_server.h>
 #include <esp_https_server.h>
 
+// send signal when recording
+#define RECORDING_DIAG 21
+
 // ADC
 #define ADC_ATTEN ADC_11db
 #define ADC_SAMPLES 16

@@ -55,10 +55,6 @@ static bool prepSD_MMC() {
 #endif
   
   res = SD_MMC.begin("/sdcard", true, formatIfMountFailed);
-#if defined(CAMERA_MODEL_AI_THINKER)
-  pinMode(4, OUTPUT);
-  digitalWrite(4, 0); // set lamp pin fully off as sd_mmc library still initialises pin 4 in 1 line mode
-#endif 
   if (res) {
     fp.mkdir(DATA_DIR);
     infoSD();
@@ -100,12 +96,6 @@ bool startStorage() {
 #endif
   // One of SPIFFS or LittleFS
   if (!strlen(fsType)) {
-#ifdef _SPIFFS_H_
-    if ((fs::SPIFFSFS*)&STORAGE == &SPIFFS) {
-      strcpy(fsType, "SPIFFS");
-      res = SPIFFS.begin(formatIfMountFailed);
-    }
-#endif
 #ifdef _LITTLEFS_H_
     if ((fs::LittleFSFS*)&STORAGE == &LittleFS) {
       strcpy(fsType, "LittleFS");
@@ -161,9 +151,6 @@ bool checkFreeStorage() {
       char oldestDir[FILE_NAME_LEN];
       getOldestDir(oldestDir);
       LOG_WRN("Deleting oldest folder: %s %s", oldestDir, sdFreeSpaceMode == 2 ? "after uploading" : "");
-#if INCLUDE_FTP_HFS
-      if (sdFreeSpaceMode == 2) fsStartTransfer(oldestDir); // transfer and then delete oldest folder
-#endif
       deleteFolderOrFile(oldestDir);
       freeSize = (size_t)((STORAGE.totalBytes() - STORAGE.usedBytes()) / ONEMEG);
     }

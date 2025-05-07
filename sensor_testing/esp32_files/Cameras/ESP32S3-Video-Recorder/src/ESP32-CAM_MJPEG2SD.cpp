@@ -8,15 +8,15 @@
 #include "appGlobals.h"
 #include <Arduino.h>
 
-
 bool printInitMessage = true;
-#define GPIO_PIN 14
+#define RECORD_PIN 14
 extern bool forceRecord;
 bool stopRecording = false;
 bool startRecording = true;
 
 void setup() {
-  pinMode(GPIO_PIN, INPUT_PULLUP);
+  pinMode(RECORD_PIN, INPUT_PULLUP);
+  pinMode(RECORDING_DIAG, OUTPUT);
 
   logSetup();
   // prep storage
@@ -55,7 +55,7 @@ void loop() {
     printInitMessage = false;
   }
 
-  int state = digitalRead(GPIO_PIN);
+  int state = digitalRead(RECORD_PIN);
   Serial.print("state: ");
   Serial.println(state);
 
