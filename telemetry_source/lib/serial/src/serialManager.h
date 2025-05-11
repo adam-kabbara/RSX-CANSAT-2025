@@ -2,7 +2,6 @@
 #define SERIAL_MANAGER_H
 
 #include "includes.h"
-#include "helpers.h"
 
 class SerialManager
 {
@@ -10,8 +9,8 @@ private:
     HardwareSerial* serialPort;
 
 public:
-    SerialManager(HardwareSerial& port) 
-        : serialPort(&port) 
+    SerialManager(HardwareSerial& port)
+        : serialPort(&port)
         {}
 
     void begin();
@@ -22,9 +21,12 @@ public:
 
     void sendInfoMsg(const char *msg);
 
-    void sendDataMsg(uint8_t err, const char *format, ...);
+    void sendErrorDataMsg(const char *format, ...);
 
-    void sendTelemetry(const transmission_packet *pckt);
+    void sendInfoDataMsg(const char *format, ...);
+
+    void sendTelemetry(char *buff);
+
 };
 
 #endif /* SERIAL_MANAGER_H */

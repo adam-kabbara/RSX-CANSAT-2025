@@ -1,15 +1,13 @@
 #include "includes.h"
-#include "helpers.h"
 #include "commandManager.h"
 #include "serialManager.h"
-#include "telemetry.h"
-#include <Preferences.h>
+#include "sensorManager.h"
+#include "missionManager.h"
 
 hw_timer_t *send_timer = NULL;
 SerialManager xbee_serial(Serial2);
-struct mission_info_struct mission_info;
+MissionManager mission_info;
 uint8_t send_flag = 0;
-Preferences preferences;
 
 void IRAM_ATTR send_1();
 
@@ -27,10 +25,10 @@ void setup()
     // nvs_flash_init(); // initialize the NVS partition
 
     // Remove all preferences under the opened namespace
-    // mission_info.preferences.clear();
+    // xbee_serial.clearPref();
 
     // Reset sequence
-    resetSeq(xbee_serial, mission_info, preferences);
+    mission_info.resetSeq(xbee_serial);
 
     xbee_serial.sendInfoMsg("Startup Completed.");
 }
@@ -38,24 +36,22 @@ void setup()
 void loop()
 {
     char cmd_buff[CMD_BUFF_SIZE];
+    char send_buffer[DATA_BUFF_SIZE];
     CommandManager cmd_mgr;
-    struct transmission_packet pckt;
-    float alt_buffer[ALT_WINDOW_SIZE];
-    int alt_buffer_indx = 0;
-    float max_alt = 0.0;
+    SensorManager sensor_mgr;
 
     // Run this loop at 40Hz
     while(1)
     {
         // Just process commands in idle state
         // 10Hz
-        while(mission_info.op_state == IDLE)
+        while(mission_info.getOpState() == IDLE)
         {
             if(xbee_serial.get_data(cmd_buff))
             {
-                if(cmd_mgr.processCommand(cmd_buff, xbee_serial, mission_info, preferences))
+                if(cmd_mgr.processCommand(cmd_buff, xbee_serial, mission_info, sensor_mgr))
                 {
-                    cmd_buff_to_echo(cmd_buff, pckt.CMD_ECHO);
+                    sensor_mgr.cmd_buff_to_echo(cmd_buff);
                 }
             }
 
@@ -68,42 +64,43 @@ void loop()
         timerWrite(send_timer, 0);
         timerAlarmEnable(send_timer);
 
-        alt_buffer_indx = 0;
+        sensor_mgr.resetAltData();
 
-        if(mission_info.op_mode == OPMODE_SIM)
+        if(mission_info.getOpMode() == OPMODE_SIM)
         {
             xbee_serial.sendInfoMsg("BEGIN_SIMP");
         }
 
         // Process command and then check for sending data
         // 40 Hz
-        while(mission_info.op_state != IDLE)
+        while(mission_info.getOpState() != IDLE)
         {
             if(xbee_serial.get_data(cmd_buff))
             {
-                if(cmd_mgr.processCommand(cmd_buff, xbee_serial, mission_info, preferences))
+                if(cmd_mgr.processCommand(cmd_buff, xbee_serial, mission_info, sensor_mgr))
                 {
-                    cmd_buff_to_echo(cmd_buff, pckt.CMD_ECHO);
+                    sensor_mgr.cmd_buff_to_echo(cmd_buff);
                 }
             }
 
             // Wait until first simulation packet is received
-            if(mission_info.op_mode == OPMODE_SIM && mission_info.FIRST_SIMP == 0)
+            if(mission_info.getOpMode() == OPMODE_SIM && mission_info.isWaitingSimp())
             {
+                vTaskDelay(pdMS_TO_TICKS(25));
                 continue;
             }
 
-            sampleSensors(mission_info, pckt, alt_buffer, ALT_WINDOW_SIZE, alt_buffer_indx, max_alt);
+            sensor_mgr.sampleSensors(mission_info);
 
             if(send_flag == 1)
             {
-                mission_info.packet_count++;
-                pckt.PACKET_COUNT = mission_info.packet_count;
-                preferences.begin("xb-set", false);
-                preferences.putInt("pckts", mission_info.packet_count);
-                preferences.end();
-
-                xbee_serial.sendTelemetry(&pckt);
+                mission_info.incrPacketCount();
+                sensor_mgr.setPacketCount(mission_info.getPacketCount());
+                mission_info.beginPref("xb-set", false);
+                mission_info.putPrefInt("pckts", mission_info.getPacketCount());
+                mission_info.endPref();
+                sensor_mgr.build_data_str(send_buffer, DATA_BUFF_SIZE);
+                xbee_serial.sendTelemetry(send_buffer);
                 send_flag = 0;
             }
 
@@ -112,8 +109,8 @@ void loop()
 
         // Back to IDLE state, turn off timer, reset settings
         timerAlarmDisable(send_timer);
-        mission_info.ALT_CAL_CHK = 0;
-        mission_info.FIRST_SIMP = 0;
+        mission_info.setAltCalOff();
+        mission_info.waitingForSimp();
     }
 }
 

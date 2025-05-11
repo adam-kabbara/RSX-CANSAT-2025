@@ -14,7 +14,7 @@ CommandManager::CommandManager()
     command_map.emplace("MEC", std::bind(&CommandManager::do_mec, this, _1, _2, _3, _4));
 }
 
-int CommandManager::processCommand(char *cmd_buff, SerialManager &ser, mission_info_struct &info, Preferences preferences) 
+int CommandManager::processCommand(char *cmd_buff, SerialManager &ser, MissionManager &info, SensorManager &sensors) 
 {
     // Extract fields from command buffer
 
@@ -62,7 +62,7 @@ int CommandManager::processCommand(char *cmd_buff, SerialManager &ser, mission_i
     if(!packet.keyword || !packet.team_id || !packet.command || !packet.data)
     {
         ser.sendErrorMsg("COMMAND REJECTED: FORMAT IS INCORRECT.");
-        ser.sendDataMsg(1, "COMMAND: %s\n", cmd_buff);
+        ser.sendErrorDataMsg("COMMAND: %s\n", cmd_buff);
         return 0;
     }
 
@@ -74,7 +74,7 @@ int CommandManager::processCommand(char *cmd_buff, SerialManager &ser, mission_i
 
     if(atoi(packet.team_id) != TEAM_ID)
     {
-        ser.sendDataMsg(1, "COMMAND REJECTED: TEAM ID DOES NOT MATCH EXPECTED VALUE OF %d", TEAM_ID);
+        ser.sendErrorDataMsg("COMMAND REJECTED: TEAM ID DOES NOT MATCH EXPECTED VALUE OF %d", TEAM_ID);
         return 0;
     }
 
@@ -85,22 +85,22 @@ int CommandManager::processCommand(char *cmd_buff, SerialManager &ser, mission_i
         ser.sendErrorMsg("COMMAND REJECTED: NOT A COMMAND");
         return 0;
     }
-    iter->second(ser, info, packet.data, preferences);
+    iter->second(ser, info, sensors, packet.data);
     return 1;
 }
 
 // Toggle mission telemetry
-void CommandManager::do_cx(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences)
+void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
     if(strcmp(data, "ON") == 0)
     {
-        if(info.op_state == IDLE && info.ALT_CAL_CHK == 1)
+        if(info.getOpState() == IDLE && info.isAltCalibrated() == 1)
         {
-            info.packet_count = 0;
+            info.clearPacketCount();
             ser.sendInfoMsg("STARTING TELEMETRY TRANSMISSION.");
-            info.op_state = LAUNCH_PAD;
+            info.setOpState(LAUNCH_PAD);
         }
-        else if(info.op_state != IDLE)
+        else if(info.getOpState() != IDLE)
         {
             ser.sendErrorMsg("TRANSMISSION IS ALREADY ON.");
         }
@@ -111,12 +111,12 @@ void CommandManager::do_cx(SerialManager &ser, mission_info_struct &info, const 
     }
     else if(strcmp(data, "OFF") == 0)
     {
-        if(info.op_state != IDLE)
+        if(info.getOpState() != IDLE)
         {
-            info.op_state = IDLE;
-            info.ALT_CAL_CHK = 0;
-            ser.sendDataMsg(0, "ENDING PAYLOAD TRANSMISSION.{%s|%s}", 
-                op_mode_to_string(info.op_mode, 1), op_state_to_string(info.op_state));
+            info.setOpState(IDLE);
+            info.setAltCalOff();
+            ser.sendInfoDataMsg("ENDING PAYLOAD TRANSMISSION.{%s|%s}", 
+                sensors.op_mode_to_string(info.getOpMode(), 1), sensors.op_state_to_string(info.getOpState()));
         }
         else
         {
@@ -129,7 +129,7 @@ void CommandManager::do_cx(SerialManager &ser, mission_info_struct &info, const 
     }
 }
 
-void CommandManager::do_st(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences)
+void CommandManager::do_st(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
     if(strcmp(data, "GPS") == 0)
     {
@@ -145,21 +145,21 @@ void CommandManager::do_st(SerialManager &ser, mission_info_struct &info, const 
     }
 }
 
-void CommandManager::do_give_status(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences)
+void CommandManager::do_give_status(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
-  ser.sendDataMsg(0, "CANSAT IS ONLINE.{%s|%s}", 
-      op_mode_to_string(info.op_mode, 1), op_state_to_string(info.op_state));
+  ser.sendInfoDataMsg("CANSAT IS ONLINE.{%s|%s}", 
+      sensors.op_mode_to_string(info.getOpMode(), 1), sensors.op_state_to_string(info.getOpState()));
 } // END: do_give_status
 
-void CommandManager::do_restart(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences)
+void CommandManager::do_restart(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
   ser.sendInfoMsg("Attempting to restart processor!");
   ESP.restart();
 } // END: do_restart
 
-void CommandManager::do_sim(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences)
+void CommandManager::do_sim(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
-  if(info.op_state != IDLE)
+  if(info.getOpState() != IDLE)
   {
     ser.sendErrorMsg("SIMULATION MODE CANNOT BE CHANGED WHILE TRANSMISSION IS ON");
     return;
@@ -167,15 +167,15 @@ void CommandManager::do_sim(SerialManager &ser, mission_info_struct &info, const
 
   if(strcmp(data, "ENABLE") == 0)
   {
-    switch(info.sim_status)
+    switch(info.getSimStatus())
     {
       case SIM_OFF:
         {
-          info.sim_status = SIM_EN;
-          preferences.begin("xb-set", false);
-          int sim_status_int = static_cast<int>(info.sim_status);
-          preferences.putInt("simst", sim_status_int);
-          preferences.end();
+          info.setSimStatus(SIM_EN);
+          info.beginPref("xb-set", false);
+          int sim_status_int = static_cast<int>(info.getSimStatus());
+          info.putPrefInt("simst", sim_status_int);
+          info.endPref();
           ser.sendInfoMsg("SIMULATION MODE ENABLED");
           break;
         }
@@ -193,22 +193,22 @@ void CommandManager::do_sim(SerialManager &ser, mission_info_struct &info, const
   }
   else if(strcmp(data, "ACTIVATE") == 0)
   {
-    switch(info.sim_status)
+    switch(info.getSimStatus())
     {
       case SIM_EN:
         {
-          info.sim_status = SIM_ON;
-          info.op_mode = OPMODE_SIM;
-          info.FIRST_SIMP = 0;
-          preferences.begin("xb-set", false);
-          int sim_status_int = static_cast<int>(info.sim_status);
-          preferences.putInt("simst", sim_status_int);
-          int op_mode_int = static_cast<int>(info.op_mode);
-          preferences.putInt("opmode", op_mode_int);
-          preferences.end();
-          ser.sendDataMsg(0, "SIMULATION MODE IS ACTIVE{%s|%s}", 
-            op_mode_to_string(info.op_mode, 1), op_state_to_string(info.op_state));
-          info.ALT_CAL_CHK = 1;
+          info.setSimStatus(SIM_ON);
+          info.setOpMode(OPMODE_SIM);
+          info.waitingForSimp();
+          info.beginPref("xb-set", false);
+          int sim_status_int = static_cast<int>(info.getSimStatus());
+          info.putPrefInt("simst", sim_status_int);
+          int op_mode_int = static_cast<int>(info.getOpMode());
+          info.putPrefInt("opmode", op_mode_int);
+          info.endPref();
+          ser.sendInfoDataMsg("SIMULATION MODE IS ACTIVE{%s|%s}", 
+            sensors.op_mode_to_string(info.getOpMode(), 1), sensors.op_state_to_string(info.getOpState()));
+          info.setAltCalibration(0);
           break;
         }
       case SIM_OFF:
@@ -225,29 +225,29 @@ void CommandManager::do_sim(SerialManager &ser, mission_info_struct &info, const
   }
   else if(strcmp(data, "DISABLE") == 0)
   {
-    switch(info.sim_status)
+    switch(info.getSimStatus())
     {
       case SIM_ON:
         {
-          info.sim_status = SIM_OFF;
-          info.op_mode = OPMODE_FLIGHT;
-          preferences.begin("xb-set", false);
-          int sim_status_int = static_cast<int>(info.sim_status);
-          preferences.putInt("simst", sim_status_int);
-          int op_mode_int = static_cast<int>(info.op_mode);
-          preferences.putInt("opmode", op_mode_int);
-          preferences.end();
-          ser.sendDataMsg(0, "SET CANSAT TO FLIGHT MODE.{%s|%s}", 
-            op_mode_to_string(info.op_mode, 1), op_state_to_string(info.op_state));
+          info.setSimStatus(SIM_OFF);
+          info.setOpMode(OPMODE_FLIGHT);
+          info.beginPref("xb-set", false);
+          int sim_status_int = static_cast<int>(info.getSimStatus());
+          info.putPrefInt("simst", sim_status_int);
+          int op_mode_int = static_cast<int>(info.getOpMode());
+          info.putPrefInt("opmode", op_mode_int);
+          info.endPref();
+          ser.sendInfoDataMsg("SET CANSAT TO FLIGHT MODE.{%s|%s}", 
+            sensors.op_mode_to_string(info.getOpMode(), 1), sensors.op_state_to_string(info.getOpState()));
           break;
         }
       case SIM_EN:
         {
-          info.sim_status = SIM_OFF;
-          preferences.begin("xb-set", false);
-          int sim_status_int = static_cast<int>(info.sim_status);
-          preferences.putInt("simst", sim_status_int);
-          preferences.end();
+          info.setSimStatus(SIM_OFF);
+          info.beginPref("xb-set", false);
+          int sim_status_int = static_cast<int>(info.getSimStatus());
+          info.putPrefInt("simst", sim_status_int);
+          info.endPref();
           ser.sendErrorMsg("SIMULATION MODE DISABLED");
           break;
         }
@@ -260,23 +260,23 @@ void CommandManager::do_sim(SerialManager &ser, mission_info_struct &info, const
   }
   else
   {
-    ser.sendDataMsg(1, "UNRECOGNIZED SIM COMMAND: '%s'", data);
+    ser.sendErrorDataMsg("UNRECOGNIZED SIM COMMAND: '%s'", data);
   }
 } // END: do_sim()
 
-void CommandManager::do_simp(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences)
+void CommandManager::do_simp(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
   // Check if we are in simulation mode
-  if(info.op_mode == OPMODE_SIM)
+  if(info.getOpMode() == OPMODE_SIM)
   {
     int i;
     sscanf(data, "%d", i);
-    if(info.FIRST_SIMP == 0)
+    if(info.isWaitingSimp())
     {
-        info.launch_altitude = pressure_to_alt(i/100.0);
-        info.FIRST_SIMP = 1;
+        info.setAltCalibration(sensors.pressure_to_alt(i/100.0));
+        info.simpRecv();
     }
-    info.SIMP_DATA = i;
+    info.setSimpData(i);
   }
   else
   {
@@ -284,18 +284,17 @@ void CommandManager::do_simp(SerialManager &ser, mission_info_struct &info, cons
   }
 } // END: do_simp()
 
-void CommandManager::do_cal(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences)
+void CommandManager::do_cal(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
   // TODO add sensor function here
-  info.launch_altitude = pressure_to_alt(900.0);
-  info.ALT_CAL_CHK = 1;
-  preferences.begin("xb-set", false);
-  preferences.putFloat("grndalt", info.launch_altitude);
-  preferences.end();
-  ser.sendDataMsg(0, "Launch Altitude calibrated to %f", info.launch_altitude);
+  info.setAltCalibration(sensors.pressure_to_alt(sensors.getPressure()));
+  info.beginPref("xb-set", false);
+  info.putPrefFloat("grndalt", info.getLaunchAlt());
+  info.endPref();
+  ser.sendInfoDataMsg("Launch Altitude calibrated to %f", info.getLaunchAlt());
 } // END: do_Cal()
 
-void CommandManager::do_mec(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences)
+void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
   ser.sendInfoMsg("MEC COMMAND RECVD");
 }

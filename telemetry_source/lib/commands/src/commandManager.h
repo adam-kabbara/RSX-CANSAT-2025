@@ -3,28 +3,28 @@
 
 #include "includes.h"
 #include "serialManager.h"
-#include <Preferences.h>
-#include "helpers.h"
+#include "missionManager.h"
+#include "sensorManager.h"
 
 class CommandManager {
 private:
 
-    std::unordered_map<std::string, std::function<void(SerialManager&, mission_info_struct&, char*, Preferences preferences)>> command_map;
+    std::unordered_map<std::string, std::function<void(SerialManager&, MissionManager&, SensorManager&, char*)>> command_map;
 
     // Command processing functions
-    void do_cx(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences);
-    void do_st(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences);
-    void do_restart(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences);
-    void do_give_status(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences);
-    void do_sim(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences);
-    void do_simp(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences);
-    void do_cal(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences);
-    void do_mec(SerialManager &ser, mission_info_struct &info, const char *data, Preferences preferences);
+    void do_cx(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data);
+    void do_st(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data);
+    void do_restart(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data);
+    void do_give_status(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data);
+    void do_sim(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data);
+    void do_simp(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data);
+    void do_cal(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data);
+    void do_mec(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data);
 
 public:
     CommandManager();
 
-    int processCommand(char *cmd_buff, SerialManager &ser, mission_info_struct &info, Preferences preferences);
+    int processCommand(char *cmd_buff, SerialManager &ser, MissionManager &info, SensorManager &sensors);
 };
 
 #endif /* COMMAND_MANAGER_H */

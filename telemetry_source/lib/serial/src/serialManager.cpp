@@ -32,7 +32,7 @@ void SerialManager::sendInfoMsg(const char* msg)
     serialPort->println(buffer);
 }
 
-void SerialManager::sendDataMsg(uint8_t err, const char *format, ...)
+void SerialManager::sendErrorDataMsg(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -41,21 +41,26 @@ void SerialManager::sendDataMsg(uint8_t err, const char *format, ...)
 
     vsnprintf(buffer, sizeof(buffer), format, args);
     
-    if(err)
-    {
-        this->sendErrorMsg(buffer);
-    }
-    else
-    {
-        this->sendInfoMsg(buffer);
-    }
+    this->sendErrorMsg(buffer);
 
     va_end(args);
 }
 
-void SerialManager::sendTelemetry(const transmission_packet *pckt)
+void SerialManager::sendInfoDataMsg(const char *format, ...)
 {
-    char buffer[DATA_BUFF_SIZE];
-    build_data_str(pckt, buffer, DATA_BUFF_SIZE);
-    serialPort->println(buffer);
+    va_list args;
+    va_start(args, format);
+
+    char buffer[RESP_SIZE];
+
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    
+    this->sendInfoMsg(buffer);
+
+    va_end(args);
+}
+
+void SerialManager::sendTelemetry(char *buff)
+{
+    serialPort->println(buff);
 }

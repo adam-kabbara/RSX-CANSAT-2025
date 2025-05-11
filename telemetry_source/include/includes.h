@@ -20,7 +20,7 @@
 #define XBEE_BAUD_RATE 57600
 #define RX_PIN 16
 #define TX_PIN 17
-#define ALT_WINDOW_SIZE 5
+#define ALTITUDE_WINDOW_SIZE 5
 
 enum SimModeStatus {
     SIM_OFF = 0,
@@ -40,16 +40,5 @@ enum OperatingMode {
     OPMODE_FLIGHT = 0,
     OPMODE_SIM = 1
 };
-
-typedef struct mission_info_struct {
-    OperatingState op_state = IDLE;
-    SimModeStatus sim_status = SIM_OFF;
-    OperatingMode op_mode = OPMODE_FLIGHT;
-    uint8_t ALT_CAL_CHK = 0;
-    int packet_count = 0;
-    float launch_altitude = 0.0;
-    int SIMP_DATA = 0;
-    uint8_t FIRST_SIMP = 0;
-} mission_info_struct;
 
 #endif /* GLOBAL_H */
