@@ -100,7 +100,7 @@ void loop() {
 
             Serial.println("--------------------------------");
         } else {
-            Serial.println("No GPS position detected...")
+            Serial.println("No GPS position detected...");
         }
     }
 }
