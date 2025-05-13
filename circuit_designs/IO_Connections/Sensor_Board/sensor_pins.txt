@@ -38,7 +38,9 @@ CS  --> GPIO15
 DI  --> GPIO23
 SCL --> GPIO18
 SDA --> GPIO19
-INT --> GPIO35
+INT --> GPIO35 & 10k Ohm Pull-Up Resistor --> 3.3V (Power Board)
+P0  --> 3.3V (Power Board)
+P1  --> 3.3V (Power Board)
 GND --> GND
 
 LED (Power Indicator):
