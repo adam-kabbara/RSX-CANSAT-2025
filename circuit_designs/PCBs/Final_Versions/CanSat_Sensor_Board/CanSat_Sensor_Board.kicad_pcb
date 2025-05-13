@@ -26990,7 +26990,7 @@
 			(justify right bottom mirror)
 		)
 	)
-	(gr_text "GND"
+	(gr_text "VCC"
 		(at 133 61.5 0)
 		(layer "B.SilkS")
 		(uuid "2c746dda-9411-48fc-8bca-2ffca1e159f7")
@@ -27014,7 +27014,7 @@
 			(justify right bottom mirror)
 		)
 	)
-	(gr_text "Signal1"
+	(gr_text "Data2"
 		(at 133 69.5 0)
 		(layer "B.SilkS")
 		(uuid "35b1e2ef-b609-4141-88ed-3c09ee019913")
@@ -27374,7 +27374,7 @@
 			(justify left bottom mirror)
 		)
 	)
-	(gr_text "Data2"
+	(gr_text "Signal1"
 		(at 133 63.5 0)
 		(layer "B.SilkS")
 		(uuid "6a1c369f-1dc9-4d7d-a5a2-246872b2acae")
@@ -27422,7 +27422,7 @@
 			(justify left bottom mirror)
 		)
 	)
-	(gr_text "VCC"
+	(gr_text "GND"
 		(at 133 71.5 0)
 		(layer "B.SilkS")
 		(uuid "76f1115c-39a2-4d63-9e5f-5c86031e42df")
@@ -27640,7 +27640,7 @@
 			(justify right bottom mirror)
 		)
 	)
-	(gr_text "Signal2"
+	(gr_text "Data1"
 		(at 133 67.5 0)
 		(layer "B.SilkS")
 		(uuid "a12dec46-2dd3-4014-8786-9e24047ba29b")
@@ -27844,7 +27844,7 @@
 			(justify right bottom mirror)
 		)
 	)
-	(gr_text "Data1"
+	(gr_text "Signal2"
 		(at 133 65.5 0)
 		(layer "B.SilkS")
 		(uuid "bf2351a4-823c-4161-b7cc-15e14fed2967")
@@ -36127,8 +36127,8 @@
 		)
 		(polygon
 			(pts
-				(xy 190.75 112.5) (xy 195.575573 112.5) (xy 195.575573 112.5) (xy 195.575573 90.687799) (xy 195.575573 90.687799)
-				(xy 189.450239 90.687799) (xy 189.450239 99.618367) (xy 190.75 100.918128)
+				(xy 190.75 112.5) (xy 195.575573 112.5) (xy 195.575573 90.687799) (xy 189.450239 90.687799) (xy 189.450239 99.618367)
+				(xy 190.75 100.918128)
 			)
 		)
 		(filled_polygon
