@@ -1,0 +1,23 @@
+%TF.GenerationSoftware,KiCad,Pcbnew,8.0.5*%
+%TF.CreationDate,2025-05-01T20:48:06-04:00*%
+%TF.ProjectId,CanSat_Camera_Board,43616e53-6174-45f4-9361-6d6572615f42,rev?*%
+%TF.SameCoordinates,Original*%
+%TF.FileFunction,Profile,NP*%
+%FSLAX46Y46*%
+G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
+G04 Created by KiCad (PCBNEW 8.0.5) date 2025-05-01 20:48:06*
+%MOMM*%
+%LPD*%
+G01*
+G04 APERTURE LIST*
+%TA.AperFunction,Profile*%
+%ADD10C,0.050000*%
+%TD*%
+G04 APERTURE END LIST*
+D10*
+X122500000Y-60000000D02*
+X177500000Y-60000000D01*
+X177500000Y-140000000D01*
+X122500000Y-140000000D01*
+X122500000Y-60000000D01*
+M02*
