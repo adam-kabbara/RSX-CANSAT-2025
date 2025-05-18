@@ -2,14 +2,11 @@
 GUI for real-time CANSAT data visualisation
 
 Author: RSX
-Version: 1.3.2
+Version: 1.4
 
 TODO:  
-- graph should auto scroll and keep entire data buffer
-- graph should reset when restarting telemetry
-- calibrate altitude in simulation mode
-- stop sending simp data in some cases
-- remove command log horizontal scrolling
+- graph should auto scroll?
+- remove command log horizontal scrolling (idk how)
 """
 
 import sys
@@ -251,12 +248,14 @@ class GroundStationApp(QMainWindow):
         self.__cansat_mode                  = "FLIGHT"
         self.__PORT_SELECTED_INFO           = None
         self.__serial                       = QSerialPort()
-        self.__TEAM_ID                      = 1334
+        self.__TEAM_ID                      = 3114
         self.__packet_recv_count            = 0
         self.__packet_sent_count            = 0
-        self.__graph_time_window            = 30
+        self.__graph_time_window            = 100
         self.__csv_file                     = None
         self.__csv_writer                   = None
+        self.__outfile                      = None
+        self.__write_to_logfile             = 0
         self.__serial.setBaudRate(57600)
         self.__serial.readyRead.connect(self.recv_data)
         self.__serial.errorOccurred.connect(self.handle_serial_error)
@@ -324,12 +323,12 @@ class GroundStationApp(QMainWindow):
         self.button_telemetry.setFont(button_font)
         self.button_telemetry.clicked.connect(lambda: self.command_group_change_buttons(CommandButtonGroup.TELEMETRY))
 
-        self.button_transmit_on = QPushButton("TRANSMISSION ON")
+        self.button_transmit_on = QPushButton("START MISSION")
         self.button_transmit_on.setFont(button_font)
         self.button_transmit_on.clicked.connect(lambda: self.toggle_transmission(1))
         self.button_transmit_on.hide()
 
-        self.button_transmit_off = QPushButton("TRANSMISSION OFF")
+        self.button_transmit_off = QPushButton("END MISSION")
         self.button_transmit_off.setFont(button_font)
         self.button_transmit_off.clicked.connect(lambda: self.toggle_transmission(0))
         self.button_transmit_off.hide()
@@ -354,12 +353,17 @@ class GroundStationApp(QMainWindow):
         self.button_restart.clicked.connect(self.send_restart)
         self.button_restart.hide()
 
-        self.button_set_time = QPushButton("SET TIME")
+        self.button_set_time = QPushButton("SET TIME: COMPUTER")
         self.button_set_time.setFont(button_font)
-        self.button_set_time.clicked.connect(self.send_time)
+        self.button_set_time.clicked.connect(lambda: self.send_time(0))
         self.button_set_time.hide()
 
-        self.button_reset_mission = QPushButton("RESET MISSION DATA")
+        self.button_set_time_gps = QPushButton("SET TIME: GPS")
+        self.button_set_time_gps.setFont(button_font)
+        self.button_set_time_gps.clicked.connect(lambda: self.send_time(1))
+        self.button_set_time_gps.hide()
+
+        self.button_reset_mission = QPushButton("CLEAR PLOTS + COMMAND LOG")
         self.button_reset_mission.setFont(button_font)
         self.button_reset_mission.clicked.connect(self.reset_mission)
         self.button_reset_mission.hide()
@@ -383,6 +387,11 @@ class GroundStationApp(QMainWindow):
         self.button_refresh_ports.setFont(button_font)
         self.button_refresh_ports.clicked.connect(lambda: self.refresh_ports(True))
         self.button_refresh_ports.hide()
+
+        self.button_get_log_data = QPushButton("GET CANSAT LOG DATA")
+        self.button_get_log_data.setFont(button_font)
+        self.button_get_log_data.clicked.connect(self.get_log_data)
+        self.button_get_log_data.hide()
 
         self.button_sensor_control = QPushButton("SENSOR CONTROL")
         self.button_sensor_control.setFont(button_font)
@@ -423,7 +432,7 @@ class GroundStationApp(QMainWindow):
         int_validator = QIntValidator(self)
         self.team_id_field.setValidator(int_validator)
         self.team_id_field.editingFinished.connect(self.team_id_edited)
-        self.team_id_field_info = QLabel("Change TEAM ID (sends to CANSAT)")
+        self.team_id_field_info = QLabel("Change TEAM ID (ground station)")
         self.team_id_field_info.setFont(button_font)
         team_id_editing_box = QHBoxLayout()
         team_id_editing_box.addWidget(self.team_id_field_info)
@@ -446,10 +455,12 @@ class GroundStationApp(QMainWindow):
         commands_layout.addWidget(self.button_activate_sensor_ex)
         commands_layout.addWidget(self.button_advanced)
         commands_layout.addWidget(self.button_set_time)
+        commands_layout.addWidget(self.button_set_time_gps)
         commands_layout.addWidget(self.button_reset_mission)
         commands_layout.addWidget(self.button_sim_mode_enable)
         commands_layout.addWidget(self.button_sim_mode_activate)
         commands_layout.addWidget(self.button_sim_mode_disable)
+        commands_layout.addWidget(self.button_get_log_data)
         commands_layout.addLayout(team_id_editing_box)
         commands_layout.addWidget(self.button_back)
 
@@ -469,6 +480,7 @@ class GroundStationApp(QMainWindow):
         self.buttons_adv = [
             self.button_reset_mission,
             self.button_back,
+            self.button_get_log_data,
             self.team_id_field,
             self.team_id_field_info,
         ]
@@ -489,6 +501,7 @@ class GroundStationApp(QMainWindow):
 
         self.buttons_sensor = [
             self.button_set_time,
+            self.button_set_time_gps,
             self.button_back,
             self.button_altitude_cal,
             self.button_activate_sensor_ex,
@@ -841,11 +854,15 @@ class GroundStationApp(QMainWindow):
         if(self.send_data("CMD,%d,TEST,X" % self.__TEAM_ID)):
             self.update_gui_log("Sent test message")
     
-    def send_time(self):
-        utc_time = datetime.now(timezone.utc)
-        time_str = utc_time.strftime("%H:%M:%S")
-        if(self.send_data("CMD,%d,ST,%s" % (self.__TEAM_ID, time_str))):
-            self.update_gui_log(f"Sent new mission time '{time_str}'")
+    def send_time(self, gps):
+        if(gps):
+           if(self.send_data("CMD,%d,ST,GPS" % (self.__TEAM_ID))):
+                self.update_gui_log(f"Sent GPS Set Time Command") 
+        else:
+            utc_time = datetime.now(timezone.utc)
+            time_str = utc_time.strftime("%H:%M:%S")
+            if(self.send_data("CMD,%d,ST,%s" % (self.__TEAM_ID, time_str))):
+                self.update_gui_log(f"Sent new mission time '{time_str}'")
 
     def send_restart(self):
         if(self.send_data("CMD,%d,RR,X" % self.__TEAM_ID)):
@@ -863,42 +880,43 @@ class GroundStationApp(QMainWindow):
         # TODO: Need one for each device on/off
         if(self.send_data("CMD,%d,MEC,X:ON" % self.__TEAM_ID)):
             self.update_gui_log("Sent MEC command (DOES NOTHING)")
+
+    def get_log_data(self):
+        if(self.send_data("CMD,%d,GTLOGS,X" % self.__TEAM_ID)):
+            self.update_gui_log("Attempting to retreive log data...")
     
     def toggle_transmission(self, toggle):
         if toggle:
-            self.__csv_file = open("cansat_data.csv", "w", newline="")
-            self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
-            self.__csv_writer.writeheader()
-            self.__csv_file = open("cansat_data.csv", "a", newline="")
-            self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
-            if(self.send_data("CMD,%d,CX,ON" % self.__TEAM_ID)):
-                self.__packet_recv_count = 0
+            if(self.send_data("CMD,%d,CX,ON" % self.__TEAM_ID)):  
                 self.update_gui_log("SENT TRANSMISSION ON COMMAND")
-                
-                if(self.__cansat_mode == "SIM"):
-                    try:
-                        with open("cansat_2023_simp.txt", 'r') as file:
-                            for line in file:
-                                if line.startswith("CMD,$,SIMP"):
-                                    line = line.replace('$', str(self.__TEAM_ID))
-                                    self.simp_data.append(line.strip())
-                        self.current_simp_idx = 0
-                        self.simp_timer.start(1000)
-                    except FileNotFoundError:
-                        self.update_gui_log("ERROR: Could not find SIMP data file cansat_2023_simp.txt!", "red")
+                self.__packet_recv_count = 0
 
+                for plotter in self.plotters:
+                    plotter.reset_plot()
+
+                self.__csv_file = open("cansat_data.csv", "w", newline="")
+                self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
+                self.__csv_writer.writeheader()
         else:
-            if(self.send_data("CMD,%d,CX,OFF" % self.__TEAM_ID)):
-                self.update_gui_log("SENT TRANSMISSION OFF COMMAND")
-                if(self.__cansat_mode == "SIM"):
-                    self.simp_timer.stop()
-                    self.current_simp_idx = 0
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Icon.Warning    )
+            msg_box.setWindowTitle("CONFIRM: ENDING MISSION")
+            msg_box.setText("Are you sure you want to end the mission?")
+            msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            msg_box.setDefaultButton(QMessageBox.StandardButton.No)
+
+            response = msg_box.exec()
+            if response == QMessageBox.StandardButton.Yes:
+                if(self.send_data("CMD,%d,CX,OFF" % self.__TEAM_ID)):
+                    self.update_gui_log("SENT TRANSMISSION OFF COMMAND")
+                    if(self.__cansat_mode == "SIM"):
+                        self.simp_timer.stop()
+                        self.current_simp_idx = 0
 
     def team_id_edited(self):
         self.team_id_field.clearFocus()
         self.__TEAM_ID = int(self.team_id_field.text())
-        if(self.send_data("CMD,%d,TMID,%d" % (self.__TEAM_ID, self.__TEAM_ID))):
-            self.update_gui_log(f"Sent new team ID '{self.__TEAM_ID}'")
+        self.update_gui_log(f"Updated ground station TEAM ID to '{self.__TEAM_ID}'")
     
     @pyqtSlot(QSerialPort.SerialPortError)
     def handle_serial_error(self, error):
@@ -943,14 +961,29 @@ class GroundStationApp(QMainWindow):
     def recv_data(self):
         while self.__serial.canReadLine():
             msg = self.__serial.readLine().data().decode().strip()
-            self.__recveived_data = msg
-            self.__data_received.emit()
+            if self.__write_to_logfile:
+                self.__outfile.write((msg + "\n").encode('utf-8'))
+                if "$LOGFILE:END" in msg:
+                    self.__write_to_logfile = 0
+                    self.__outfile.close()
+                    self.update_gui_log("Finished uploading log data")
+            else:
+                self.__recveived_data = msg
+                self.__data_received.emit()
 
     @pyqtSlot()
     def process_data(self):
         # Info msg
         msg = self.__recveived_data
         if(msg.startswith('$')):
+
+            # Get logfile
+            if "$LOGFILE:BEGIN" in msg:
+                self.__outfile = open("cansat_logs.txt", "wb")
+                self.__outfile.write((msg + "\n").encode('utf-8'))
+                self.__write_to_logfile = 1
+                return
+
             msg_text = re.search('MSG:(.+)', msg).group(1)
             if msg_text is None:
                 msg_text = "(UNEXPECTED FORMAT):" + msg
@@ -967,29 +1000,30 @@ class GroundStationApp(QMainWindow):
                 self.label_remote_state.setText(f'<span style="color:black;">CANSAT State: \
                                               </span><span style="color:BLUE;">{new_state}</span>')
 
-            if msg.startswith("$IE"):
+            if "BEGIN_SIMP" in msg:
+                if(self.__cansat_mode == "SIM"):
+                    try:
+                        with open("cansat_2023_simp.txt", 'r') as file:
+                            for line in file:
+                                if line.startswith("CMD,$,SIMP"):
+                                    line = line.replace('$', str(self.__TEAM_ID))
+                                    self.simp_data.append(line.strip())
+                        self.current_simp_idx = 0
+                        self.simp_timer.start(1000)
+                    except FileNotFoundError:
+                        self.update_gui_log("ERROR: Could not find SIMP data file cansat_2023_simp.txt!", "red")
+
+            if msg.startswith("$E"):
                 self.update_gui_log(f"-> CANSAT: {msg_text}", "red")
             else:
                 self.update_gui_log(f"-> CANSAT: {msg_text}", "blue")
         else: # telemetry
             self.parse_telemetry_string(msg)
     
-    def reset_mission(self):
-        msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Icon.Warning)
-        msg_box.setWindowTitle("CONFIRM RESET")
-        msg_box.setText("Are you sure you want to reset mission data?")
-        msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        msg_box.setDefaultButton(QMessageBox.StandardButton.No)
-
-        response = msg_box.exec()
-        if response == QMessageBox.StandardButton.Yes:
-            self.__packet_recv_count = 0
-            
-            for plotter in self.plotters:
+    def reset_mission(self):     
+        self.gui_log.clear()
+        for plotter in self.plotters:
                 plotter.reset_plot()
-            
-            self.gui_log.clear()
 
     def set_port_text_closed(self):
          self.label_port.setText(f'<span style="color:black;">Ground Port: \
