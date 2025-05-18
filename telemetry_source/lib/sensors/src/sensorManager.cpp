@@ -1,17 +1,18 @@
 #include "sensorManager.h"
 
-OperatingState SensorManager::updateState(OperatingState curr_state)
+OperatingState SensorManager::updateState(OperatingState curr_state, MissionManager &mission_info)
 {
-    int idx = alt_data.idx;
+    int idx = alt_data.idx - 1;
     int size = alt_data.window_size;
 
     float alt_sum = 0.0;
 
-    for(int i = 0; i < size; i++)
+    for (int i = 0; i < 5; i++)
     {
-        alt_sum += alt_data.buffer[i];
+        int index = (idx - i + size) % size;
+        alt_sum += alt_data.buffer[index];
     }
-    alt_sum = alt_sum / alt_data.window_size;
+    alt_sum = alt_sum / 5;
 
     switch(curr_state)
     {
@@ -24,15 +25,31 @@ OperatingState SensorManager::updateState(OperatingState curr_state)
         }
         
         case ASCENT: {
-            // Check if the last 3 altitude changes are small (altitude stabilizing)
-            float d1 = fabs(alt_data.buffer[idx] - alt_data.buffer[(idx - 1 + size) % size]);
-            float d2 = fabs(alt_data.buffer[(idx - 1 + size) % size] - alt_data.buffer[(idx - 2 + size) % size]);
-            float d3 = fabs(alt_data.buffer[(idx - 2 + size) % size] - alt_data.buffer[(idx - 3 + size) % size]);
-            
-            if (d1 < 5.0 && d2 < 5.0 && d3 < 5.0) // Change threshold as needed
+            // Because sim mode only sends reading every 1 second it's way harder to detect apogee
+            if(mission_info.getOpMode() == OPMODE_SIM)
             {
-                alt_data.max_alt = alt_data.buffer[idx];
-                return APOGEE;
+                // Just check current reading is <10m difference from last reading
+                if(alt_data.buffer[idx] - alt_data.buffer[(idx - 1 + size) % size] < 5)
+                {
+                    alt_data.max_alt = alt_data.buffer[idx];
+                    return APOGEE;
+                }
+            }
+            else
+            {
+                if(alt_data.sample_count > size)
+                {
+                    // To detect apogee, look for the change in last 3 samples every 0.2seconds is < 5m
+                    int step = 0.2*SENSOR_SAMPLE_RATE_HZ;
+                    float d1 = fabs(alt_data.buffer[idx] - alt_data.buffer[(idx - step + size) % size]);
+                    float d2 = fabs(alt_data.buffer[(idx - step + size) % size] - alt_data.buffer[(idx - 2*step + size) % size]);
+                    float d3 = fabs(alt_data.buffer[(idx - 2*step + size) % size] - alt_data.buffer[(idx - 3*step + size) % size]);
+                    if (d1 < 5.0 && d2 < 5.0 && d3 < 5.0)
+                    {
+                        alt_data.max_alt = alt_data.buffer[idx];
+                        return APOGEE;
+                    }
+                }
             }
             break;
         }
@@ -42,6 +59,12 @@ OperatingState SensorManager::updateState(OperatingState curr_state)
             float a = alt_data.buffer[idx];
             float b = alt_data.buffer[(idx - 1 + size) % size];
             float c = alt_data.buffer[(idx - 2 + size) % size];
+
+            // Replace max alt if needed
+            if(a > alt_data.max_alt)
+            {
+                alt_data.max_alt = a;
+            }
 
             if (a < b && b < c)
             {
@@ -77,21 +100,27 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
     // PRESSURE
     if(mission_info.getOpMode() == OPMODE_SIM)
     {
-      send_packet.PRESSURE = mission_info.getSimpData();
+      send_packet.PRESSURE = mission_info.getSimpData()/1000.0;
     }
     else
     {
-      send_packet.PRESSURE = random(0, 10000);
+      send_packet.PRESSURE = getPressure();
     }
 
     // ALTITUDE
-    send_packet.ALTITUDE = pressure_to_alt(send_packet.PRESSURE/100) - mission_info.getLaunchAlt();
+    send_packet.ALTITUDE = pressure_to_alt(send_packet.PRESSURE*10.0) - mission_info.getLaunchAlt();
 
     // STATE
-    alt_data.buffer[alt_data.idx] = send_packet.ALTITUDE;
-    alt_data.idx = (alt_data.idx + 1) % alt_data.window_size;
+    if(mission_info.getOpMode() == OPMODE_FLIGHT)
+    {
+        alt_data.buffer[alt_data.idx] = send_packet.ALTITUDE;
+        alt_data.idx = (alt_data.idx + 1) % alt_data.window_size;
+        alt_data.sample_count++;
+    }
 
-    mission_info.setOpState(updateState(mission_info.getOpState()));
+    mission_info.setOpState(updateState(mission_info.getOpState(), mission_info));
+
+    strcpy(send_packet.STATE, op_state_to_string(mission_info.getOpState()));
 
     // TEAM ID
     send_packet.TEAM_ID_PCKT = TEAM_ID;
@@ -235,6 +264,13 @@ void SensorManager::cmd_buff_to_echo(char *cmd_buff)
     send_packet.CMD_ECHO[echo_indx] = '\0';
 }
 
+void SensorManager::setAltData(float alt)
+{
+    alt_data.buffer[alt_data.idx] = alt;
+    alt_data.idx = (alt_data.idx + 1) % alt_data.window_size;
+    alt_data.sample_count++;
+}
+
 void SensorManager::resetAltData()
 {
     for(int i = 0; i < alt_data.window_size; i++)
@@ -244,6 +280,7 @@ void SensorManager::resetAltData()
     alt_data.idx = 0;
     alt_data.current_alt = 0.0;
     alt_data.max_alt = 0.0;
+    alt_data.sample_count = 0;
 }
 
 void SensorManager::setPacketCount(int count)

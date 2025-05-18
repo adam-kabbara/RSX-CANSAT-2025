@@ -2,6 +2,7 @@
 #define SERIAL_MANAGER_H
 
 #include "includes.h"
+#include <LittleFS.h>
 
 class SerialManager
 {
@@ -26,6 +27,8 @@ public:
     void sendInfoDataMsg(const char *format, ...);
 
     void sendTelemetry(char *buff);
+
+    void sendLogFile(File log);
 
 };
 

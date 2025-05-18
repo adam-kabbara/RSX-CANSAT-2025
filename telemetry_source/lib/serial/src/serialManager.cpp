@@ -64,3 +64,16 @@ void SerialManager::sendTelemetry(char *buff)
 {
     serialPort->println(buff);
 }
+
+void SerialManager::sendLogFile(File log)
+{
+    serialPort->println("$LOGFILE:BEGIN");
+    delay(500);
+    while(log.available())
+    {
+        String line = log.readStringUntil('\n');
+        serialPort->println(line);
+        delay(500);
+    }
+    serialPort->println("$LOGFILE:END");
+}

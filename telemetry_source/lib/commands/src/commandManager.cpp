@@ -12,9 +12,10 @@ CommandManager::CommandManager()
     command_map.emplace("SIMP", std::bind(&CommandManager::do_simp, this, _1, _2, _3, _4));
     command_map.emplace("CAL", std::bind(&CommandManager::do_cal, this, _1, _2, _3, _4));
     command_map.emplace("MEC", std::bind(&CommandManager::do_mec, this, _1, _2, _3, _4));
+    command_map.emplace("GTLOGS", std::bind(&CommandManager::do_logs, this, _1, _2, _3, _4));
 }
 
-int CommandManager::processCommand(char *cmd_buff, SerialManager &ser, MissionManager &info, SensorManager &sensors) 
+int CommandManager::processCommand(const char *cmd_buff, SerialManager &ser, MissionManager &info, SensorManager &sensors) 
 {
     // Extract fields from command buffer
 
@@ -28,7 +29,11 @@ int CommandManager::processCommand(char *cmd_buff, SerialManager &ser, MissionMa
 
     command_packet packet;
 
-    char *token = strtok(cmd_buff, ",");
+    char cmd_buff_copy[CMD_BUFF_SIZE];
+    strncpy(cmd_buff_copy, cmd_buff, CMD_BUFF_SIZE);
+    cmd_buff_copy[CMD_BUFF_SIZE - 1] = '\0';
+
+    char *token = strtok(cmd_buff_copy, ",");
     int token_cnt = 0;
 
     while(token != NULL)
@@ -36,13 +41,13 @@ int CommandManager::processCommand(char *cmd_buff, SerialManager &ser, MissionMa
         switch(token_cnt)
         {
             case 0: 
-                packet.keyword = token; 
+                packet.keyword = token;
                 break;
             case 1: 
-                packet.team_id = token; 
+                packet.team_id = token;
                 break;
             case 2: 
-                packet.command = token; 
+                packet.command = token;
                 break;
         }
         token_cnt++;
@@ -94,7 +99,7 @@ void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManag
 {
     if(strcmp(data, "ON") == 0)
     {
-        if(info.getOpState() == IDLE && info.isAltCalibrated() == 1)
+        if(info.getOpState() == IDLE && (info.isAltCalibrated() == 1 || info.getOpMode() == OPMODE_SIM))
         {
             info.clearPacketCount();
             ser.sendInfoMsg("STARTING TELEMETRY TRANSMISSION.");
@@ -131,11 +136,12 @@ void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManag
 
 void CommandManager::do_st(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
+    int x,y,z;
     if(strcmp(data, "GPS") == 0)
     {
         ser.sendInfoMsg("TODO: GPS!");
     }
-    else if(std::strstr(data, "UTC") != nullptr)
+    else if(sscanf(data, "%d:%d:%d", &x, &y, &z) == 3)
     {
         ser.sendInfoMsg("TODO: SET RTC CONTROLLER TIME!");
     }
@@ -208,7 +214,6 @@ void CommandManager::do_sim(SerialManager &ser, MissionManager &info, SensorMana
           info.endPref();
           ser.sendInfoDataMsg("SIMULATION MODE IS ACTIVE{%s|%s}", 
             sensors.op_mode_to_string(info.getOpMode(), 1), sensors.op_state_to_string(info.getOpState()));
-          info.setAltCalibration(0);
           break;
         }
       case SIM_OFF:
@@ -228,6 +233,7 @@ void CommandManager::do_sim(SerialManager &ser, MissionManager &info, SensorMana
     switch(info.getSimStatus())
     {
       case SIM_ON:
+      case SIM_EN:
         {
           info.setSimStatus(SIM_OFF);
           info.setOpMode(OPMODE_FLIGHT);
@@ -239,16 +245,6 @@ void CommandManager::do_sim(SerialManager &ser, MissionManager &info, SensorMana
           info.endPref();
           ser.sendInfoDataMsg("SET CANSAT TO FLIGHT MODE.{%s|%s}", 
             sensors.op_mode_to_string(info.getOpMode(), 1), sensors.op_state_to_string(info.getOpState()));
-          break;
-        }
-      case SIM_EN:
-        {
-          info.setSimStatus(SIM_OFF);
-          info.beginPref("xb-set", false);
-          int sim_status_int = static_cast<int>(info.getSimStatus());
-          info.putPrefInt("simst", sim_status_int);
-          info.endPref();
-          ser.sendErrorMsg("SIMULATION MODE DISABLED");
           break;
         }
       case SIM_OFF:
@@ -269,14 +265,22 @@ void CommandManager::do_simp(SerialManager &ser, MissionManager &info, SensorMan
   // Check if we are in simulation mode
   if(info.getOpMode() == OPMODE_SIM)
   {
-    int i;
-    sscanf(data, "%d", i);
-    if(info.isWaitingSimp())
+    int pressure;
+    if(sscanf(data, "%d", &pressure) == 1)
     {
-        info.setAltCalibration(sensors.pressure_to_alt(i/100.0));
-        info.simpRecv();
+      float alt = sensors.pressure_to_alt(pressure/100.0);
+      if(info.isWaitingSimp())
+      {
+          info.setAltCalibration(alt);
+          info.simpRecv();
+      }
+      sensors.setAltData(alt-info.getLaunchAlt());
+      info.setSimpData(pressure);
     }
-    info.setSimpData(i);
+    else
+    {
+      ser.sendErrorDataMsg("ERROR: SIMP DATA FORMAT IS INCORRECT: %s", data);
+    }
   }
   else
   {
@@ -297,4 +301,26 @@ void CommandManager::do_cal(SerialManager &ser, MissionManager &info, SensorMana
 void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
   ser.sendInfoMsg("MEC COMMAND RECVD");
+}
+
+void CommandManager::do_logs(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
+{
+  // Only do this if IDLE
+  if(info.getOpState() != IDLE)
+  {
+    ser.sendErrorMsg("CANNOT SEND LOG DATA WHILE CANSAT IS NOT IDLE!");
+    return;
+  }
+
+  File log = LittleFS.open("/logs.txt", FILE_READ);
+  if(!log)
+  {
+    ser.sendErrorMsg("COULD NOT FIND ANY SAVED LOG FILE!");
+    log.close();
+    return;
+  }
+
+  ser.sendLogFile(log);
+
+  log.close();
 }

@@ -20,7 +20,9 @@
 #define XBEE_BAUD_RATE 57600
 #define RX_PIN 16
 #define TX_PIN 17
-#define ALTITUDE_WINDOW_SIZE 5
+#define ALTITUDE_WINDOW_SIZE 40
+#define SENSOR_SAMPLE_RATE_HZ 40
+#define MAX_LOG_FILE_SIZE_BYTES 125000
 
 enum SimModeStatus {
     SIM_OFF = 0,
