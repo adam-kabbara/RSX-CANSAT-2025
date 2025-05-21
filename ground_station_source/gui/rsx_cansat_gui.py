@@ -363,7 +363,7 @@ class GroundStationApp(QMainWindow):
         self.button_set_time_gps.clicked.connect(lambda: self.send_time(1))
         self.button_set_time_gps.hide()
 
-        self.button_reset_mission = QPushButton("CLEAR PLOTS + COMMAND LOG")
+        self.button_reset_mission = QPushButton("CLEAR PLOTS, COMMAND LOG, CSV FILE")
         self.button_reset_mission.setFont(button_font)
         self.button_reset_mission.clicked.connect(self.reset_mission)
         self.button_reset_mission.hide()
@@ -514,6 +514,17 @@ class GroundStationApp(QMainWindow):
             self.combo_select_port,
             self.button_refresh_ports,
         ]
+
+        self.get_log_overlay = QLabel("Logfile collection in progress.", self)
+        self.get_log_overlay.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.get_log_overlay.setStyleSheet("""
+            background-color: rgba(0, 0, 0, 215);
+            color: white;
+            font-size: 18px;
+        """)
+        self.get_log_overlay.setGeometry(self.rect())
+        self.get_log_overlay.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, False)
+        self.get_log_overlay.hide()
         # ------ END COMMANDS GROUP ------ #
 
         # ------ DATA GROUP ------ #
@@ -752,9 +763,18 @@ class GroundStationApp(QMainWindow):
         grid_layout.addLayout(graph_parent_group, 1, 0, 1, 3)
         # ------ END GRAPH GROUP ------ #
 
+        # ------ START CSV FILE ------- #
+        self.__csv_file = open("cansat_data.csv", "w", newline="")
+        self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
+        self.__csv_writer.writeheader()
+        # ------- END CSV FILE -------- #
+
         self.showMaximized()
     
     # ------ FUNCTIONS ------ #
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.get_log_overlay.setGeometry(self.rect())
 
     def update_gui_log(self, msg, color="black"):
         log_item = QListWidgetItem(f"{QTime.currentTime().toString('h:mm AP')}     {msg}")
@@ -882,9 +902,18 @@ class GroundStationApp(QMainWindow):
             self.update_gui_log("Sent MEC command (DOES NOTHING)")
 
     def get_log_data(self):
-        if(self.send_data("CMD,%d,GTLOGS,X" % self.__TEAM_ID)):
-            self.update_gui_log("Attempting to retreive log data...")
-    
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Warning    )
+        msg_box.setWindowTitle("CONFIRM: REQUEST TRANSMISSION OF MISSION LOGFILE")
+        msg_box.setText("THIS WILL BLOCK ALL OTHER PROCESSES UNTIL COMPLETE!!")
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        msg_box.setDefaultButton(QMessageBox.StandardButton.No)
+
+        response = msg_box.exec()
+        if response == QMessageBox.StandardButton.Yes:
+            if(self.send_data("CMD,%d,GTLOGS,X" % self.__TEAM_ID)):
+                self.update_gui_log("Attempting to retreive log data...")
+        
     def toggle_transmission(self, toggle):
         if toggle:
             if(self.send_data("CMD,%d,CX,ON" % self.__TEAM_ID)):  
@@ -894,9 +923,6 @@ class GroundStationApp(QMainWindow):
                 for plotter in self.plotters:
                     plotter.reset_plot()
 
-                self.__csv_file = open("cansat_data.csv", "w", newline="")
-                self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
-                self.__csv_writer.writeheader()
         else:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Icon.Warning    )
@@ -964,6 +990,7 @@ class GroundStationApp(QMainWindow):
             if self.__write_to_logfile:
                 self.__outfile.write((msg + "\n").encode('utf-8'))
                 if "$LOGFILE:END" in msg:
+                    self.get_log_overlay.hide()
                     self.__write_to_logfile = 0
                     self.__outfile.close()
                     self.update_gui_log("Finished uploading log data")
@@ -979,10 +1006,13 @@ class GroundStationApp(QMainWindow):
 
             # Get logfile
             if "$LOGFILE:BEGIN" in msg:
+                self.get_log_overlay.show()
                 self.__outfile = open("cansat_logs.txt", "wb")
                 self.__outfile.write((msg + "\n").encode('utf-8'))
                 self.__write_to_logfile = 1
                 return
+            
+            self.__csv_writer.writerow(msg)
 
             msg_text = re.search('MSG:(.+)', msg).group(1)
             if msg_text is None:
@@ -1024,6 +1054,8 @@ class GroundStationApp(QMainWindow):
         self.gui_log.clear()
         for plotter in self.plotters:
                 plotter.reset_plot()
+        self.__csv_file.seek(0)
+        self.__csv_file.truncate()
 
     def set_port_text_closed(self):
          self.label_port.setText(f'<span style="color:black;">Ground Port: \
@@ -1040,7 +1072,7 @@ class GroundStationApp(QMainWindow):
             self.__serial.close()
         if self.__csv_file is not None:
             if not self.__csv_file.closed:
-                        self.__csv_file.close()
+                self.__csv_file.close()
 
     def update_packet_label(self):
         self.label_packet_count.setText(f'<span style="color:black;">Packets Received: \
