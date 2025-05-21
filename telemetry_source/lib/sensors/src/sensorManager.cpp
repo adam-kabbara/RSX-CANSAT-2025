@@ -5,18 +5,21 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
     int idx = alt_data.idx - 1;
     int size = alt_data.window_size;
 
-    float alt_sum = 0.0;
-
-    for (int i = 0; i < 5; i++)
-    {
-        int index = (idx - i + size) % size;
-        alt_sum += alt_data.buffer[index];
-    }
-    alt_sum = alt_sum / 5;
-
     switch(curr_state)
     {
         case LAUNCH_PAD: {
+
+            // Average of last 5 samples is > 5m
+
+            float alt_sum = 0.0;
+
+            for (int i = 0; i < 5; i++)
+            {
+                int index = (idx - i + size) % size;
+                alt_sum += alt_data.buffer[index];
+            }
+            alt_sum = alt_sum / 5;
+
             if(alt_sum > 5.0)
             {
                 return ASCENT;
@@ -39,14 +42,29 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             {
                 if(alt_data.sample_count > size)
                 {
-                    // To detect apogee, look for the change in last 3 samples every 0.2seconds is < 5m
-                    int step = 0.2*SENSOR_SAMPLE_RATE_HZ;
-                    float d1 = fabs(alt_data.buffer[idx] - alt_data.buffer[(idx - step + size) % size]);
-                    float d2 = fabs(alt_data.buffer[(idx - step + size) % size] - alt_data.buffer[(idx - 2*step + size) % size]);
-                    float d3 = fabs(alt_data.buffer[(idx - 2*step + size) % size] - alt_data.buffer[(idx - 3*step + size) % size]);
-                    if (d1 < 5.0 && d2 < 5.0 && d3 < 5.0)
+                    // To detect apogee, take last three averages of three samples at 0.15sec intervals
+                    // and determine if the difference between each of them is less than 5m
+
+                    int step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
+
+                    float avg0 = (alt_data.buffer[(idx + size - 1) % size] +
+                                alt_data.buffer[idx] +
+                                alt_data.buffer[(idx + 1) % size]) / 3.0;
+
+                    float avg1 = (alt_data.buffer[(idx - step + size - 1) % size] +
+                                alt_data.buffer[(idx - step + size) % size] +
+                                alt_data.buffer[(idx - step + size + 1) % size]) / 3.0;
+
+                    float avg2 = (alt_data.buffer[(idx - 2 * step + size - 1) % size] +
+                                alt_data.buffer[(idx - 2 * step + size) % size] +
+                                alt_data.buffer[(idx - 2 * step + size + 1) % size]) / 3.0;
+
+                    float d1 = fabs(avg0 - avg1);
+                    float d2 = fabs(avg1 - avg2);
+
+                    if (d1 < 5.0 && d2 < 5.0)
                     {
-                        alt_data.max_alt = alt_data.buffer[idx];
+                        alt_data.max_alt = avg1;
                         return APOGEE;
                     }
                 }
@@ -55,18 +73,30 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
         }
 
         case APOGEE: {
-            // last few readings are decreasing
-            float a = alt_data.buffer[idx];
-            float b = alt_data.buffer[(idx - 1 + size) % size];
-            float c = alt_data.buffer[(idx - 2 + size) % size];
+
+            // Last three average of 3 sample reading over 0.25 sec intervals are decreasing
+
+            int step = 0.25 * SENSOR_SAMPLE_RATE_HZ;
+
+            float avg0 = (alt_data.buffer[(idx + size - 1) % size] +
+                        alt_data.buffer[idx] +
+                        alt_data.buffer[(idx + 1) % size]) / 3.0;
+
+            float avg1 = (alt_data.buffer[(idx - step + size - 1) % size] +
+                        alt_data.buffer[(idx - step + size) % size] +
+                        alt_data.buffer[(idx - step + size + 1) % size]) / 3.0;
+
+            float avg2 = (alt_data.buffer[(idx - 2 * step + size - 1) % size] +
+                        alt_data.buffer[(idx - 2 * step + size) % size] +
+                        alt_data.buffer[(idx - 2 * step + size + 1) % size]) / 3.0;
 
             // Replace max alt if needed
-            if(a > alt_data.max_alt)
+            if(avg0 > alt_data.max_alt)
             {
-                alt_data.max_alt = a;
+                alt_data.max_alt = avg0;
             }
 
-            if (a < b && b < c)
+            if (avg0 < avg1 && avg1 < avg2)
             {
                 return DESCENT;
             }
@@ -74,7 +104,17 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
         }
 
         case DESCENT: {
-            // last few readings are 75% of max
+            // Average of last 5 readings are 75% of max
+
+            float alt_sum = 0.0;
+
+            for (int i = 0; i < 5; i++)
+            {
+                int index = (idx - i + size) % size;
+                alt_sum += alt_data.buffer[index];
+            }
+            alt_sum = alt_sum / 5;
+
             if (alt_sum <= 0.75 * alt_data.max_alt)
             {
                 return PROBE_RELEASE;
@@ -83,6 +123,18 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
         }
 
         case PROBE_RELEASE: {
+
+            // Average of last 5 samples is < 5m
+
+            float alt_sum = 0.0;
+
+            for (int i = 0; i < 5; i++)
+            {
+                int index = (idx - i + size) % size;
+                alt_sum += alt_data.buffer[index];
+            }
+            alt_sum = alt_sum / 5;
+
             if(alt_sum < 5.0)
             {
                 return LAUNCH_PAD;
