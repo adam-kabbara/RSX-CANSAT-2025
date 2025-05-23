@@ -73,34 +73,49 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
         }
 
         case APOGEE: {
-
-            // Last three average of 3 sample reading over 0.25 sec intervals are decreasing
-
-            int step = 0.25 * SENSOR_SAMPLE_RATE_HZ;
-
-            float avg0 = (alt_data.buffer[(idx + size - 1) % size] +
-                        alt_data.buffer[idx] +
-                        alt_data.buffer[(idx + 1) % size]) / 3.0;
-
-            float avg1 = (alt_data.buffer[(idx - step + size - 1) % size] +
-                        alt_data.buffer[(idx - step + size) % size] +
-                        alt_data.buffer[(idx - step + size + 1) % size]) / 3.0;
-
-            float avg2 = (alt_data.buffer[(idx - 2 * step + size - 1) % size] +
-                        alt_data.buffer[(idx - 2 * step + size) % size] +
-                        alt_data.buffer[(idx - 2 * step + size + 1) % size]) / 3.0;
-
-            // Replace max alt if needed
-            if(avg0 > alt_data.max_alt)
+            if(mission_info.getOpMode() == OPMODE_SIM)
             {
-                alt_data.max_alt = avg0;
-            }
+                // Just check last 3 readings are decreasing
+                float r0 = alt_data.buffer[(idx + size - 2) % size];
+                float r1 = alt_data.buffer[(idx + size - 1) % size];
+                float r2 = alt_data.buffer[idx];
 
-            if (avg0 < avg1 && avg1 < avg2)
-            {
-                return DESCENT;
+                if (r0 > r1 && r1 > r2)
+                {
+                    alt_data.max_alt = alt_data.buffer[idx];
+                    return DESCENT;
+                }
             }
-            break;
+            else
+            {
+                // Last three average of 3 sample reading over 0.25 sec intervals are decreasing
+
+                int step = 0.25 * SENSOR_SAMPLE_RATE_HZ;
+
+                float avg0 = (alt_data.buffer[(idx + size - 1) % size] +
+                            alt_data.buffer[idx] +
+                            alt_data.buffer[(idx + 1) % size]) / 3.0;
+
+                float avg1 = (alt_data.buffer[(idx - step + size - 1) % size] +
+                            alt_data.buffer[(idx - step + size) % size] +
+                            alt_data.buffer[(idx - step + size + 1) % size]) / 3.0;
+
+                float avg2 = (alt_data.buffer[(idx - 2 * step + size - 1) % size] +
+                            alt_data.buffer[(idx - 2 * step + size) % size] +
+                            alt_data.buffer[(idx - 2 * step + size + 1) % size]) / 3.0;
+
+                // Replace max alt if needed
+                if(avg0 > alt_data.max_alt)
+                {
+                    alt_data.max_alt = avg0;
+                }
+
+                if (avg0 < avg1 && avg1 < avg2)
+                {
+                    return DESCENT;
+                }
+                break;
+            }
         }
 
         case DESCENT: {
@@ -190,7 +205,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
       ran_num[i] = random(0, 20);
     }
 
-    send_packet.TEMPERATURE = ran_num[0];
+    send_packet.TEMPERATURE = getTemp();
     send_packet.VOLTAGE = ran_num[1];
     send_packet.GYRO_R = ran_num[2];
     send_packet.GYRO_P = ran_num[3];
@@ -207,6 +222,13 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
     send_packet.GPS_LATITUDE = ran_num[14];
     send_packet.GPS_LONGITUDE = ran_num[15];
     send_packet.GPS_SATS = ran_num[16];
+
+    int write_servo = 0;
+    if(mission_info.getOpState() == APOGEE && write_servo==0)
+    {
+        writeServo(50);
+        write_servo = 1;
+    }
 }
 
 void SensorManager::build_data_str(char *buff, size_t size)
@@ -335,6 +357,16 @@ void SensorManager::resetAltData()
     alt_data.sample_count = 0;
 }
 
+void SensorManager::startSensors(SerialManager &ser)
+{
+    uint8_t status = bme.begin(0x77);
+    delay(100);
+    m_servo.attach(13);
+    delay(100);
+    writeServo(0);
+    delay(100);
+}
+
 void SensorManager::setPacketCount(int count)
 {
     send_packet.PACKET_COUNT = count;
@@ -342,5 +374,15 @@ void SensorManager::setPacketCount(int count)
 
 float SensorManager::getPressure()
 {
-    return 900.0;
+    return (bme.readPressure() / 1000.0);
+}
+
+float SensorManager::getTemp()
+{
+    return bme.readTemperature();
+}
+
+void SensorManager::writeServo(int pos)
+{
+    m_servo.write(pos);
 }

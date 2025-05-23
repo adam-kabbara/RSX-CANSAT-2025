@@ -4,6 +4,11 @@
 #include "includes.h"
 #include "serialManager.h"
 #include "missionManager.h"
+#include <Adafruit_BME280.h>
+#include <Wire.h>
+#include <TinyGPS++.h>
+#include <ESP32Servo.h>
+#include <HardwareSerial.h>
 
 class SensorManager
 {
@@ -50,6 +55,11 @@ private:
 
     altitude_data alt_data;
 
+    Adafruit_BME280 bme;
+    Servo m_servo;
+
+    int servo_1_pos = 0;
+
 public:
 
     OperatingState updateState(OperatingState curr_state, MissionManager &mission_info);
@@ -72,7 +82,13 @@ public:
 
     float getPressure();
 
+    float getTemp();
+
     void setAltData(float alt);
+
+    void startSensors(SerialManager &ser);
+
+    void writeServo(int pos);
 };
 
 #endif /* SENSOR_MANAGER_H */

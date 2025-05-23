@@ -6,6 +6,7 @@
 
 hw_timer_t *send_timer = NULL;
 SerialManager xbee_serial(Serial2);
+SensorManager sensor_mgr;
 MissionManager mission_info;
 uint8_t send_flag = 0;
 
@@ -17,11 +18,11 @@ void setup()
     send_timer = timerBegin(0, 80, true);
     timerAttachInterrupt(send_timer, &send_1, true);
     timerAlarmWrite(send_timer, 1000000, true);
-
+    
     xbee_serial.begin();
 
     // Debug serial
-    Serial.begin(9600);
+    //Serial.begin(9600);
 
     // Setup SPIFF
     if(!LittleFS.begin(true))
@@ -40,6 +41,8 @@ void setup()
     // Reset sequence
     mission_info.resetSeq(xbee_serial);
 
+    sensor_mgr.startSensors(xbee_serial);
+
     xbee_serial.sendInfoMsg("Startup Completed.");
     //Serial.println("\nStartup Completed.");
 }
@@ -49,7 +52,6 @@ void loop()
     char cmd_buff[CMD_BUFF_SIZE];
     char send_buffer[DATA_BUFF_SIZE];
     CommandManager cmd_mgr;
-    SensorManager sensor_mgr;
     int delay_rate_ms = (1/SENSOR_SAMPLE_RATE_HZ) * 1000;
     int cannot_write_to_file = 0;
 
