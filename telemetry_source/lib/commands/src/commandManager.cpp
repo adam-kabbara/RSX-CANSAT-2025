@@ -18,7 +18,7 @@ CommandManager::CommandManager()
 int CommandManager::processCommand(const char *cmd_buff, SerialManager &ser, MissionManager &info, SensorManager &sensors) 
 {
     // Extract fields from command buffer
-
+    
     struct command_packet 
     {
         char *keyword = nullptr;
@@ -290,8 +290,7 @@ void CommandManager::do_simp(SerialManager &ser, MissionManager &info, SensorMan
 
 void CommandManager::do_cal(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
-  // TODO add sensor function here
-  info.setAltCalibration(sensors.pressure_to_alt(sensors.getPressure()));
+  info.setAltCalibration(sensors.pressure_to_alt(sensors.getPressure()*10));
   info.beginPref("xb-set", false);
   info.putPrefFloat("grndalt", info.getLaunchAlt());
   info.endPref();
