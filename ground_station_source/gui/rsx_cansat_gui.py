@@ -597,7 +597,6 @@ class GroundStationApp(QMainWindow):
         self.gui_log.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.gui_log.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.gui_log.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
         self.gui_log.setStyleSheet("""
             QListWidget {
                 font-size: 18px;
@@ -1011,8 +1010,10 @@ class GroundStationApp(QMainWindow):
                 self.__outfile.write((msg + "\n").encode('utf-8'))
                 self.__write_to_logfile = 1
                 return
-            
-            self.__csv_writer.writerow(msg)
+
+            row = {field: "" for field in self.__csv_writer.fieldnames}
+            row["CMD_ECHO"] = msg
+            self.__csv_writer.writerow(row)
 
             msg_text = re.search('MSG:(.+)', msg).group(1)
             if msg_text is None:
