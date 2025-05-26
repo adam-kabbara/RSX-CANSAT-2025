@@ -122,12 +122,6 @@ static void openAvi() {
   aviFile = STORAGE.open(AVITEMP, FILE_WRITE);
   oTime = millis() - oTime;
   LOG_VRB("File opening time: %ums", oTime);
-#if INCLUDE_AUDIO
-  startAudioRecord();
-#endif
-#if INCLUDE_TELEM
-  haveSrt = startTelemetry();
-#endif
   // initialisation of counters
   startTime = millis();
   frameCnt = fTimeTot = wTimeTot = dTimeTot = vidSize = 0;
@@ -289,17 +283,6 @@ static bool closeAvi() {
   aviFile.write(iSDbuffer, highPoint); 
   size_t readLen = 0;
   bool haveWav = false;
-#if INCLUDE_AUDIO
-  // add wav file if exists
-  finishAudioRecord(true);
-  haveWav = haveWavFile();
-  if (haveWav) {
-    do {
-      readLen = writeWavFile(iSDbuffer, RAMSIZE);
-      aviFile.write(iSDbuffer, readLen);
-    } while (readLen > 0);
-  }
-#endif
   // save avi index
   finalizeAviIndex(frameCnt);
   do {
@@ -315,15 +298,9 @@ static bool closeAvi() {
   aviFile.seek(0, SeekSet); // start of file
   aviFile.write(aviHeader, AVI_HEADER_LEN); 
   aviFile.close();
+  digitalWrite(RECORDING_DIAG, LOW);
   LOG_VRB("Final SD storage time %lu ms", millis() - cTime);
   uint32_t hTime = millis();
-#if INCLUDE_MQTT
-  if (mqtt_active) {
-    sprintf(jsonBuff, "{\"RECORD\":\"OFF\", \"TIME\":\"%s\"}", esp_log_system_timestamp());
-    mqttPublish(jsonBuff);
-    mqttPublishPath("record", "off");
-  }
-#endif
   if (vidDurationSecs >= minSeconds) {
     // name file to include actual dateTime, FPS, duration, and frame count
     int alen = snprintf(aviFileName, FILE_NAME_LEN - 1, "%s_%s_%u_%lu%s%s.%s", 
@@ -333,9 +310,6 @@ static bool closeAvi() {
     STORAGE.rename(AVITEMP, aviFileName);
     LOG_VRB("AVI close time %lu ms", millis() - hTime); 
     cTime = millis() - cTime;
-#if INCLUDE_TELEM
-    stopTelemetry(aviFileName);
-#endif
     // AVI stats
     LOG_INF("******** AVI recording stats ********");
     LOG_ALT("Recorded %s", aviFileName);
@@ -355,18 +329,6 @@ static bool closeAvi() {
     LOG_INF("Busy: %u%%", std::min(100 * (wTimeTot + fTimeTot + dTimeTot + oTime + cTime) / vidDuration, (uint32_t)100));
     checkMemory();
     LOG_INF("*************************************");
-#if INCLUDE_FTP_HFS
-    if (autoUpload) {
-      if (deleteAfter) {
-        // issue #380 - in case other files failed to transfer, do whole parent folder
-        dateFormat(partName, sizeof(partName), true);
-        fsStartTransfer(partName); 
-      } else fsStartTransfer(aviFileName); // transfer this file to remote ftp server 
-    }
-#endif
-#if INCLUDE_TGRAM
-    if (tgramUse) tgramAlert(aviFileName, "");
-#endif
     if (!checkFreeStorage()) doRecording = false; 
     return true; 
   } else {
@@ -410,6 +372,7 @@ static boolean processFrame() {
       stopPlaying(); // terminate any playback
       stopPlayback = true; // stop any subsequent playback
       LOG_ALT("Capture started by %s%s%s", captureMotion ? "Motion " : "", pirVal ? "PIR" : "",forceRecord ? "Button" : "");
+      digitalWrite(RECORDING_DIAG, HIGH);
       openAvi();
       wasCapturing = true;
     }
@@ -708,12 +671,6 @@ bool prepRecording() {
   } else {
     LOG_INF("To record new AVI, do one of:");
     LOG_INF("- press Start Recording on web page");
-#if INCLUDE_PERIPH
-    if (pirUse) {
-      LOG_INF("- attach PIR to pin %u", pirPin);
-      LOG_INF("- raise pin %u to 3.3V", pirPin);
-    }
-#endif
     if (useMotion) LOG_INF("- move in front of camera");
   }
   logLine();
@@ -736,90 +693,32 @@ void endTasks() {
   for (int i = 0; i < numStreams; i++) deleteTask(sustainHandle[i]);
   deleteTask(captureHandle);
   deleteTask(playbackHandle);
-#if INCLUDE_TELEM
-  deleteTask(telemetryHandle);
-#endif
-#if INCLUDE_PERIPH
-  deleteTask(DS18B20handle);
-  deleteTask(servoHandle);
-  deleteTask(stickHandle);
-#endif
-#if INCLUDE_SMTP
-  deleteTask(emailHandle);
-#endif
-#if INCLUDE_FTP_HFS
-  deleteTask(fsHandle);
-#endif
-#if INCLUDE_TGRAM
-  deleteTask(telegramHandle);
-#endif
-#if INCLUDE_AUDIO
-  deleteTask(audioHandle);
-#endif
 }
 
 void OTAprereq() {
   // stop timer isrs, and free up heap space, or crashes esp32
   doPlayback = forceRecord = false;
   controlFrameTimer(false);
-#if INCLUDE_PERIPH
-  setStickTimer(false);
-#endif
   stopPing();
   endTasks();
   esp_camera_deinit();
   delay(100);
 }
 
-#ifdef CAMERA_MODEL_DFRobot_FireBeetle2_ESP32S3
-// This board has a configurable power supply
-// Need to instal following library
-#include "DFRobot_AXP313A.h" // https://github.com/cdjq/DFRobot_AXP313A
-DFRobot_AXP313A axp;
-
-static bool camPower() {
-  int pwrRetry = 5;
-  while (pwrRetry) { 
-    if (axp.begin() == 0) {
-      axp.enableCameraPower(axp.eOV2640);
-      return true;
-    } else {
-      delay(1000); 
-      pwrRetry--;
-    }
-  } 
-  LOG_ERR("Failed to power up camera");
-  return false;
-}
-
-#else
-
 static bool camPower() {
   // dummy
   return true;
 }
-#endif
 
 bool prepCam() {
   // initialise camera depending on model and board
   if (!camPower()) return false;
   int siodGpioNum = SIOD_GPIO_NUM;
   int siocGpioNum = SIOC_GPIO_NUM; 
-#if INCLUDE_I2C
-  if (I2Csda < 0) {
-    // share I2C port
-    prepI2Ccam(SIOD_GPIO_NUM, SIOC_GPIO_NUM);
-    
-    // stop camera doing own I2C initialisation
-    siodGpioNum = -1;
-    siocGpioNum = -1;   
-  }
-#endif
   bool res = false;
   // buffer sizing depends on psram size (4M or 8M)
   // FRAMESIZE_QSXGA = 1MB, FRAMESIZE_UXGA = 375KB (as JPEG)
   framesize_t maxFS = ESP.getPsramSize() > 5 * ONEMEG ? FRAMESIZE_QSXGA : FRAMESIZE_UXGA;
-  //framesize_t maxFS = FRAMESIZE_HD;
   // configure camera
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -848,11 +747,6 @@ bool prepCam() {
   config.frame_size = maxFS;
   config.jpeg_quality = 10;
   config.fb_count = FB_CNT;
-
-#if defined(CAMERA_MODEL_ESP_EYE)
-  pinMode(13, INPUT_PULLUP);
-  pinMode(14, INPUT_PULLUP);
-#endif
 
   // camera init
   esp_err_t err = ESP_FAIL;
@@ -901,20 +795,7 @@ bool prepCam() {
         s->set_brightness(s, 1);//up the brightness just a bit
         s->set_saturation(s, -2);//lower the saturation
       }
-  
-  #if defined(CAMERA_MODEL_M5STACK_WIDE)
-      s->set_vflip(s, 1);
-      s->set_hmirror(s, 1);
-  #endif
-  
-  #if defined(CAMERA_MODEL_M5STACK_WIDE) || defined(CAMERA_MODEL_M5STACK_ESP32CAM)
-      s->set_vflip(s, 1);
-      s->set_hmirror(s, 1);
-  #endif
-  
-  #if defined(CAMERA_MODEL_ESP32S3_EYE)
-      s->set_vflip(s, 1);
-  #endif
+
       res = true;
     }
   }
