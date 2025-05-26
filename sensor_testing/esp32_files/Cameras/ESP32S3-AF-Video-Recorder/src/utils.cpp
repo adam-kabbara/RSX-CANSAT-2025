@@ -244,33 +244,19 @@ float smoothSensor(float latestVal, float smoothedVal, float alpha) {
 }
 
 // onboard chip temperature sensor
-#if CONFIG_IDF_TARGET_ESP32
-extern "C" {
-// Use internal on chip temperature sensor (if present)
-uint8_t temprature_sens_read(); // sic
-}
-#elif CONFIG_IDF_TARGET_ESP32S3 || CONFIG_IDF_TARGET_ESP32C3
 #include "driver/temperature_sensor.h"
 static temperature_sensor_handle_t temp_sensor = NULL;
-#endif
 
 static void prepInternalTemp() {
-#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3
   // setup internal sensor
   temperature_sensor_config_t temp_sensor_config = TEMPERATURE_SENSOR_CONFIG_DEFAULT(20, 100);
   temperature_sensor_install(&temp_sensor_config, &temp_sensor);
   temperature_sensor_enable(temp_sensor);
-#endif
 }
 
 float readInternalTemp() {
   float intTemp = NULL_TEMP;
-#if CONFIG_IDF_TARGET_ESP32
-  // convert on chip raw temperature in F to Celsius degrees
-  intTemp = (temprature_sens_read() - 32) / 1.8;  // value of 55 means not present
-#elif CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3
-    temperature_sensor_get_celsius(temp_sensor, &intTemp); 
-#endif
+  temperature_sensor_get_celsius(temp_sensor, &intTemp); 
   return intTemp;
 }
 /*********************** Remote loggging ***********************/

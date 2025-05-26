@@ -5,19 +5,21 @@
  *
  * s60sc 2020 - 2024
  */
-#include <Arduino.h>
 #include "appGlobals.h"
+#include <Arduino.h>
 #include "ESP32_OV5640_AF.h"
 
-
 bool printInitMessage = true;
-#define GPIO_PIN 14
+#define RECORD_PIN 14
 extern bool forceRecord;
+bool stopRecording = false;
+bool startRecording = true;
 
 OV5640 ov5640 = OV5640();
 
 void setup() {
-  pinMode(GPIO_PIN, INPUT_PULLUP);
+  pinMode(RECORD_PIN, INPUT_PULLUP);
+  pinMode(RECORDING_DIAG, OUTPUT);
 
   logSetup();
   // prep storage
@@ -65,37 +67,41 @@ void loop() {
     // confirm not blocked in setup
     LOG_INF("=============== Total tasks: %u ===============\n",
             uxTaskGetNumberOfTasks() - 1);
-    delay(1000);
+    // delay(1000);
     printInitMessage = false;
   }
 
-  int state = digitalRead(GPIO_PIN);
+  int state = digitalRead(RECORD_PIN);
+  Serial.print("state: ");
   Serial.println(state);
-  if (state == HIGH) {
-    if (!forceRecord)
-      forceRecord = true;
-    else
-      forceRecord = false;
+
+  if (state == 1) {
+    forceRecord = forceRecord ? !stopRecording : startRecording;
+
+    if (!forceRecord && stopRecording) {
+      startRecording = false;
+    }
+    Serial.print("bool forceRecord: ");
+    Serial.println(forceRecord);
   }
 
-  uint8_t rc = ov5640.getFWStatus();
-  Serial.printf("FW_STATUS = 0x%x\n", rc);
-  if (rc == -1) {
-    Serial.println("Check your OV5640");
-  } else if (rc == FW_STATUS_S_FOCUSED) {
-    Serial.println("YAY Focused!");
-    // esp_err_t err = esp_camera_deinit();
-    // if (err != ESP_OK) {
-    //   Serial.printf("Camera de-init failed with error 0x%x", err);
-    // }
-    // esp_deep_sleep_start();
-  } else if (rc == FW_STATUS_S_FOCUSING) {
-    Serial.println("STILL FOCUSING!");
-  } else {
-    Serial.println("IDK");
+  if (state == 0) {
+    if (forceRecord) {
+      stopRecording = true;
+    } else {
+      stopRecording = false;
+    }
+
+    if (!startRecording) {
+      startRecording = true;
+    }
   }
 
-  delay(3000);
+  delay(1000);
 
   // vTaskDelete(NULL); // free 8k ram
 }
+
+//TODO: low power mode prior to starting recording 
+// timestamp for recordings
+// cleanup all the bullshit
