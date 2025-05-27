@@ -1,3 +1,10 @@
+// Daniel Yu
+// CANSAT Team 2T4-2T5
+// Robotics for Space Exploration
+// University of Toronto
+
+// GPS Code
+
 #include <Arduino.h>
 #include <TinyGPS++.h>
 #include <HardwareSerial.h>
@@ -6,7 +13,7 @@ TinyGPSPlus gps;
 HardwareSerial GPS_Serial(1);
 
 void setup() {
-    Serial.begin(115200); // For debugging
+    Serial.begin(115200); // For monitoring of the GPS data
     GPS_Serial.begin(9600, SERIAL_8N1, 16, 17); // Set baud rate and pins for GPS
 
     Serial.println("GPS Module is starting up...");
@@ -19,46 +26,81 @@ void loop() {
         gps.encode(c); // Feed the GPS parser
 
         if (gps.location.isUpdated()) {
+            // Latitude location
             Serial.print("Latitude: ");
-            Serial.println(gps.location.lat(), 6);
+            Serial.print(gps.location.lat(), 6);
+            if (gps.location.lat() > 0) {
+                Serial.println(" °N");
+            } else {
+                Serial.println(" °S");
+            }
+            
+            // Longitude location
             Serial.print("Longitude: ");
             Serial.println(gps.location.lng(), 6);
+            if (gps.location.lng() > 0) {
+                Serial.println(" °E");
+            } else {
+                Serial.println(" °W");
+            }
+            
+            // Number of satellites
             Serial.print("Satellites: ");
             Serial.println(gps.satellites.value());
+            
+            // Altitude 
             Serial.print("Altitude: ");
-            Serial.println(gps.altitude.meters());
+            Serial.print(gps.altitude.meters());
+            Serial.println(" m");
+
+            // Speed in knots and m/s
+            Serial.print("Speed: ");
+            Serial.print(gps.speed.knots());
+            Serial.print(" knots ");
+            Serial.print("(");
+            Serial.print(gps.speed.mps());
+            Serial.println(" m/s)");
+
+            // Prints the current time in HH:MM:SS format with 24-hour clock
+            int hour = gps.time.hour();
+            int minute = gps.time.minute();
+            int second = gps.time.second();
             Serial.print("Time: ");
-            Serial.println(gps.time.value());
+            if (hour < 10) {
+                Serial.print("0");
+            } 
+            Serial.print(hour);
+            Serial.print(":");
+            if (minute < 10) {
+                Serial.print("0");
+            }
+            Serial.print(minute);
+            Serial.print(":");
+            if (second < 10) {
+                Serial.print("0");
+            }
+            Serial.println(second);
+
+            // Prints the current date in DD/MM/YYYY format
+            int day = gps.date.day();
+            int month = gps.date.month();
+            int year = gps.date.year();
+            Serial.print("Date: ");
+            if (day < 10) {
+                Serial.print("0");
+            }
+            Serial.print(day);
+            Serial.print("/");
+            if (month < 10) {
+                Serial.print("0");
+            }
+            Serial.print(month);
+            Serial.print("/");
+            Serial.println(year);
+
             Serial.println("--------------------------------");
+        } else {
+            Serial.println("No GPS position detected...");
         }
     }
 }
-
-// #include <Arduino.h>
-
-// #define RXD2 16
-// #define TXD2 17
-
-// #define GPS_BAUD 9600
-
-// // Create an instance of the HardwareSerial class for Serial 2
-// HardwareSerial gpsSerial(2);
-
-// void setup(){
-//   // Serial Monitor
-//   Serial.begin(115200);
-  
-//   // Start Serial 2 with the defined RX and TX pins and a baud rate of 9600
-//   gpsSerial.begin(GPS_BAUD, SERIAL_8N1, RXD2, TXD2);
-//   Serial.println("Serial 2 started at 9600 baud rate");
-// }
-
-// void loop(){
-//   while (gpsSerial.available() > 0){
-//     // get the byte data from the GPS
-//     char gpsData = gpsSerial.read();
-//     Serial.print(gpsData);
-//   }
-//   delay(1000);
-//   Serial.println("-------------------------------");
-// }
