@@ -280,7 +280,7 @@ void SensorManager::build_data_str(char *buff, size_t size)
         "%d,%s,%d,%s,%s," //5
         "%.1f,%.1f,%.1f,%.1f," //4
         "%d,%d,%d,%d,%d," //5
-        "%d,%d,%d,%d,%d," //5
+        "%d,%d,%.1f,%.1f,%.1f," //5
         "%s,%.1f,%.4f," //3
         "%.4f,%d,%s,%d", //3
         send_packet.TEAM_ID_PCKT, 
