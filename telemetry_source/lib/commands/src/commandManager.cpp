@@ -299,7 +299,149 @@ void CommandManager::do_cal(SerialManager &ser, MissionManager &info, SensorMana
 
 void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
-  ser.sendInfoMsg("MEC COMMAND RECVD");
+  const char *colon = strchr(data, ':');
+  char mec[16];
+  char val[16];
+  if (colon != NULL)
+  {
+    size_t len_before = colon - data;
+    strncpy(mec, data, len_before);
+    mec[len_before] = '\0';
+    strcpy(val, colon + 1);
+  } 
+  else 
+  {
+    ser.sendErrorMsg("MEC FORMAT IS INCORRECT, DATA SHOULD CONTAIN 'MEC:VAL'");
+  }
+  if(strcmp(mec, "SERVO"))
+  {
+    const char *sep = strchr(val, '|');
+    if (val != NULL) 
+    {
+        char left[4], right[4];
+        size_t len_left = sep - val;
+
+        strncpy(left, val, len_left);
+        left[len_left] = '\0';
+
+        strcpy(right, sep + 1);
+
+        int servo_num = atoi(left);
+        int servo_val = atoi(right);
+
+        switch(servo_num)
+        {
+          case 0:
+            sensors.writeReleaseServo(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to release servo.", servo_val);
+            break;
+          case 1:
+            sensors.writeGyroServo1(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to gyro 1 servo.", servo_val);
+            break;
+          case 2:
+            sensors.writeGyroServo2(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to gyro 2 servo.", servo_val);
+            break;
+          case 3:
+            sensors.writeCameraServo(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to camera servo.", servo_val);
+            break;
+          default:
+            ser.sendErrorDataMsg("ERROR: RECEIVED INVALID SERVO #: %d", servo_num);
+            break;
+        }
+    } else 
+    {
+        ser.sendErrorMsg("ERROR: SERVO COMMAND FORMAT INCORRECT, DID NOT RECEIVE '#|VAL'");
+    }
+  }
+  else if(strcmp(mec, "CAMERA1"))
+  {
+    if(strcmp(val, "ON"))
+    {
+      digitalWrite(CAMERA1_PIN, HIGH);
+      int state = digitalRead(CAMERA1_STATUS_PIN);
+      if(state == HIGH)
+      {
+        ser.sendInfoMsg("CAMERA1 ON");
+      }
+      else
+      {
+        ser.sendErrorMsg("WROTE ON TO CAMERA1, BUT DID NOT GET ON STATUS");
+      }
+    }
+    else if(strcmp(val, "OFF"))
+    {
+      digitalWrite(CAMERA1_PIN, LOW);
+      int state = digitalRead(CAMERA1_STATUS_PIN);
+      if(state == LOW)
+      {
+        ser.sendInfoMsg("CAMERA1 OFF");
+      }
+      else
+      {
+        ser.sendErrorMsg("WROTE OFF TO CAMERA1, BUT IT IS STILL ON");
+      }
+    }
+  }
+  else if(strcmp(mec, "CAMERA2"))
+  {
+    if(strcmp(val, "ON"))
+    {
+      digitalWrite(CAMERA2_PIN, HIGH);
+      int state = digitalRead(CAMERA2_STATUS_PIN);
+      if(state == HIGH)
+      {
+        ser.sendInfoMsg("CAMERA2 ON");
+      }
+      else
+      {
+        ser.sendErrorMsg("WROTE TO CAMERA2, BUT DID NOT GET ON STATUS");
+      }
+    }
+    else if(strcmp(val, "OFF"))
+    {
+      digitalWrite(CAMERA2_PIN, LOW);
+      int state = digitalRead(CAMERA2_STATUS_PIN);
+      if(state == LOW)
+      {
+        ser.sendInfoMsg("CAMERA2 OFF");
+      }
+      else
+      {
+        ser.sendErrorMsg("WROTE OFF TO CAMERA2, BUT IT IS STILL ON");
+      }
+    }
+  }
+  else if(strcmp(mec, "CAMERA1_STAT"))
+  {
+    int state = digitalRead(CAMERA1_STATUS_PIN);
+    if(state == HIGH)
+    {
+      ser.sendInfoMsg("CAMERA1 ON");
+    }
+    else
+    {
+      ser.sendInfoMsg("CAMERA1 OFF");
+    }
+  }
+  else if(strcmp(mec, "CAMERA2_STAT"))
+  {
+    int state = digitalRead(CAMERA2_STATUS_PIN);
+    if(state == HIGH)
+    {
+      ser.sendInfoMsg("CAMERA2 ON");
+    }
+    else
+    {
+      ser.sendErrorMsg("CAMERA2 OFF");
+    }
+  }
+  else
+  {
+    ser.sendErrorDataMsg("ERROR: UNRECOGNIZED MEC COMMAND: %s", mec);
+  }
 }
 
 void CommandManager::do_logs(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)

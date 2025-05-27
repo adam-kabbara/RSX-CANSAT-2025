@@ -35,6 +35,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 if(alt_data.buffer[idx] - alt_data.buffer[(idx - 1 + size) % size] < 5)
                 {
                     alt_data.max_alt = alt_data.buffer[idx];
+                    writeReleaseServo(50);
                     return APOGEE;
                 }
             }
@@ -66,6 +67,33 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                     {
                         alt_data.max_alt = avg1;
                         return APOGEE;
+                    }
+
+                    // Check we are descending in case apogee was missed
+
+                    step = 0.25 * SENSOR_SAMPLE_RATE_HZ;
+
+                    avg0 = (alt_data.buffer[(idx + size - 1) % size] +
+                                alt_data.buffer[idx] +
+                                alt_data.buffer[(idx + 1) % size]) / 3.0;
+
+                    avg1 = (alt_data.buffer[(idx - step + size - 1) % size] +
+                                alt_data.buffer[(idx - step + size) % size] +
+                                alt_data.buffer[(idx - step + size + 1) % size]) / 3.0;
+
+                    avg2 = (alt_data.buffer[(idx - 2 * step + size - 1) % size] +
+                                alt_data.buffer[(idx - 2 * step + size) % size] +
+                                alt_data.buffer[(idx - 2 * step + size + 1) % size]) / 3.0;
+
+                    // Replace max alt if needed
+                    if(avg0 > alt_data.max_alt)
+                    {
+                        alt_data.max_alt = avg0;
+                    }
+
+                    if (avg0 < avg1 && avg1 < avg2)
+                    {
+                        return DESCENT;
                     }
                 }
             }
@@ -132,6 +160,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             if (alt_sum <= 0.75 * alt_data.max_alt)
             {
+                writeReleaseServo(50);
                 return PROBE_RELEASE;
             }
             break;
@@ -192,42 +221,56 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
     // TEAM ID
     send_packet.TEAM_ID_PCKT = TEAM_ID;
 
-    // MISSION TIME
-    strcpy(send_packet.MISSION_TIME, "00:00:00");
-
     // MODE
     strcpy(send_packet.MODE, op_mode_to_string(mission_info.getOpMode(), 0));
 
-    // TODO: SENSOR DEPENDENT
     int ran_num[17];
     for(int i = 0; i < 17; i++)
     {
       ran_num[i] = random(0, 20);
     }
 
+    getRtcTime(send_packet.MISSION_TIME);
     send_packet.TEMPERATURE = getTemp();
     send_packet.VOLTAGE = ran_num[1];
+
     send_packet.GYRO_R = ran_num[2];
     send_packet.GYRO_P = ran_num[3];
     send_packet.GYRO_Y = ran_num[4];
+
     send_packet.ACCEL_R = ran_num[5];
     send_packet.ACCEL_P = ran_num[6];
     send_packet.ACCEL_Y = ran_num[7];
+
     send_packet.MAG_R = ran_num[8];
     send_packet.MAG_P = ran_num[9];
     send_packet.MAG_Y = ran_num[10];
     send_packet.AUTO_GYRO_ROTATION_RATE = ran_num[11];
-    strcpy(send_packet.GPS_TIME, send_packet.MISSION_TIME);
-    send_packet.GPS_ALTITUDE = ran_num[13];
-    send_packet.GPS_LATITUDE = ran_num[14];
-    send_packet.GPS_LONGITUDE = ran_num[15];
-    send_packet.GPS_SATS = ran_num[16];
 
-    int write_servo = 0;
-    if(mission_info.getOpState() == APOGEE && write_servo==0)
+    getGpsTime(send_packet.GPS_TIME);
+    send_packet.GPS_ALTITUDE = getGpsAlt();
+    send_packet.GPS_LATITUDE = getGpsLat();
+    send_packet.GPS_LONGITUDE = getGpsLong();
+    send_packet.GPS_SATS = getGpsSats();
+
+    int cam1_state = digitalRead(CAMERA1_STATUS_PIN);
+    int cam2_state = digitalRead(CAMERA2_STATUS_PIN);
+
+    if(cam1_state && cam2_state)
     {
-        writeServo(50);
-        write_servo = 1;
+        send_packet.CAMERA_STATUS = 3;
+    }
+    else if(cam1_state)
+    {
+        send_packet.CAMERA_STATUS = 1;
+    }
+    else if(cam2_state)
+    {
+        send_packet.CAMERA_STATUS = 2;
+    }
+    else
+    {
+        send_packet.CAMERA_STATUS = 0;
     }
 }
 
@@ -239,7 +282,7 @@ void SensorManager::build_data_str(char *buff, size_t size)
         "%d,%d,%d,%d,%d," //5
         "%d,%d,%d,%d,%d," //5
         "%s,%.1f,%.4f," //3
-        "%.4f,%d,%s", //3
+        "%.4f,%d,%s,%d", //3
         send_packet.TEAM_ID_PCKT, 
         send_packet.MISSION_TIME, 
         send_packet.PACKET_COUNT, 
@@ -264,7 +307,8 @@ void SensorManager::build_data_str(char *buff, size_t size)
         send_packet.GPS_LATITUDE, 
         send_packet.GPS_LONGITUDE, 
         send_packet.GPS_SATS, 
-        send_packet.CMD_ECHO);
+        send_packet.CMD_ECHO,
+        send_packet.CAMERA_STATUS);
     
 }
 
@@ -361,9 +405,29 @@ void SensorManager::startSensors(SerialManager &ser)
 {
     uint8_t status = bme.begin(0x77);
     delay(100);
-    m_servo.attach(13);
+    m_servo_release.attach(SERVO_RELEASE_PIN);
+    delay(1000);
+    writeReleaseServo(0);
     delay(100);
-    writeServo(0);
+    m_servo_gyro_1.attach(SERVO_GYRO1_PIN);
+    delay(1000);
+    writeGyroServo1(90);
+    delay(100);
+    m_servo_gyro_2.attach(SERVO_GYRO2_PIN);
+    delay(1000);
+    writeGyroServo2(90);
+    delay(100);
+    m_servo_camera.attach(SERVO_CAMERA_PIN);
+    delay(1000);
+    writeCameraServo(90);
+    delay(100);
+    pinMode(CAMERA1_PIN, OUTPUT);
+    delay(100);
+    pinMode(CAMERA2_PIN, OUTPUT);
+    delay(100);
+    pinMode(CAMERA1_STATUS_PIN, INPUT);
+    delay(100);
+    pinMode(CAMERA2_STATUS_PIN, INPUT);
     delay(100);
 }
 
@@ -382,7 +446,54 @@ float SensorManager::getTemp()
     return bme.readTemperature();
 }
 
-void SensorManager::writeServo(int pos)
+void SensorManager::writeReleaseServo(int pos)
 {
-    m_servo.write(pos);
+    m_servo_release.write(pos);
+}
+
+void SensorManager::writeGyroServo1(int pos)
+{
+    m_servo_gyro_1.write(pos);
+}
+
+void SensorManager::writeGyroServo2(int pos)
+{
+    m_servo_gyro_2.write(pos);
+}
+
+void SensorManager::writeCameraServo(int pos)
+{
+    m_servo_camera.write(pos);
+}
+
+float SensorManager::getGpsAlt()
+{
+    return 0;
+}
+
+float SensorManager::getGpsLat()
+{
+    return 0;
+}
+
+float SensorManager::getGpsLong()
+{
+    return 0;
+}
+
+int SensorManager::getGpsSats()
+{
+    return 0;
+}
+
+void SensorManager::getRtcTime(char time_str[DATA_SIZE])
+{
+    strncpy(time_str, "00:00:00", DATA_SIZE - 1);
+    time_str[DATA_SIZE - 1] = '\0';
+}
+
+void SensorManager::getGpsTime(char time_str[DATA_SIZE])
+{
+    strncpy(time_str, "00:00:00", DATA_SIZE - 1);
+    time_str[DATA_SIZE - 1] = '\0';
 }

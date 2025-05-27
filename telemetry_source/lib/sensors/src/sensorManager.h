@@ -40,6 +40,7 @@ private:
         float GPS_LONGITUDE = 0.0;
         int GPS_SATS = 0;
         char CMD_ECHO[CMD_BUFF_SIZE] = "";
+        int CAMERA_STATUS = 0;
     } transmission_packet;
 
     transmission_packet send_packet;
@@ -56,7 +57,10 @@ private:
     altitude_data alt_data;
 
     Adafruit_BME280 bme;
-    Servo m_servo;
+    Servo m_servo_release;
+    Servo m_servo_gyro_1;
+    Servo m_servo_gyro_2;
+    Servo m_servo_camera;
 
     int servo_1_pos = 0;
 
@@ -88,7 +92,25 @@ public:
 
     void startSensors(SerialManager &ser);
 
-    void writeServo(int pos);
+    void writeReleaseServo(int pos);
+
+    void writeGyroServo1(int pos);
+
+    void writeGyroServo2(int pos);
+
+    void writeCameraServo(int pos);
+
+    float getGpsAlt();
+
+    float getGpsLat();
+
+    float getGpsLong();
+
+    int getGpsSats();
+
+    void getRtcTime(char time_str[DATA_SIZE]);
+
+    void getGpsTime(char time_str[DATA_SIZE]);
 };
 
 #endif /* SENSOR_MANAGER_H */
