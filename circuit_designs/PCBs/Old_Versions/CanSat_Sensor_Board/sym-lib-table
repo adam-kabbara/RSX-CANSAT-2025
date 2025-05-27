@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "CanSat_Sensor_Board-eagle-import")(type "KiCad")(uri "${KIPRJMOD}/CanSat_Sensor_Board-eagle-import.kicad_sym")(options "")(descr ""))
+)

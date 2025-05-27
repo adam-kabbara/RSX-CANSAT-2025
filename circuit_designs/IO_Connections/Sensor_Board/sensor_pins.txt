@@ -20,10 +20,10 @@ SCK --> GPIO22
 SDI --> GPIO21
 
 BN-220 (GPS):
-GND --> GND
-TX  --> RXD0/GPIO3
-RX  --> TXD0/GPIO1
-VCC --> 3.3V (Power Board)
+GND         --> GND
+TX (White)  --> RXD0/GPIO3
+RX (Green)  --> TXD0/GPIO1
+VCC         --> 3.3V (Power Board)
 
 Adafruit LIS3MDL (Magnetometer):
 SDA --> GPIO21
@@ -38,7 +38,9 @@ CS  --> GPIO15
 DI  --> GPIO23
 SCL --> GPIO18
 SDA --> GPIO19
-INT --> GPIO35
+INT --> GPIO35 & 10k Ohm Pull-Up Resistor --> 3.3V (Power Board)
+P0  --> 3.3V (Power Board)
+P1  --> 3.3V (Power Board)
 GND --> GND
 
 LED (Power Indicator):

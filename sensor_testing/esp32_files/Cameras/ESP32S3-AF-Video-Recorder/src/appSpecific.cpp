@@ -53,9 +53,6 @@ bool updateAppStatus(const char* variable, const char* value, bool fromUser) {
   else if (!strcmp(variable, "timeLapseOn")) timeLapseOn = intVal;
   else if (!strcmp(variable, "lswitch")) nightSwitch = intVal;
 #endif
-#if INCLUDE_FTP_HFS
-  else if (!strcmp(variable, "upload")) fsStartTransfer(value); 
-#endif
   else if (!strcmp(variable, "delete")) {
     stopPlayback = true;
     deleteFolderOrFile(value);
@@ -68,146 +65,11 @@ bool updateAppStatus(const char* variable, const char* value, bool fromUser) {
     doRecording = !dbgMotion;
   }
   else if (!strcmp(variable, "devHub")) devHub = (bool)intVal;   
-  // peripherals
-#if INCLUDE_PERIPH
-  else if (!strcmp(variable, "pirUse")) pirUse = (bool)intVal;
-  else if (!strcmp(variable, "lampLevel")) {
-    lampLevel = intVal;
-    if (!lampType) setLamp(lampLevel); // manual
-  }
-  else if (!strcmp(variable, "lampType")) {
-    lampType = intVal;
-    lampAuto = lampNight = false;
-    if (lampType == 1) lampAuto = true; // lamp activated by PIR
-    if (!lampType) setLamp(lampLevel); 
-    else setLamp(0); 
-  }
-  else if (!strcmp(variable, "relayPin")) relayPin = intVal;
-  else if (!strcmp(variable, "relayMode")) relayMode = (bool)intVal;
-  else if (!strcmp(variable, "relaySwitch")) digitalWrite(relayPin, intVal);
-  else if (!strcmp(variable, "SVactive")) SVactive = (bool)intVal;
-  else if (!strcmp(variable, "voltUse")) voltUse = (bool)intVal;
-  else if (!strcmp(variable, "pirPin")) pirPin = intVal;
-  else if (!strcmp(variable, "lampPin")) lampPin = intVal;
-  else if (!strcmp(variable, "servoPanPin")) servoPanPin = intVal;
-  else if (!strcmp(variable, "servoTiltPin")) servoTiltPin = intVal;
-  else if (!strcmp(variable, "voltPin")) voltPin = intVal;
-  else if (!strcmp(variable, "servoSteerPin")) servoSteerPin = intVal;
-  else if (!strcmp(variable, "servoDelay")) servoDelay = intVal;
-  else if (!strcmp(variable, "servoMinAngle")) servoMinAngle = intVal;
-  else if (!strcmp(variable, "servoMaxAngle")) servoMaxAngle = intVal;
-  else if (!strcmp(variable, "servoMinPulseWidth")) servoMinPulseWidth = intVal;
-  else if (!strcmp(variable, "servoMaxPulseWidth")) servoMaxPulseWidth = intVal;
-  else if (!strcmp(variable, "servoCenter")) servoCenter = intVal;
-  else if (!strcmp(variable, "voltDivider")) voltDivider = intVal;
-  else if (!strcmp(variable, "voltLow")) voltLow = fltVal;
-  else if (!strcmp(variable, "voltInterval")) voltInterval = intVal;
-  else if (!strcmp(variable, "buzzerUse")) buzzerUse = (bool)intVal;  
-  else if (!strcmp(variable, "buzzerPin")) buzzerPin = intVal; 
-  else if (!strcmp(variable, "buzzerDuration")) buzzerDuration = intVal;
-  else if (!strcmp(variable, "ds18b20Pin")) ds18b20Pin = intVal;
-#endif
-#if INCLUDE_I2C
-  else if (!strcmp(variable, "I2Csda")) I2Csda = intVal;
-  else if (!strcmp(variable, "I2Cscl")) I2Cscl = intVal;
-#endif
-#if INCLUDE_AUDIO
-  else if (!strcmp(variable, "micRem")) {
-    micRem = bool(intVal);
-    LOG_INF("Remote mic is %s", micRem ? "On" : "Off");
-    if (micRem && !ampVol) LOG_WRN("Amp volume is off");
-  }
-  else if (!strcmp(variable, "spkrRem")) {
-    spkrRem = (bool)intVal;
-    LOG_INF("Remote speaker is %s", spkrRem ? "On" : "Off");
-    if (spkrRem && !micGain) LOG_WRN("Mic gain is off");
-  }
-  else if (!strcmp(variable, "micGain")) micGain = intVal;
-  else if (!strcmp(variable, "micSckPin")) micSckPin = intVal;
-  else if (!strcmp(variable, "micSWsPin")) micSWsPin = intVal;
-  else if (!strcmp(variable, "micSdPin")) micSdPin = intVal;
-  else if (!strcmp(variable, "ampVol")) ampVol = intVal;
-  else if (!strcmp(variable, "mampBckIo")) mampBckIo = intVal;
-  else if (!strcmp(variable, "mampSwsIo")) mampSwsIo = intVal;
-  else if (!strcmp(variable, "mampSdIo")) mampSdIo = intVal;
-  else if (!strcmp(variable, "AudActive")) AudActive = intVal;
-#endif
-#if INCLUDE_TELEM
-  else if (!strcmp(variable, "teleUse")) teleUse = (bool)intVal;
-#endif
   else if (!strcmp(variable, "wakeUse")) wakeUse = (bool)intVal;
-#if INCLUDE_MCPWM
-  else if (!strcmp(variable, "motorRevPin")) motorRevPin = intVal;
-  else if (!strcmp(variable, "motorFwdPin")) motorFwdPin = intVal;
-  else if (!strcmp(variable, "motorRevPinR")) motorRevPinR = intVal;
-  else if (!strcmp(variable, "motorFwdPinR")) {
-    motorFwdPinR = intVal;
-    if (motorFwdPinR > 0) trackSteer = true; // use track steering if pin defined
-  }
-  else if (!strcmp(variable, "pwmFreq")) pwmFreq = intVal;
-#endif
 #ifndef AUXILIARY
   else if (!strcmp(variable, "AuxIP")) strncpy(AuxIP, value, MAX_IP_LEN-1);
 #endif
-#if INCLUDE_PERIPH
-  else if (!strcmp(variable, "RCactive")) {
-    RCactive = (bool)intVal;
-    bool aux = false;
-#ifdef AUXILIARY
-    aux = true;
-#endif
-#if INCLUDE_MCPWM
-    useBDC = (useUart && !aux) ? false : (bool)intVal;
-#endif
-  }
-  else if (!strcmp(variable, "heartbeatRC")) heartbeatRC = intVal;
-  else if (!strcmp(variable, "maxSteerAngle")) maxSteerAngle = intVal;  
-  else if (!strcmp(variable, "maxDutyCycle")) maxDutyCycle = intVal;  
-  else if (!strcmp(variable, "minDutyCycle")) minDutyCycle = intVal;  
-  else if (!strcmp(variable, "maxTurnSpeed")) maxTurnSpeed = intVal;  
-  else if (!strcmp(variable, "allowReverse")) allowReverse = (bool)intVal;   
-  else if (!strcmp(variable, "autoControl")) autoControl = (bool)intVal; 
-  else if (!strcmp(variable, "waitTime")) waitTime = intVal;    
-  else if (!strcmp(variable, "lightsRCpin")) lightsRCpin = intVal;
-  else if (!strcmp(variable, "stickUse")) stickUse = (bool)intVal; 
-  else if (!strcmp(variable, "stickXpin")) stickXpin = intVal; 
-  else if (!strcmp(variable, "stickYpin")) stickYpin = intVal; 
-  else if (!strcmp(variable, "stickzPushPin")) stickzPushPin = intVal; 
-#endif
-#if (INCLUDE_PGRAM && INCLUDE_PERIPH)
-  else if (!strcmp(variable, "stepIN1pin")) setStepperPin((uint8_t)intVal, 0);
-  else if (!strcmp(variable, "stepIN2pin")) setStepperPin((uint8_t)intVal, 1);
-  else if (!strcmp(variable, "stepIN3pin")) setStepperPin((uint8_t)intVal, 2);
-  else if (!strcmp(variable, "stepIN4pin")) setStepperPin((uint8_t)intVal, 3);
-  else if (!strcmp(variable, "PGactive")) {
-    PGactive = stepperUse = (bool)intVal;
-    if (PGactive) setLamp(0);
-  }
-  else if (!strcmp(variable, "numberOfPhotos")) numberOfPhotos = intVal;
-  else if (!strcmp(variable, "gearing")) gearing = fltVal;
-  else if (!strcmp(variable, "RPM")) tRPM = intVal;
-  else if (!strcmp(variable, "clockwise")) clockWise = (bool)intVal;
-  else if (!strcmp(variable, "timeForPhoto")) timeForPhoto = intVal;
-  else if (!strcmp(variable, "timeForFocus")) timeForFocus = intVal;
-  else if (!strcmp(variable, "pinShutter")) pinShutter = intVal;
-  else if (!strcmp(variable, "pinFocus")) pinFocus = intVal;
-  else if (!strcmp(variable, "extCam")) extCam = (bool)intVal;
-#endif
-
-#if INCLUDE_EXTHB
-  // External Heartbeat
-  else if (!strcmp(variable, "external_heartbeat_active")) external_heartbeat_active = (bool)intVal;
-  else if (!strcmp(variable, "external_heartbeat_domain")) snprintf(external_heartbeat_domain, MAX_HOST_LEN, "%s", value);
-  else if (!strcmp(variable, "external_heartbeat_uri")) snprintf(external_heartbeat_uri, FILE_NAME_LEN, "%s", value);
-  else if (!strcmp(variable, "external_heartbeat_port")) external_heartbeat_port = intVal;
-  else if (!strcmp(variable, "external_heartbeat_token")) snprintf(external_heartbeat_token, MAX_HOST_LEN, "%s", value);
-#endif
-
   else if (!strcmp(variable, "useUart")) useUart = (bool)intVal;
-#if INCLUDE_UART
-  else if (!strcmp(variable, "uartTxdPin")) uartTxdPin = intVal;
-  else if (!strcmp(variable, "uartRxdPin")) uartRxdPin = intVal;
-#endif
 
 #ifndef AUXILIARY
   // camera settings
@@ -326,43 +188,8 @@ esp_err_t appSpecificWebHandler(httpd_req_t *req, const char* variable, const ch
 static bool setPeripheral(char cmd, int controlVal, bool fromUart) {
   bool res = true;
   switch (cmd) {
-#if INCLUDE_MCPWM
-    case 'M': 
-      // motor speed
-      if (trackSteer) trackSteeering(controlVal, false);
-      else motorSpeed(controlVal); 
-    break;
-    case 'D':
-      // steering
-      if (trackSteer) trackSteeering(controlVal, true);
-      else setSteering(controlVal);
-    break;
-#endif
-#if INCLUDE_PERIPH
-    case 'L':
-      // lights
-      setLightsRC((bool)controlVal);
-    break;
-    case 'P':
-      // camera pan servo
-      setCamPan(controlVal);
-    break;
-    case 'T':
-      // camera tilt servo
-      setCamTilt(controlVal);
-    break;
-#endif
-#if INCLUDE_PGRAM
-    case 'G':
-      // photogrammetry control
-      takePhotos(bool(controlVal));
-    break;
-#endif
     case 'K': 
       // cam browser conn closed
-#ifdef AUXILIARY
-      if (fromUart) 
-#endif
         stopRC();
     break;
     default:
@@ -378,22 +205,11 @@ void appSpecificWsHandler(const char* wsMsg) {
   char cmd = (char)wsMsg[0];
   int controlVal = atoi(wsMsg + 1); // skip first char
   bool aux = false;
-#ifdef AUXILIARY
-  aux = true;
-#endif
   if (useUart && !aux) {
-#if INCLUDE_UART 
-    // send command over uart to auxiliary
-    if (!writeUart(cmd, (uint32_t)controlVal)) LOG_WRN("Failed to send data to Auxiliary over UART");
-#endif
   } else {
     if (!setPeripheral(cmd, controlVal, false)) {
       switch (cmd) {
         case 'X':
-#if INCLUDE_AUDIO
-          // stop remote mic stream
-          stopAudio = true;
-#endif
         break;
         case 'C': 
           // control request
@@ -426,9 +242,7 @@ void appSpecificWsHandler(const char* wsMsg) {
 }
 
 void appSpecificWsBinHandler(uint8_t* wsMsg, size_t wsMsgLen) {
-#if INCLUDE_AUDIO
-  browserMicInput(wsMsg, wsMsgLen);
-#endif
+
 }
 
 void buildAppJsonString(bool filter) {
@@ -449,31 +263,6 @@ void buildAppJsonString(bool filter) {
   }
   p += sprintf(p, "\"showRecord\":%u,", (uint8_t)((isCapturing && doRecording) || forceRecord));
   p += sprintf(p, "\"camModel\":\"%s\",", camModel);
-#if INCLUDE_PERIPH
-  p += sprintf(p, "\"SVactive\":\"%d\",", SVactive); 
- #if INCLUDE_AUDIO
-  p += sprintf(p, "\"AudActive\":\"%d\",", AudActive); 
- #endif
- #if (INCLUDE_PGRAM)
-  p += sprintf(p, "\"PGactive\":\"%d\",", PGactive); 
- #endif
-#endif
-#if INCLUDE_MCPWM
-  p += sprintf(p, "\"maxSteerAngle\":\"%d\",", maxSteerAngle); 
-  p += sprintf(p, "\"maxDutyCycle\":\"%d\",", maxDutyCycle);
-  p += sprintf(p, "\"minDutyCycle\":\"%d\",", minDutyCycle);  
-  p += sprintf(p, "\"allowReverse\":\"%d\",", allowReverse);   
-  p += sprintf(p, "\"autoControl\":\"%d\",", autoControl);
-  p += sprintf(p, "\"waitTime\":\"%d\",", waitTime); 
-  p += sprintf(p, "\"RCactive\":\"%d\",", RCactive); 
-  p += sprintf(p, "\"maxSteerAngle\":\"%d\",", maxSteerAngle); 
-  p += sprintf(p, "\"maxDutyCycle\":\"%d\",", maxDutyCycle);
-  p += sprintf(p, "\"minDutyCycle\":\"%d\",", minDutyCycle);  
-  p += sprintf(p, "\"allowReverse\":\"%d\",", allowReverse);   
-  p += sprintf(p, "\"autoControl\":\"%d\",", autoControl);
-  p += sprintf(p, "\"waitTime\":\"%d\",", waitTime); 
-  p += sprintf(p, "\"heartbeatRC\":\"%d\",", heartbeatRC); 
-#endif
   p += sprintf(p, "\"sustainId\":\"%u\",", sustainId);     
   // Extend info
   uint8_t cardType = 99; // not MMC
@@ -492,10 +281,6 @@ void buildAppJsonString(bool filter) {
     p += sprintf(p, "\"total_bytes\":\"%s\",", fmtSize(STORAGE.totalBytes()));
   }
   p += sprintf(p, "\"free_psram\":\"%s\",", fmtSize(ESP.getFreePsram()));     
-#if INCLUDE_FTP_HFS
-  p += sprintf(p, "\"progressBar\":%d,", percentLoaded);  
-  if (percentLoaded == 100) percentLoaded = 0;
-#endif
   //p += sprintf(p, "\"vcc\":\"%i V\",", ESP.getVcc() / 1023.0F; ); 
   *p = 0;
 }
@@ -504,12 +289,6 @@ void buildAppJsonString(bool filter) {
 
 void externalAlert(const char* subject, const char* message) {
   // alert any configured external servers
-#if INCLUDE_TGRAM
-  if (tgramUse) tgramAlert(subject, message);
-#endif
-#if INCLUDE_SMTP
-  if (smtpUse) emailAlert(subject, message);
-#endif
 }
 
 void displayAudioLed(int16_t audioSample) {
@@ -542,46 +321,17 @@ bool appDataFiles() {
 
 void currentStackUsage() {
   checkStackUse(captureHandle, 0);
-#if INCLUDE_DS18B20
-  checkStackUse(DS18B20handle, 1);
-#endif
-#if INCLUDE_SMTP
-  checkStackUse(emailHandle, 2);
-#endif
   checkStackUse(fsHandle, 3);
   checkStackUse(logHandle, 4);
-#if INCLUDE_AUDIO
-  checkStackUse(audioHandle, 5);
-#endif
-#if INCLUDE_MQTT
-  checkStackUse(mqttTaskHandle, 6);
-#endif
   // 7: pingtask
   checkStackUse(playbackHandle, 8);
   checkStackUse(servoHandle, 9);
   checkStackUse(stickHandle, 10);
-#if INCLUDE_TGRAM
-  checkStackUse(telegramHandle, 11);
-#endif
-#if INCLUDE_TELEM
-  checkStackUse(telemetryHandle, 12);
-#endif
-#if INCLUDE_UART
-  checkStackUse(uartRxHandle, 13);
-#endif
   // 14: http webserver
   for (int i=0; i < numStreams; i++) checkStackUse(sustainHandle[i], 15 + i);
 }
 
 static void stopRC() {
-  // stop RC movement if connection lost
-#if INCLUDE_PERIPH
-  setLightsRC(false);
-#endif
-#if INCLUDE_MCPWM
-  if (motorFwdPin > 0) motorSpeed(0, true);
-  if (motorFwdPinR > 0) motorSpeed(0, false); 
-#endif
 }
 
 /************** default app configuration **************/

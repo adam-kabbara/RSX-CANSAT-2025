@@ -22,10 +22,6 @@
 
 #include "appGlobals.h"
 
-#if INCLUDE_TINYML
-#include TINY_ML_LIB
-#endif
-
 using namespace std;
 
 #define RESIZE_DIM 96  // dimensions of resized motion bitmap
@@ -113,56 +109,6 @@ static void rescaleImage(const uint8_t* input, int inputWidth, int inputHeight, 
     }
   }
 }
-
-#if INCLUDE_TINYML
-
-static int getImageData(size_t offset, size_t length, float *out_ptr) {
-  // copy to features as grayscale or RGB
-  size_t pixelPtr = offset * colorDepth;
-  size_t out_ptr_idx = 0;
-  while (out_ptr_idx < length) {
-    out_ptr[out_ptr_idx++] = (colorDepth == RGB888_BYTES)  
-      ? (float)((currBuff[pixelPtr] << 16) + (currBuff[pixelPtr + 1] << 8) + currBuff[pixelPtr + 2])
-      : (float)((currBuff[pixelPtr] << 16) + (currBuff[pixelPtr] << 8) + currBuff[pixelPtr]);  
-    pixelPtr += colorDepth;
-  } 
-  return 0;
-}
-
-static bool tinyMLclassify() {
-  // convert input data to appropriate format
-  bool out = false;
-  uint32_t dTime = millis(); 
-  // reduce size of bitmap to that required by classifier and copy to features as grayscale or RGB
-  if (RESIZE_DIM != EI_CLASSIFIER_INPUT_WIDTH) {
-    uint8_t* tempBuff = (uint8_t*)ps_malloc(EI_CLASSIFIER_INPUT_WIDTH * EI_CLASSIFIER_INPUT_HEIGHT * colorDepth);
-    rescaleImage(currBuff, RESIZE_DIM, RESIZE_DIM, tempBuff, EI_CLASSIFIER_INPUT_WIDTH, EI_CLASSIFIER_INPUT_HEIGHT);
-    memcpy(currBuff, tempBuff, EI_CLASSIFIER_INPUT_WIDTH * EI_CLASSIFIER_INPUT_HEIGHT * colorDepth);
-    free(tempBuff);
-  }
-  signal_t features_signal;
-  features_signal.total_length = EI_CLASSIFIER_INPUT_WIDTH * EI_CLASSIFIER_INPUT_HEIGHT;
-  features_signal.get_data = &getImageData;
-
-  // Run the classifier
-  ei_impulse_result_t result = { 0 };
-  EI_IMPULSE_ERROR res = run_classifier(&features_signal, &result, false);
-  if (res == EI_IMPULSE_OK) {
-    if (result.classification[0].value > mlProbability) {
-      out = true; // sufficient classification match, so keep motion detection
-      if (dbgVerbose) {
-        LOG_VRB("Prob: %0.2f, Timing: DSP %d ms, inference %d ms, anomaly %d ms", 
-        result.classification[0].value, result.timing.dsp, result.timing.classification, result.timing.anomaly);
-        char outcome[200] = {0};
-        for (uint16_t i = 0; i < EI_CLASSIFIER_LABEL_COUNT; i++)
-          sprintf(outcome + strlen(outcome), "%s: %.2f, ", ei_classifier_inferencing_categories[i], result.classification[i].value);
-        LOG_VRB("Predictions - %s in %ums", outcome, millis() - dTime);
-      } 
-    } 
-  } else LOG_WRN("Failed to run classifier (%d)", res);
-  return out;
-}
-#endif
 
 bool checkMotion(camera_fb_t* fb, bool motionStatus, bool lightLevelOnly) {
   // check difference between current and previous image (subtract background)
@@ -259,22 +205,8 @@ bool checkMotion(camera_fb_t* fb, bool motionStatus, bool lightLevelOnly) {
       if (!motionStatus && motionCnt >= detectMotionFrames) {
         LOG_VRB("***** Motion - START");
         motionStatus = true; // motion started
-#if INCLUDE_TINYML
-        // pass image to TinyML for classification
-        if (mlUse) if (!tinyMLclassify()) motionCnt = 0; // not classified, so cancel motion
-#endif
         if (motionCnt) notifyMotion(fb);
         dTime = millis();
-#if INCLUDE_MQTT
-        if (mqtt_active && motionCnt) {
-          sprintf(jsonBuff, "{\"MOTION\":\"ON\",\"TIME\":\"%s\"}", esp_log_system_timestamp());
-          mqttPublish(jsonBuff);
-          mqttPublishPath("motion", "on");
-#if INCLUDE_HASIO
-          mqttPublishPath("cmd", "still");
-#endif
-        }
-#endif
       } 
     } else motionCnt = 0;
   
@@ -282,13 +214,6 @@ bool checkMotion(camera_fb_t* fb, bool motionStatus, bool lightLevelOnly) {
       // insufficient change or motion not classified
       LOG_VRB("***** Motion - STOP");
       motionStatus = false; // motion stopped
-#if INCLUDE_MQTT
-      if (mqtt_active) {
-        sprintf(jsonBuff, "{\"MOTION\":\"OFF\",\"TIME\":\"%s\"}", esp_log_system_timestamp());
-        mqttPublish(jsonBuff);
-        mqttPublishPath("motion", "off");
-      }
-#endif
     } 
     if (motionStatus) LOG_VRB("*** Motion - ongoing %u frames", motionCnt);
   }
@@ -301,18 +226,6 @@ bool checkMotion(camera_fb_t* fb, bool motionStatus, bool lightLevelOnly) {
 
 void notifyMotion(camera_fb_t* fb) {
   // send out notification of motion if requested
-#if INCLUDE_SMTP
-  if (smtpUse) {
-    // send email with movement image
-    keepFrame(fb);
-    char subjectMsg[50];
-    snprintf(subjectMsg, sizeof(subjectMsg) - 1, "from %s", hostName);
-    emailAlert("Motion Alert", subjectMsg);
-  } 
-#endif
-#if INCLUDE_TGRAM
-  if (tgramUse) keepFrame(fb); // for telegram, wait till filename available
-#endif
 }
 
 /************* copied and modified from esp32-camera/to_bmp.c to access jpg_scale_t *****************/
