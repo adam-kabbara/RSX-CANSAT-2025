@@ -159,7 +159,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             if (alt_sum <= 0.75 * alt_data.max_alt)
             {
-                writeReleaseServo(50);
+                writeReleaseServo(38);
                 return PROBE_RELEASE;
             }
             break;
@@ -255,15 +255,15 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
     int cam1_state = digitalRead(CAMERA1_STATUS_PIN);
     int cam2_state = digitalRead(CAMERA2_STATUS_PIN);
 
-    if(cam1_state && cam2_state)
+    if (cam1_state && cam2_state)
     {
         send_packet.CAMERA_STATUS = 3;
     }
-    else if(cam1_state)
+    else if (cam1_state)
     {
         send_packet.CAMERA_STATUS = 1;
     }
-    else if(cam2_state)
+    else if (cam2_state)
     {
         send_packet.CAMERA_STATUS = 2;
     }
@@ -402,32 +402,50 @@ void SensorManager::resetAltData()
 
 void SensorManager::startSensors(SerialManager &ser)
 {
+    // Temperature and Pressure
     uint8_t status = bme.begin(0x77);
     delay(100);
+    
+    // Release Servo
     m_servo_release.attach(SERVO_RELEASE_PIN);
     delay(1000);
+    writeReleaseServo(38);
+    ser.sendInfoMsg("Waiting 10 seconds for release servo setup...");
+    delay(10000);
     writeReleaseServo(0);
     delay(100);
+    
+    // Gyro Servo 1
     m_servo_gyro_1.attach(SERVO_GYRO1_PIN);
     delay(1000);
     writeGyroServo1(90);
     delay(100);
+    
+    // Gyro Servo 2
     m_servo_gyro_2.attach(SERVO_GYRO2_PIN);
     delay(1000);
     writeGyroServo2(90);
     delay(100);
+    
+    // Camera Servo
     m_servo_camera.attach(SERVO_CAMERA_PIN);
     delay(1000);
     writeCameraServo(90);
     delay(100);
+    
+    // Camera Signal Pins (Trigger)
     pinMode(CAMERA1_PIN, OUTPUT);
     delay(100);
     pinMode(CAMERA2_PIN, OUTPUT);
     delay(100);
+    
+    // Camera Data Pins (Recording Status)
     pinMode(CAMERA1_STATUS_PIN, INPUT);
     delay(100);
     pinMode(CAMERA2_STATUS_PIN, INPUT);
     delay(100);
+    
+    ser.sendInfoMsg("All sensors and servos initialized successfully!");
 }
 
 void SensorManager::setPacketCount(int count)
