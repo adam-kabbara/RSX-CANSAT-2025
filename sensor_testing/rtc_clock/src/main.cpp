@@ -8,11 +8,11 @@ RTC_DS1307 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 void setup () {
-  Serial.begin(57600);
+  Serial.begin(115200);
 
-#ifndef ESP8266
-  while (!Serial); // wait for serial port to connect. Needed for native USB
-#endif
+// #ifndef ESP8266
+//   while (!Serial); // wait for serial port to connect. Needed for native USB
+// #endif
 
   if (! rtc.begin()) {
     Serial.println("Couldn't find RTC");
