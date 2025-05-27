@@ -44,6 +44,7 @@ void setup()
     sensor_mgr.startSensors(xbee_serial);
 
     xbee_serial.sendInfoMsg("Startup Completed.");
+
     //Serial.println("\nStartup Completed.");
 }
 
@@ -75,10 +76,6 @@ void loop()
 
         xbee_serial.sendInfoMsg("MISSION STARTING!");
 
-        // Exited IDLE state, turn on timer
-        timerWrite(send_timer, 0);
-        timerAlarmEnable(send_timer);
-
         sensor_mgr.resetAltData();
 
         if(mission_info.getOpMode() == OPMODE_SIM)
@@ -97,6 +94,12 @@ void loop()
         {
             xbee_serial.sendErrorMsg("There was an error opening a file for saving data!");
         }
+
+        // Start timer and camera
+        digitalWrite(CAMERA1_PIN, HIGH);
+        digitalWrite(CAMERA2_PIN, HIGH);
+        timerWrite(send_timer, 0);
+        timerAlarmEnable(send_timer);
 
         // Process command and then check for sending data
         // 40 Hz
@@ -147,8 +150,10 @@ void loop()
             vTaskDelay(pdMS_TO_TICKS(delay_rate_ms));
         }
 
-        // Back to IDLE state, turn off timer, reset settings
+        // Back to IDLE state, turn off timer & camera, reset settings
         timerAlarmDisable(send_timer);
+        digitalWrite(CAMERA1_PIN, LOW);
+        digitalWrite(CAMERA2_PIN, LOW);
         mission_info.setAltCalOff();
         mission_info.waitingForSimp();
         logfile.close();
