@@ -35,7 +35,6 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 if(alt_data.buffer[idx] - alt_data.buffer[(idx - 1 + size) % size] < 5)
                 {
                     alt_data.max_alt = alt_data.buffer[idx];
-                    writeReleaseServo(50);
                     return APOGEE;
                 }
             }
