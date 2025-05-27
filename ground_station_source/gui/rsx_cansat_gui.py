@@ -74,6 +74,7 @@ class TelemetryData:
     GPS_LONGITUDE: float
     GPS_SATS: str
     CMD_ECHO: str
+    CAM_STATUS: int
 
     def to_dict(self):
         return {key: str(value) for key, value in self.__dict__.items()}
@@ -94,7 +95,7 @@ class BaseDynamicPlotter:
         (255, 0, 255)  # Magenta
     ]
     
-    def __init__(self, plot, title, timewindow, unit):
+    def __init__(self, plot, title, timewindow, x_unit, y_unit):
         self.timewindow = timewindow
         self.last_time = None
         self.base_line_color_idx = 0
@@ -108,8 +109,9 @@ class BaseDynamicPlotter:
         self.plt.setTitle(f'<span style="font-family: Monospace; font-size:14pt; font-weight:bold;">{title}</span>')
         self.plt.showGrid(x=True, y=True)
         self.plt.getAxis('bottom').setStyle(tickFont=font)
+        self.plt.getAxis('bottom').setLabel(f'<span style="font-family: Monospace; font-size:14pt; font-weight:bold;">{x_unit}</span>')
         self.plt.getAxis('left').setStyle(tickFont=font)
-        self.plt.getAxis('left').setLabel(f'<span style="font-family: Monospace; font-size:14pt; font-weight:bold;">{unit}</span>')
+        self.plt.getAxis('left').setLabel(f'<span style="font-family: Monospace; font-size:14pt; font-weight:bold;">{y_unit}</span>')
         self.plt.getViewBox().setLimits(xMin=-timewindow, xMax=5000, minXRange=5, yMin=-10000, yMax=10000, minYRange=2)
     
     def get_pen_color(self, index):
@@ -124,8 +126,8 @@ class BaseDynamicPlotter:
 # Plotting system for regular graphs with 1 line
 class DynamicPlotter(BaseDynamicPlotter):
 
-    def __init__(self, plot, title, timewindow, unit):
-        super().__init__(plot, title, timewindow, unit)
+    def __init__(self, plot, title, timewindow, x_unit, y_unit):
+        super().__init__(plot, title, timewindow, x_unit, y_unit)
         self.databuffer = deque([0.0] * timewindow, maxlen=timewindow)
         self.x = np.linspace(-timewindow, 0, timewindow)
         self.y = np.zeros(self.databuffer.maxlen, dtype=float)
@@ -156,8 +158,8 @@ class DynamicPlotter(BaseDynamicPlotter):
 
 # Plotting system for graphs with multiple lines
 class DynamicPlotter_MultiLine(BaseDynamicPlotter):
-    def __init__(self, plot, title, timewindow, num_lines, unit):
-        super().__init__(plot, title, timewindow, unit)
+    def __init__(self, plot, title, timewindow, num_lines, x_unit, y_unit):
+        super().__init__(plot, title, timewindow, x_unit, y_unit)
         self.num_lines = num_lines
         self.databuffer = [deque([0.0] * timewindow, maxlen=timewindow) for _ in range(num_lines)]
         self.x = np.linspace(-timewindow, 0, timewindow)
@@ -197,8 +199,8 @@ class DynamicPlotter_MultiLine(BaseDynamicPlotter):
 
 # Plotting system where both x and y axis require updates from data
 class DynamicPlotter_2d(BaseDynamicPlotter):
-    def __init__(self, plot, title, timewindow, unit):
-        super().__init__(plot, title, timewindow, unit)
+    def __init__(self, plot, title, timewindow, x_unit, y_unit):
+        super().__init__(plot, title, timewindow, x_unit, y_unit)
         self.databuffer_x = deque([0.0] * timewindow, maxlen=timewindow)
         self.databuffer_y = deque([0.0] * timewindow, maxlen=timewindow)
         self.x = np.zeros(self.databuffer_x.maxlen, dtype=float)
@@ -263,6 +265,11 @@ class GroundStationApp(QMainWindow):
         self.simp_timer.timeout.connect(self.send_simp_data)
         self.simp_data                      = []
         self.current_simp_idx               = 0
+        self.__servo_id                     = -1
+        self.__servo_val                    = -1
+        self.__camera_id                    = "NONE"
+        self.__camera_val                   = -1
+        self.__set_time_id                  = 1
 
         self.setWindowTitle("CANSAT Ground Station")
         self.setWindowIcon(QIcon('icon.png'))
@@ -353,15 +360,22 @@ class GroundStationApp(QMainWindow):
         self.button_restart.clicked.connect(self.send_restart)
         self.button_restart.hide()
 
-        self.button_set_time = QPushButton("SET TIME: COMPUTER")
+        set_time_box = QHBoxLayout()
+
+        self.button_set_time = QPushButton("SET TIME")
         self.button_set_time.setFont(button_font)
-        self.button_set_time.clicked.connect(lambda: self.send_time(0))
+        self.button_set_time.clicked.connect(self.send_time)
         self.button_set_time.hide()
 
-        self.button_set_time_gps = QPushButton("SET TIME: GPS")
-        self.button_set_time_gps.setFont(button_font)
-        self.button_set_time_gps.clicked.connect(lambda: self.send_time(1))
-        self.button_set_time_gps.hide()
+        self.set_time_field = QComboBox()
+        self.set_time_field.addItem("COMPUTER", 0)
+        self.set_time_field.addItem("GPS", 1)
+        self.set_time_field.setFont(button_font)
+        self.set_time_field.activated.connect(self.set_time_field_edited)
+        self.set_time_field.hide()
+
+        set_time_box.addWidget(self.button_set_time)
+        set_time_box.addWidget(self.set_time_field)
 
         self.button_reset_mission = QPushButton("CLEAR PLOTS, COMMAND LOG, CSV FILE")
         self.button_reset_mission.setFont(button_font)
@@ -402,15 +416,92 @@ class GroundStationApp(QMainWindow):
         self.button_altitude_cal.clicked.connect(self.altitude_cal)
         self.button_altitude_cal.hide()
 
-        self.button_activate_sensor_ex = QPushButton("ACTIVATE/DE-ACTIVATE SENSOR (NOT IMPLIMENTED)")
-        self.button_activate_sensor_ex.setFont(button_font)
-        self.button_activate_sensor_ex.clicked.connect(self.activate_sensor_ex)
-        self.button_activate_sensor_ex.hide()
-
         self.button_test_connection = QPushButton("CHECK CONNECTION")
         self.button_test_connection.setFont(button_font)
         self.button_test_connection.clicked.connect(self.check_remote_connection)
         self.button_test_connection.hide()
+
+        ### Program servo
+        program_servo_box = QHBoxLayout()
+
+        self.servo_id_field = QComboBox()
+        self.servo_id_field.setPlaceholderText("SELECT SERVO")
+        self.servo_id_field.addItem("Release Servo", 0)
+        self.servo_id_field.addItem("Gyro Servo 1", 1)
+        self.servo_id_field.addItem("Gyro Servo 2", 2)
+        self.servo_id_field.addItem("Camera Servo", 3)
+        self.servo_id_field.setFont(button_font)
+        self.servo_id_field.activated.connect(self.servo_id_edited)
+
+        self.servo_val_field = QLineEdit()
+        self.servo_val_field.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+        self.servo_val_field.setMaxLength(3)
+        self.servo_val_field.setStyleSheet("""
+            QLineEdit {
+                background-color: #f0f0f0;
+                border: 1px solid #cccccc;
+                border-radius: 10px;
+                padding: 4px;
+                font-size: 14px;
+            }
+            
+            QLineEdit:focus {
+                border: 1px solid #0078d4;
+                background-color: #ffffff;
+            }
+        """)
+        int_validator = QIntValidator(self)
+        self.servo_val_field.setValidator(int_validator)
+        self.servo_val_field.editingFinished.connect(self.servo_val_edited)
+
+        self.program_servo_button = QPushButton(" PROGRAM SERVO ")
+        self.program_servo_button.setFont(button_font)
+        self.program_servo_button.clicked.connect(self.program_servo)
+        self.program_servo_button.hide()
+
+        program_servo_box.addWidget(self.program_servo_button)
+        program_servo_box.addWidget(self.servo_id_field)
+        program_servo_box.addWidget(self.servo_val_field)
+        
+        self.servo_id_field.hide()
+        self.program_servo_button.hide()
+        self.servo_val_field.hide()
+        ### end program servo
+
+        ### program camera
+        program_camera_box = QHBoxLayout()
+
+        self.camera_id_field = QComboBox()
+        self.camera_id_field.setPlaceholderText("SELECT CAMERA")
+        self.camera_id_field.addItem("CAMERA1")
+        self.camera_id_field.addItem("CAMERA2")
+        self.camera_id_field.setFont(button_font)
+        self.camera_id_field.activated.connect(self.camera_id_edited)
+
+        self.camera_val_field = QComboBox()
+        self.camera_val_field.addItem("ON", 0)
+        self.camera_val_field.addItem("OFF", 1)
+        self.camera_val_field.setFont(button_font)
+        self.camera_val_field.activated.connect(self.camera_val_edited)
+
+        self.program_camera_button = QPushButton(" PROGRAM CAMERA ")
+        self.program_camera_button.setFont(button_font)
+        self.program_camera_button.clicked.connect(self.toggle_camera)
+        self.program_camera_button.hide()
+
+        program_camera_box.addWidget(self.program_camera_button)
+        program_camera_box.addWidget(self.camera_id_field)
+        program_camera_box.addWidget(self.camera_val_field)
+        
+        self.camera_id_field.hide()
+        self.camera_val_field.hide()
+        self.program_camera_button.hide()
+        ### end program camera
+
+        self.camera_status_button = QPushButton("GET CAMERA STATUS")
+        self.camera_status_button.setFont(button_font)
+        self.camera_status_button.clicked.connect(self.get_cam_status)
+        self.camera_status_button.hide()
 
         self.team_id_field = QLineEdit()
         self.team_id_field.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
@@ -452,10 +543,11 @@ class GroundStationApp(QMainWindow):
         commands_layout.addWidget(self.button_sensor_control)
         commands_layout.addWidget(self.button_mode)
         commands_layout.addWidget(self.button_altitude_cal)
-        commands_layout.addWidget(self.button_activate_sensor_ex)
+        commands_layout.addWidget(self.camera_status_button)
+        commands_layout.addLayout(program_servo_box)
+        commands_layout.addLayout(program_camera_box)
         commands_layout.addWidget(self.button_advanced)
-        commands_layout.addWidget(self.button_set_time)
-        commands_layout.addWidget(self.button_set_time_gps)
+        commands_layout.addLayout(set_time_box)
         commands_layout.addWidget(self.button_reset_mission)
         commands_layout.addWidget(self.button_sim_mode_enable)
         commands_layout.addWidget(self.button_sim_mode_activate)
@@ -501,10 +593,16 @@ class GroundStationApp(QMainWindow):
 
         self.buttons_sensor = [
             self.button_set_time,
-            self.button_set_time_gps,
+            self.set_time_field,
             self.button_back,
             self.button_altitude_cal,
-            self.button_activate_sensor_ex,
+            self.program_servo_button,
+            self.servo_id_field,
+            self.servo_val_field,
+            self.program_camera_button,
+            self.camera_id_field,
+            self.camera_val_field,
+            self.camera_status_button,
         ]
 
         self.buttons_connection = [
@@ -540,37 +638,49 @@ class GroundStationApp(QMainWindow):
         self.label_remote_state.setFont(command_status_font)
         self.label_remote_state.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         self.label_remote_state.setText(f'<span style="color:black;">CANSAT State: \
-                                              </span><span style="color:RED;">UNKNOWN</span>')
+                                              </span><span style="color:GREY;">N/A</span>')
 
         self.label_remote_mode = QLabel()
         self.label_remote_mode.setFont(command_status_font)
         self.label_remote_mode.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         self.label_remote_mode.setText(f'<span style="color:black;">CANSAT Mode: \
-                                              </span><span style="color:RED;">UNKNOWN</span>')
+                                              </span><span style="color:GREY;">N/A</span>')
         
         self.label_mission_time = QLabel()
         self.label_mission_time.setFont(command_status_font)
         self.label_mission_time.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         self.label_mission_time.setText(f'<span style="color:black;">Mission Time: \
-                                              </span><span style="color:RED;">N/A</span>')
+                                              </span><span style="color:GREY;">N/A</span>')
 
         self.label_packet_count = QLabel()
         self.label_packet_count.setFont(command_status_font)
         self.label_packet_count.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         self.label_packet_count.setText(f'<span style="color:black;">Packets Received/Sent: \
-                                              </span><span style="color:RED;">N/A</span>')
+                                              </span><span style="color:GREY;">N/A</span>')
         
         self.label_sat = QLabel()
         self.label_sat.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         self.label_sat.setFont(command_status_font)
         self.label_sat.setText(f'<span style="color:black;">Satellites: \
-                                              </span><span style="color:RED;">N/A</span>')
+                                              </span><span style="color:GREY;">N/A</span>')
         
         self.label_cmd_echo = QLabel()
         self.label_cmd_echo.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
         self.label_cmd_echo.setFont(command_status_font)
         self.label_cmd_echo.setText(f'<span style="color:black;">CMD ECHO: \
-                                              </span><span style="color:RED;">N/A</span>')
+                                              </span><span style="color:GREY;">N/A</span>')
+        
+        self.camera1_status_label = QLabel()
+        self.camera1_status_label.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.camera1_status_label.setFont(command_status_font)
+        self.camera1_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
+                                              </span><span style="color:GREY;">N/A</span>')
+        
+        self.camera2_status_label = QLabel()
+        self.camera2_status_label.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.camera2_status_label.setFont(command_status_font)
+        self.camera2_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
+                                              </span><span style="color:GREY;">N/A</span>')
 
         status_layout.addWidget(self.label_port)
         status_layout.addWidget(self.label_remote_mode)
@@ -578,6 +688,8 @@ class GroundStationApp(QMainWindow):
         status_layout.addWidget(self.label_mission_time)
         status_layout.addWidget(self.label_sat)
         status_layout.addWidget(self.label_packet_count)
+        status_layout.addWidget(self.camera1_status_label)
+        status_layout.addWidget(self.camera2_status_label)
         status_layout.addWidget(self.label_cmd_echo)
 
         grid_layout.setColumnStretch(1,1)
@@ -641,16 +753,16 @@ class GroundStationApp(QMainWindow):
         self.plotters = []
 
         graph_info = [
-            {"title": "Altitude", "lines": 1, "2d": False, "unit": "m"},
-            {"title": "Temperature", "lines": 1, "2d": False, "unit": "°C"},
-            {"title": "Pressure", "lines": 1, "2d": False, "unit": "kPa"},
-            {"title": "Voltage", "lines": 1, "2d": False, "unit": "V"},
-            {"title": "Gyro", "lines": 3, "2d": False, "unit": "deg/s"},
-            {"title": "Accelerometer", "lines": 3, "2d": False, "unit":"deg/s^2"},
-            {"title": "Magnetometer", "lines": 3, "2d": False, "unit": "G"},
-            {"title": "Rotation", "lines": 1, "2d": False, "unit": "deg/s"},
-            {"title": "GPS Lat v Long", "lines": 1, "2d": True, "unit": ""},
-            {"title": "GPS Altitude", "lines": 1, "2d": False, "unit": "m"}
+            {"title": "Altitude", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "m"},
+            {"title": "Temperature", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "°C"},
+            {"title": "Pressure", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "kPa"},
+            {"title": "Voltage", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "V"},
+            {"title": "Gyro", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
+            {"title": "Accelerometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit":"deg/s^2"},
+            {"title": "Magnetometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "G"},
+            {"title": "Rotation", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
+            {"title": "GPS Lat v Long", "lines": 1, "2d": True, "x_unit": "Latitude", "y_unit": "Longitude"},
+            {"title": "GPS Altitude", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "m"}
         ]
         
         self.graph_title_to_index = {
@@ -685,13 +797,13 @@ class GroundStationApp(QMainWindow):
             self.graphs.append(graph)
 
             if entry["lines"] == 1 and entry["2d"] is False:
-                plotter = DynamicPlotter(graph, title=entry["title"], timewindow=self.__graph_time_window,unit=entry["unit"])
+                plotter = DynamicPlotter(graph, title=entry["title"], timewindow=self.__graph_time_window,x_unit=entry["x_unit"],y_unit=entry["y_unit"])
             elif entry["lines"] > 1 and entry["2d"] is False:
                 plotter = DynamicPlotter_MultiLine(graph, title=entry["title"], 
                                                    timewindow=self.__graph_time_window, num_lines=entry["lines"],
-                                                   unit=entry["unit"])
+                                                   x_unit=entry["x_unit"],y_unit=entry["y_unit"])
             else:
-                plotter = DynamicPlotter_2d(graph, title=entry["title"], timewindow=self.__graph_time_window,unit=entry["unit"])
+                plotter = DynamicPlotter_2d(graph, title=entry["title"], timewindow=self.__graph_time_window,x_unit=entry["x_unit"],y_unit=entry["y_unit"])
 
             self.plotters.append(plotter)
 
@@ -873,8 +985,8 @@ class GroundStationApp(QMainWindow):
         if(self.send_data("CMD,%d,TEST,X" % self.__TEAM_ID)):
             self.update_gui_log("Sent test message")
     
-    def send_time(self, gps):
-        if(gps):
+    def send_time(self):
+        if(self.__set_time_id):
            if(self.send_data("CMD,%d,ST,GPS" % (self.__TEAM_ID))):
                 self.update_gui_log(f"Sent GPS Set Time Command") 
         else:
@@ -886,7 +998,33 @@ class GroundStationApp(QMainWindow):
     def send_restart(self):
         if(self.send_data("CMD,%d,RR,X" % self.__TEAM_ID)):
             self.update_gui_log("Sent restart signal")
-    
+
+    def program_servo(self):
+        if(self.__servo_id == -1 or self.__servo_val == -1):
+            self.update_gui_log("ERROR: Enter a servo # and value first!", "red")
+        elif(self.send_data("CMD,%d,MEC,SERVO:%d|%d" % (self.__TEAM_ID, self.__servo_id, self.__servo_val))):
+            servo_label = self.servo_id_field.itemText(self.servo_id_field.findData(self.__servo_id))
+            self.update_gui_log(f"Sent command to program {servo_label} to {self.__servo_val}")
+
+    def toggle_camera(self):
+        if(self.__camera_id == "NONE" or self.__camera_val == - 1):
+            self.update_gui_log("ERROR: SELECT CAMERA AND MODE FIRST!", "red")
+            return
+        if(self.__camera_val == 0):
+            if(self.send_data("CMD,%d,MEC,%s:ON" % (self.__TEAM_ID, self.__camera_id))):
+                self.update_gui_log("Sent CAMERA1 ON command")
+        else:
+            if(self.send_data("CMD,%d,MEC,%s:OFF" % (self.__TEAM_ID, self.__camera_id))):
+                self.update_gui_log("Sent CAMERA1 ON command")
+
+    def get_cam_status(self):
+        if(self.send_data("CMD,%d,MEC,CAMERA1_STAT:X" % self.__TEAM_ID)):
+            self.update_gui_log("Requesting CAMERA1 status")
+        time.sleep(1)
+        if(self.send_data("CMD,%d,MEC,CAMERA2_STAT:X" % self.__TEAM_ID)):
+            self.update_gui_log("Requesting CAMERA2 status")
+
+
     def change_sim_mode(self, mode):
         if(self.send_data("CMD,%d,SIM,%s" % (self.__TEAM_ID, mode))):
             self.update_gui_log(f"Sent simulation mode '{mode}'")
@@ -894,11 +1032,6 @@ class GroundStationApp(QMainWindow):
     def altitude_cal(self):
         if(self.send_data("CMD,%d,CAL,X" % self.__TEAM_ID)):
             self.update_gui_log(f"Sent altitude calibration command")
-    
-    def activate_sensor_ex(self):
-        # TODO: Need one for each device on/off
-        if(self.send_data("CMD,%d,MEC,X:ON" % self.__TEAM_ID)):
-            self.update_gui_log("Sent MEC command (DOES NOTHING)")
 
     def get_log_data(self):
         msg_box = QMessageBox()
@@ -943,6 +1076,22 @@ class GroundStationApp(QMainWindow):
         self.__TEAM_ID = int(self.team_id_field.text())
         self.update_gui_log(f"Updated ground station TEAM ID to '{self.__TEAM_ID}'")
     
+    def servo_id_edited(self, index):
+        self.__servo_id = self.servo_id_field.itemData(index)
+    
+    def servo_val_edited(self):
+        self.servo_val_field.clearFocus()
+        self.__servo_val = int(self.servo_val_field.text())
+
+    def camera_id_edited(self, index):
+        self.__camera_id = self.camera_id_field.itemText(index)
+
+    def camera_val_edited(self, index):
+        self.__camera_val = self.camera_val_field.itemData(index)
+    
+    def set_time_field_edited(self, index):
+        self.__set_time_id = self.set_time_field.itemData(index)
+
     @pyqtSlot(QSerialPort.SerialPortError)
     def handle_serial_error(self, error):
         if error == QSerialPort.SerialPortError.ResourceError:
@@ -1010,6 +1159,22 @@ class GroundStationApp(QMainWindow):
                 self.__outfile.write((msg + "\n").encode('utf-8'))
                 self.__write_to_logfile = 1
                 return
+            
+            if "CAMERA1 ON" in msg:
+                self.camera1_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
+                                            </span><span style="color:GREEN;">ON</span>')
+            
+            if "CAMERA2 ON" in msg:
+                self.camera2_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
+                                            </span><span style="color:GREEN;">ON</span>')
+                
+            if "CAMERA1 OFF" in msg:
+                self.camera1_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
+                                            </span><span style="color:RED;">OFF</span>')
+            
+            if "CAMERA2 OFF" in msg:
+                self.camera2_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
+                                            </span><span style="color:RED;">OFF</span>')
 
             row = {field: "" for field in self.__csv_writer.fieldnames}
             row["CMD_ECHO"] = msg
@@ -1161,6 +1326,20 @@ class GroundStationApp(QMainWindow):
         if data.CMD_ECHO is not None:
             self.label_cmd_echo.setText(f'<span style="color:black;">CMD ECHO: \
                                               </span><span style="color:RED;">{data.CMD_ECHO}</span>')
+
+        if data.CAM_STATUS is not None:
+            if data.CAM_STATUS==3 or data.CAM_STATUS==1:
+                self.camera1_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
+                                            </span><span style="color:GREEN;">ON</span>')
+            if data.CAM_STATUS==3 or data.CAM_STATUS==2:
+                self.camera2_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
+                                            </span><span style="color:GREEN;">ON</span>')
+            else:
+                self.camera1_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
+                                            </span><span style="color:RED;">OFF</span>')
+                self.camera2_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
+                                            </span><span style="color:RED;">OFF</span>')
+
             
         data_dict = data.to_dict()
         self.__csv_writer.writerow(data_dict)
@@ -1198,7 +1377,8 @@ class GroundStationApp(QMainWindow):
             GPS_LATITUDE = float(fields[21]) if 21 < len(fields) else None,
             GPS_LONGITUDE= float(fields[22]) if 22 < len(fields) else None,
             GPS_SATS     = fields[23] if 23 < len(fields) else None,
-            CMD_ECHO     = fields[24] if 24 < len(fields) else None
+            CMD_ECHO     = fields[24] if 24 < len(fields) else None,
+            CAM_STATUS   =fields[25] if 25 < len(fields) else None
         )
 
         return telemetry_data
