@@ -1210,9 +1210,9 @@ class GroundStationApp(QMainWindow):
                         self.update_gui_log("ERROR: Could not find SIMP data file cansat_2023_simp.txt!", "red")
 
             if msg.startswith("$E"):
-                self.update_gui_log(f"-> CANSAT: {msg_text}", "red")
+                self.update_gui_log(f"-> {msg_text}", "red")
             else:
-                self.update_gui_log(f"-> CANSAT: {msg_text}", "blue")
+                self.update_gui_log(f"-> {msg_text}", "blue")
         else: # telemetry
             self.parse_telemetry_string(msg)
     
