@@ -2,7 +2,7 @@
 
 void SerialManager::begin() 
 {
-    serialPort->begin(XBEE_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
+    serialPort->begin(XBEE_BAUD_RATE, SERIAL_8N1, RX2_PIN, TX2_PIN);
     delay(1000);
 }
 

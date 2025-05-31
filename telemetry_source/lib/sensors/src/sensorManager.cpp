@@ -1,5 +1,7 @@
 #include "sensorManager.h"
 
+HardwareSerial GPS_Serial(1);
+
 OperatingState SensorManager::updateState(OperatingState curr_state, MissionManager &mission_info)
 {
     int idx = alt_data.idx - 1;
@@ -265,6 +267,9 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
 
     send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
 
+    while (GPS_Serial.available()) {
+        gps.encode(GPS_Serial.read());
+    }
     getGpsTime(send_packet.GPS_TIME);
     send_packet.GPS_ALTITUDE = getGpsAlt();
     send_packet.GPS_LATITUDE = getGpsLat();
@@ -424,6 +429,14 @@ void SensorManager::startSensors(SerialManager &ser)
     // Temperature and Pressure
     uint8_t status = bme.begin(0x77);
     delay(100);
+
+    // GPS
+    GPS_Serial.begin(9600, SERIAL_8N1, RX1_PIN, TX1_PIN);
+    delay(100);
+
+    // Hall Effect Sensor
+    pinMode(HALL_SENSOR_PIN, INPUT);
+    delay(100);
     
     // Release Servo
     m_servo_release.attach(SERVO_RELEASE_PIN);
@@ -504,22 +517,38 @@ void SensorManager::writeCameraServo(int pos)
 
 float SensorManager::getGpsAlt()
 {
-    return 0;
+    if (gps.altitude.isValid())
+    {
+        prev_gps_alt = gps.altitude.meters();
+    }
+    return prev_gps_alt;
 }
 
 float SensorManager::getGpsLat()
 {
-    return 0;
+    if (gps.location.isValid())
+    {
+        prev_gps_lat = gps.location.lat();
+    }
+    return prev_gps_lat;
 }
 
 float SensorManager::getGpsLong()
 {
-    return 0;
+    if (gps.location.isValid())
+    {
+        prev_gps_lng = gps.location.lng();
+    }
+    return prev_gps_lng;
 }
 
 int SensorManager::getGpsSats()
 {
-    return 0;
+    if (gps.satellites.isValid())
+    {
+        prev_gps_sats = gps.satellites.value();
+    }
+    return prev_gps_sats;
 }
 
 void SensorManager::getRtcTime(char time_str[DATA_SIZE])
@@ -529,15 +558,20 @@ void SensorManager::getRtcTime(char time_str[DATA_SIZE])
 }
 
 void SensorManager::getGpsTime(char time_str[DATA_SIZE])
-{
-    strncpy(time_str, "00:00:00", DATA_SIZE - 1);
-    time_str[DATA_SIZE - 1] = '\0';
+{   
+    if (gps.time.isValid())
+    {
+        prev_gps_hour = gps.time.hour();
+        prev_gps_minute = gps.time.minute();
+        prev_gps_second = gps.time.second();
+    }
+    snprintf(time_str, DATA_SIZE, "%02d:%02d:%02d", prev_gps_hour, prev_gps_minute, prev_gps_second);
 }
 
 float SensorManager::getVoltage()
 {
     int adc_raw = analogRead(ADC_VOLTAGE_PIN);
-    float adc_voltage = (adc_raw / 4096.0) * 3.3; // 3.3V reference voltage on a 12-bit ADC pin
+    float adc_voltage = (adc_raw / 4096.0) * 3.3;
     
     float real_voltage = adc_voltage / 0.295;
     return real_voltage;
@@ -547,6 +581,19 @@ float SensorManager::getRotRate()
 {
     return 0;
 }
+// float calculateRPM(unsigned long pulseInterval, float previous) {
+//     if ((currState == LOW) && (lastState == HIGH) && (pulseInterval > 0)) {
+//         currRPM = (60.0 * 1000000) / pulseInterval;
+//     }
+
+//     // Filters out extreme RPM calculations 
+//     if (currRPM > 2000.0) {
+//         currRPM = previous;
+//     }
+
+//     snprintf(sensorData.rpm, sizeof(sensorData.rpm), "%.2f", currRPM);
+//     return currRPM;
+// }
 
 
 void SensorManager::getMagData(float *r, float *p, float *y)

@@ -55,12 +55,20 @@ private:
     } altitude_data;
 
     altitude_data alt_data;
-
     Adafruit_BME280 bme;
+    TinyGPSPlus gps;
     Servo m_servo_release;
     Servo m_servo_gyro_1;
     Servo m_servo_gyro_2;
     Servo m_servo_camera;
+
+    float prev_gps_lat = 0.0;
+    float prev_gps_lng = 0.0;
+    float prev_gps_alt = 0.0;
+    int prev_gps_sats = 0;
+    int prev_gps_hour = 0;
+    int prev_gps_minute = 0;
+    int prev_gps_second = 0;
 
     int servo_1_pos = 0;
 
