@@ -231,20 +231,39 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
 
     getRtcTime(send_packet.MISSION_TIME);
     send_packet.TEMPERATURE = getTemp();
-    send_packet.VOLTAGE = calculateVoltage();
+    send_packet.VOLTAGE = getVoltage();
 
-    send_packet.GYRO_R = ran_num[2];
-    send_packet.GYRO_P = ran_num[3];
-    send_packet.GYRO_Y = ran_num[4];
+    float roll = 0.0;
+    float pitch = 0.0;
+    float yaw = 0.0;
 
-    send_packet.ACCEL_R = ran_num[5];
-    send_packet.ACCEL_P = ran_num[6];
-    send_packet.ACCEL_Y = ran_num[7];
+    getGyroData(&roll, &pitch, &yaw);
 
-    send_packet.MAG_R = ran_num[8];
-    send_packet.MAG_P = ran_num[9];
-    send_packet.MAG_Y = ran_num[10];
-    send_packet.AUTO_GYRO_ROTATION_RATE = ran_num[11];
+    send_packet.GYRO_R = roll;
+    send_packet.GYRO_P = pitch;
+    send_packet.GYRO_Y = yaw;
+
+    roll = 0.0;
+    pitch = 0.0;
+    yaw = 0.0;
+
+    getAccelData(&roll, &pitch, &yaw);
+
+    send_packet.ACCEL_R = roll;
+    send_packet.ACCEL_P = pitch;
+    send_packet.ACCEL_Y = yaw;
+
+    roll = 0.0;
+    pitch = 0.0;
+    yaw = 0.0;
+
+    getMagData(&roll, &pitch, &yaw);
+
+    send_packet.MAG_R = roll;
+    send_packet.MAG_P = pitch;
+    send_packet.MAG_Y = yaw;
+
+    send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
 
     getGpsTime(send_packet.GPS_TIME);
     send_packet.GPS_ALTITUDE = getGpsAlt();
@@ -515,7 +534,7 @@ void SensorManager::getGpsTime(char time_str[DATA_SIZE])
     time_str[DATA_SIZE - 1] = '\0';
 }
 
-float SensorManager::calculateVoltage()
+float SensorManager::getVoltage()
 {
     int adc_raw = analogRead(ADC_VOLTAGE_PIN);
     float adc_voltage = (adc_raw / 4096.0) * 3.3; // 3.3V reference voltage
@@ -524,3 +543,29 @@ float SensorManager::calculateVoltage()
     return real_voltage;
 }
 
+float SensorManager::getRotRate()
+{
+    return 0;
+}
+
+
+void SensorManager::getMagData(float *r, float *p, float *y)
+{
+    *r = 0.0;
+    *p = 0.0;
+    *y = 0.0;
+}
+
+void SensorManager::getGyroData(float *r, float *p, float *y)
+{
+    *r = 0.0;
+    *p = 0.0;
+    *y = 0.0;
+}
+
+void SensorManager::getAccelData(float *r, float *p, float *y)
+{
+    *r = 0.0;
+    *p = 0.0;
+    *y = 0.0;
+}
