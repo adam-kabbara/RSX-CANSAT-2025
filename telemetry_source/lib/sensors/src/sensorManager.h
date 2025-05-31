@@ -111,6 +111,16 @@ public:
     void getRtcTime(char time_str[DATA_SIZE]);
 
     void getGpsTime(char time_str[DATA_SIZE]);
+
+    float getVoltage();
+
+    float getRotRate();
+
+    void getMagData(float *r, float *p, float *y);
+
+    void getAccelData(float *r, float *p, float *y);
+
+    void getGyroData(float *r, float *p, float *y);
 };
 
 #endif /* SENSOR_MANAGER_H */

@@ -360,7 +360,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
   {
     if(strcmp(val, "ON"))
     {
-      digitalWrite(CAMERA1_PIN, HIGH);
+      digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
       int state = digitalRead(CAMERA1_STATUS_PIN);
       if(state == HIGH)
       {
@@ -373,7 +373,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     }
     else if(strcmp(val, "OFF"))
     {
-      digitalWrite(CAMERA1_PIN, LOW);
+      digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
       int state = digitalRead(CAMERA1_STATUS_PIN);
       if(state == LOW)
       {
@@ -389,7 +389,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
   {
     if(strcmp(val, "ON"))
     {
-      digitalWrite(CAMERA2_PIN, HIGH);
+      digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
       int state = digitalRead(CAMERA2_STATUS_PIN);
       if(state == HIGH)
       {
@@ -402,7 +402,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     }
     else if(strcmp(val, "OFF"))
     {
-      digitalWrite(CAMERA2_PIN, LOW);
+      digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
       int state = digitalRead(CAMERA2_STATUS_PIN);
       if(state == LOW)
       {

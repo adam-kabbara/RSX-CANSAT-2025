@@ -24,14 +24,15 @@
 
 #define RX_PIN 16
 #define TX_PIN 17
-#define CAMERA1_PIN 32
-#define CAMERA2_PIN 33
+#define CAMERA1_SIGNAL_PIN 32
+#define CAMERA2_SIGNAL_PIN 33
 #define SERVO_RELEASE_PIN 13
 #define SERVO_GYRO1_PIN 12
 #define SERVO_GYRO2_PIN 14
 #define SERVO_CAMERA_PIN 27
 #define CAMERA1_STATUS_PIN 25
 #define CAMERA2_STATUS_PIN 26
+#define ADC_VOLTAGE_PIN 39
 
 enum SimModeStatus {
     SIM_OFF = 0,

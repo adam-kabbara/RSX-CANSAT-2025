@@ -96,8 +96,8 @@ void loop()
         }
 
         // Start timer and camera
-        digitalWrite(CAMERA1_PIN, HIGH);
-        digitalWrite(CAMERA2_PIN, HIGH);
+        digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
+        digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
         timerWrite(send_timer, 0);
         timerAlarmEnable(send_timer);
 
@@ -152,8 +152,8 @@ void loop()
 
         // Back to IDLE state, turn off timer & camera, reset settings
         timerAlarmDisable(send_timer);
-        digitalWrite(CAMERA1_PIN, LOW);
-        digitalWrite(CAMERA2_PIN, LOW);
+        digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
+        digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
         mission_info.setAltCalOff();
         mission_info.waitingForSimp();
         logfile.close();
