@@ -271,10 +271,10 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
         gps.encode(GPS_Serial.read());
     }
     getGpsTime(send_packet.GPS_TIME);
-    send_packet.GPS_ALTITUDE = getGpsAlt();
-    send_packet.GPS_LATITUDE = getGpsLat();
-    send_packet.GPS_LONGITUDE = getGpsLong();
-    send_packet.GPS_SATS = getGpsSats();
+    getGpsAlt(&send_packet.GPS_ALTITUDE);
+    getGpsLat(&send_packet.GPS_LATITUDE);
+    getGpsLong(&send_packet.GPS_LONGITUDE);
+    getGpsSats(&send_packet.GPS_SATS);
 
     int cam1_state = digitalRead(CAMERA1_STATUS_PIN);
     int cam2_state = digitalRead(CAMERA2_STATUS_PIN);
@@ -515,40 +515,36 @@ void SensorManager::writeCameraServo(int pos)
     m_servo_camera.write(pos);
 }
 
-float SensorManager::getGpsAlt()
+void SensorManager::getGpsAlt(float *alt)
 {
     if (gps.altitude.isValid())
     {
-        prev_gps_alt = gps.altitude.meters();
+        *alt = gps.altitude.meters();
     }
-    return prev_gps_alt;
 }
 
-float SensorManager::getGpsLat()
+void SensorManager::getGpsLat(float *lat)
 {
     if (gps.location.isValid())
     {
-        prev_gps_lat = gps.location.lat();
+        *lat = gps.location.lat();
     }
-    return prev_gps_lat;
 }
 
-float SensorManager::getGpsLong()
+void SensorManager::getGpsLong(float *lon)
 {
     if (gps.location.isValid())
     {
-        prev_gps_lng = gps.location.lng();
+        *lon = gps.location.lng();
     }
-    return prev_gps_lng;
 }
 
-int SensorManager::getGpsSats()
+void SensorManager::getGpsSats(int *sat)
 {
     if (gps.satellites.isValid())
     {
-        prev_gps_sats = gps.satellites.value();
+        *sat = gps.satellites.value();
     }
-    return prev_gps_sats;
 }
 
 void SensorManager::getRtcTime(char time_str[DATA_SIZE])
@@ -561,11 +557,8 @@ void SensorManager::getGpsTime(char time_str[DATA_SIZE])
 {   
     if (gps.time.isValid())
     {
-        prev_gps_hour = gps.time.hour();
-        prev_gps_minute = gps.time.minute();
-        prev_gps_second = gps.time.second();
+        snprintf(time_str, DATA_SIZE, "%02d:%02d:%02d", gps.time.hour(), gps.time.minute(), gps.time.second());
     }
-    snprintf(time_str, DATA_SIZE, "%02d:%02d:%02d", prev_gps_hour, prev_gps_minute, prev_gps_second);
 }
 
 float SensorManager::getVoltage()
