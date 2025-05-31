@@ -15,7 +15,7 @@ bool stopRecording = false;
 bool startRecording = true;
 
 void setup() {
-  pinMode(RECORD_PIN, INPUT_PULLUP);
+  pinMode(RECORD_PIN, INPUT_PULLDOWN);
   pinMode(RECORDING_DIAG, OUTPUT);
 
   logSetup();
