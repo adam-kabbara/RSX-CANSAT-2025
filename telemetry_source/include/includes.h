@@ -18,11 +18,20 @@
 #define DATA_BUFF_SIZE 528
 #define TEAM_ID 3114
 #define XBEE_BAUD_RATE 57600
-#define RX_PIN 16
-#define TX_PIN 17
 #define ALTITUDE_WINDOW_SIZE 40
 #define SENSOR_SAMPLE_RATE_HZ 40
 #define MAX_LOG_FILE_SIZE_BYTES 125000
+
+#define RX_PIN 16
+#define TX_PIN 17
+#define CAMERA1_PIN 32
+#define CAMERA2_PIN 33
+#define SERVO_RELEASE_PIN 13
+#define SERVO_GYRO1_PIN 12
+#define SERVO_GYRO2_PIN 14
+#define SERVO_CAMERA_PIN 27
+#define CAMERA1_STATUS_PIN 25
+#define CAMERA2_STATUS_PIN 26
 
 enum SimModeStatus {
     SIM_OFF = 0,
