@@ -1,9 +1,0 @@
-Hall Effect Sensor Pin Connections on the ESP32:
-
-- Hall Effect Sensor Left Pin (+) --> 5V
-- Hall Effect Sensor Middle Pin (-) --> GND
-- Hall Effect Sensor Right Pin --> GPIO23
-- Note: Looking from the short flat side (side w/ product number)
-
-- LED Cathode (-) --> GND
-- LED Anode (+) --> GPIO2
