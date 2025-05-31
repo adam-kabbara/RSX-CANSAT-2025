@@ -34,9 +34,6 @@
 #define CAMERA2_STATUS_PIN 26
 #define ADC_VOLTAGE_PIN 39
 
-#define R1 10470.0
-#define R2 6750.0
-
 enum SimModeStatus {
     SIM_OFF = 0,
     SIM_EN = 1,
