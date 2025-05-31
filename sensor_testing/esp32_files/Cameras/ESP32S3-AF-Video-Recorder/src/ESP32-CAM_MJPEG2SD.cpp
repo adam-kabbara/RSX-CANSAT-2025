@@ -18,7 +18,7 @@ bool startRecording = true;
 OV5640 ov5640 = OV5640();
 
 void setup() {
-  pinMode(RECORD_PIN, INPUT_PULLUP);
+  pinMode(RECORD_PIN, INPUT_PULLDOWN);
   pinMode(RECORDING_DIAG, OUTPUT);
 
   logSetup();
