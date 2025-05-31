@@ -231,7 +231,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
 
     getRtcTime(send_packet.MISSION_TIME);
     send_packet.TEMPERATURE = getTemp();
-    send_packet.VOLTAGE = ran_num[1];
+    send_packet.VOLTAGE = calculateVoltage();
 
     send_packet.GYRO_R = ran_num[2];
     send_packet.GYRO_P = ran_num[3];
@@ -434,9 +434,9 @@ void SensorManager::startSensors(SerialManager &ser)
     delay(100);
     
     // Camera Signal Pins (Trigger)
-    pinMode(CAMERA1_PIN, OUTPUT);
+    pinMode(CAMERA1_SIGNAL_PIN, OUTPUT);
     delay(100);
-    pinMode(CAMERA2_PIN, OUTPUT);
+    pinMode(CAMERA2_SIGNAL_PIN, OUTPUT);
     delay(100);
     
     // Camera Data Pins (Recording Status)
@@ -514,3 +514,13 @@ void SensorManager::getGpsTime(char time_str[DATA_SIZE])
     strncpy(time_str, "00:00:00", DATA_SIZE - 1);
     time_str[DATA_SIZE - 1] = '\0';
 }
+
+float SensorManager::calculateVoltage()
+{
+    int adc_raw = analogRead(ADC_VOLTAGE_PIN);
+    float adc_voltage = (adc_raw / 4096.0) * 3.3; // 3.3V reference voltage
+    
+    float real_voltage = adc_voltage * (R1 + R2) / R2;
+    return real_voltage;
+}
+

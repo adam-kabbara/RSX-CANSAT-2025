@@ -111,6 +111,8 @@ public:
     void getRtcTime(char time_str[DATA_SIZE]);
 
     void getGpsTime(char time_str[DATA_SIZE]);
+
+    float calculateVoltage();
 };
 
 #endif /* SENSOR_MANAGER_H */
