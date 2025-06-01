@@ -644,7 +644,8 @@ float SensorManager::getRotRate()
     currState = digitalRead(HALL_SENSOR_PIN);
 
     // Turns on LED and calculates starting time when magnet comes across the hall effect sensor
-    if (currState == LOW && lastState == HIGH) {
+    if (currState == LOW && lastState == HIGH)
+    {
         unsigned long currentTime = micros();
         pulseInterval = currentTime - lastPulseTime;
         lastPulseTime = currentTime;
@@ -661,12 +662,14 @@ float SensorManager::getRotRate()
 float SensorManager::calculateRPM(unsigned long pulseInterval, float previous)
 {
     // Calculates the RPM value using the substracted time
-    if ((currState == LOW) && (lastState == HIGH) && (pulseInterval > 0)) {
+    if ((currState == LOW) && (lastState == HIGH) && (pulseInterval > 0))
+    {
         currRPM = (60.0 * 1000000) / pulseInterval;
     }
 
     // Filters out extreme RPM calculations 
-    if (currRPM > 2000.0) {
+    if (currRPM > 2000.0)
+    {
         currRPM = previous;
     }
 
