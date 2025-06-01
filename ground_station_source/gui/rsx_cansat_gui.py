@@ -268,7 +268,7 @@ class GroundStationApp(QMainWindow):
         self.__servo_id                     = -1
         self.__servo_val                    = -1
         self.__camera_id                    = "NONE"
-        self.__camera_val                   = -1
+        self.__camera_val                   = 0
         self.__set_time_id                  = 1
 
         self.setWindowTitle("CANSAT Ground Station")
@@ -426,10 +426,10 @@ class GroundStationApp(QMainWindow):
 
         self.servo_id_field = QComboBox()
         self.servo_id_field.setPlaceholderText("SELECT SERVO")
-        self.servo_id_field.addItem("Release Servo", 0)
-        self.servo_id_field.addItem("Gyro Servo 1", 1)
-        self.servo_id_field.addItem("Gyro Servo 2", 2)
-        self.servo_id_field.addItem("Camera Servo", 3)
+        self.servo_id_field.addItem("Camera [CPL3] [F]", 0)
+        self.servo_id_field.addItem("GYRO [CPL1] [F]", 2)
+        self.servo_id_field.addItem("Release [CLP2] [F]", 1)
+        self.servo_id_field.addItem("GYRO [Camera] [B]", 3)
         self.servo_id_field.setFont(button_font)
         self.servo_id_field.activated.connect(self.servo_id_edited)
 
@@ -487,7 +487,6 @@ class GroundStationApp(QMainWindow):
         self.program_camera_button = QPushButton(" PROGRAM CAMERA ")
         self.program_camera_button.setFont(button_font)
         self.program_camera_button.clicked.connect(self.toggle_camera)
-        self.program_camera_button.hide()
 
         program_camera_box.addWidget(self.program_camera_button)
         program_camera_box.addWidget(self.camera_id_field)
@@ -1012,10 +1011,10 @@ class GroundStationApp(QMainWindow):
             return
         if(self.__camera_val == 0):
             if(self.send_data("CMD,%d,MEC,%s:ON" % (self.__TEAM_ID, self.__camera_id))):
-                self.update_gui_log("Sent CAMERA1 ON command")
+                self.update_gui_log(f"Sent {self.__camera_id} ON command")
         else:
             if(self.send_data("CMD,%d,MEC,%s:OFF" % (self.__TEAM_ID, self.__camera_id))):
-                self.update_gui_log("Sent CAMERA1 ON command")
+                self.update_gui_log(f"Sent {self.__camera_id} OFF command")
 
     def get_cam_status(self):
         if(self.send_data("CMD,%d,MEC,CAMERA1_STAT:X" % self.__TEAM_ID)):
@@ -1150,6 +1149,10 @@ class GroundStationApp(QMainWindow):
     def process_data(self):
         # Info msg
         msg = self.__recveived_data
+
+        if not msg.strip():
+            return
+        
         if(msg.startswith('$')):
 
             # Get logfile
@@ -1267,7 +1270,7 @@ class GroundStationApp(QMainWindow):
         
         if data.VOLTAGE is not None:
             self.plotters[self.graph_title_to_index.get("Voltage")].update_plot(data.VOLTAGE)
-            self.sidebar_data_labels[self.sidebar_data_dict.get("Voltage")].setText(f"{data.PRESSURE} V")
+            self.sidebar_data_labels[self.sidebar_data_dict.get("Voltage")].setText(f"{data.VOLTAGE} V")
 
         new_gyro_data = [data.GYRO_R, data.GYRO_P, data.GYRO_Y]
         self.plotters[self.graph_title_to_index.get("Gyro")].update_plot(new_gyro_data)
@@ -1368,17 +1371,17 @@ class GroundStationApp(QMainWindow):
             ACCEL_R      = int(fields[12]) if 12 < len(fields) else None,
             ACCEL_P      = int(fields[13]) if 13 < len(fields) else None,
             ACCEL_Y      = int(fields[14]) if 14 < len(fields) else None,
-            MAG_R        = int(fields[15]) if 15 < len(fields) else None,
-            MAG_P        = int(fields[16]) if 16 < len(fields) else None,
-            MAG_Y        = int(fields[17]) if 17 < len(fields) else None,
-            AUTO_GYRO_ROTATION_RATE = int(fields[18]) if 18 < len(fields) else None,
+            MAG_R        = float(fields[15]) if 15 < len(fields) else None,
+            MAG_P        = float(fields[16]) if 16 < len(fields) else None,
+            MAG_Y        = float(fields[17]) if 17 < len(fields) else None,
+            AUTO_GYRO_ROTATION_RATE = float(fields[18]) if 18 < len(fields) else None,
             GPS_TIME     = fields[19] if 19 < len(fields) else None,
             GPS_ALTITUDE = float(fields[20]) if 20 < len(fields) else None,
             GPS_LATITUDE = float(fields[21]) if 21 < len(fields) else None,
             GPS_LONGITUDE= float(fields[22]) if 22 < len(fields) else None,
             GPS_SATS     = fields[23] if 23 < len(fields) else None,
             CMD_ECHO     = fields[24] if 24 < len(fields) else None,
-            CAM_STATUS   =fields[25] if 25 < len(fields) else None
+            CAM_STATUS   = fields[25] if 25 < len(fields) else None
         )
 
         return telemetry_data
