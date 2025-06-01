@@ -566,7 +566,7 @@ float SensorManager::getVoltage()
     int adc_raw = analogRead(ADC_VOLTAGE_PIN);
     float adc_voltage = (adc_raw / 4096.0) * 3.3;
     
-    float real_voltage = adc_voltage / 0.295;
+    float real_voltage = adc_voltage / ADC_LINEAR_REGRESSION;
     return real_voltage;
 }
 
