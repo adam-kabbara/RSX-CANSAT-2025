@@ -1,0 +1,7 @@
+Some backup command lines †o save the Serial Monitor log from gps_read in case PlatformIO's logging fails:
+
+pio device monitor -b 115200 | tee ~/Downloads/gps_data.txt
+
+pio device monitor -p /dev/tty.usbserial-0001 -b 115200 | tee ~/Downloads/gps_data.txt
+
+pio device monitor -p /dev/tty.SLAB_USBtoUART -b 115200 | tee ~/Downloads/gps_data.txt
