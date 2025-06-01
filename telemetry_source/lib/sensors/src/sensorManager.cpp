@@ -658,7 +658,8 @@ float SensorManager::getRotRate()
     return currRPM * 6.0;
 }
 
-float SensorManager::calculateRPM(unsigned long pulseInterval, float previous) {
+float SensorManager::calculateRPM(unsigned long pulseInterval, float previous)
+{
     // Calculates the RPM value using the substracted time
     if ((currState == LOW) && (lastState == HIGH) && (pulseInterval > 0)) {
         currRPM = (60.0 * 1000000) / pulseInterval;
