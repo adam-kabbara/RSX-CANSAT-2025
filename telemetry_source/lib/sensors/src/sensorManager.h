@@ -70,8 +70,6 @@ private:
     unsigned long lastPulseTime = 0;
     unsigned long pulseInterval = 0;
 
-    int servo_1_pos = 0;
-
 public:
 
     OperatingState updateState(OperatingState curr_state, MissionManager &mission_info);
