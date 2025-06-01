@@ -654,6 +654,7 @@ float SensorManager::getRotRate()
     prevRPM = currRPM; // Resets the RPM state
 
     lastState = currState; // Resets the hall effect state
+    
     return currRPM * 6.0;
 }
 
