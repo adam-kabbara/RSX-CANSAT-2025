@@ -4,6 +4,7 @@
 #include "includes.h"
 #include "serialManager.h"
 #include "missionManager.h"
+
 #include <Adafruit_BME280.h>
 #include <Wire.h>
 #include <TinyGPS++.h>
@@ -62,6 +63,13 @@ private:
     Servo m_servo_gyro_2;
     Servo m_servo_camera;
 
+    int currState = 0;
+    int lastState = 0;
+    float currRPM = 0.0;
+    float prevRPM = 0.0;
+    unsigned long lastPulseTime = 0;
+    unsigned long pulseInterval = 0;
+
     int servo_1_pos = 0;
 
 public:
@@ -115,6 +123,8 @@ public:
     float getVoltage();
 
     float getRotRate();
+
+    float calculateRPM(unsigned long pulseInterval, float previous);
 
     void getMagData(float *r, float *p, float *y);
 
