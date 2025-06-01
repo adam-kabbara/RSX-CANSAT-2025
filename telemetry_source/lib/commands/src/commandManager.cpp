@@ -104,6 +104,10 @@ void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManag
             info.clearPacketCount();
             ser.sendInfoMsg("STARTING TELEMETRY TRANSMISSION.");
             info.setOpState(LAUNCH_PAD);
+            info.beginPref("xb-set", false);
+            int state_int = static_cast<int>(LAUNCH_PAD);
+            info.putPrefInt("opstate", state_int);
+            info.endPref();
         }
         else if(info.getOpState() != IDLE)
         {
@@ -119,6 +123,10 @@ void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManag
         if(info.getOpState() != IDLE)
         {
             info.setOpState(IDLE);
+            info.beginPref("xb-set", false);
+            int state_int = static_cast<int>(IDLE);
+            info.putPrefInt("opstate", state_int);
+            info.endPref();
             info.setAltCalOff();
             ser.sendInfoDataMsg("ENDING PAYLOAD TRANSMISSION.{%s|%s}", 
                 sensors.op_mode_to_string(info.getOpMode(), 1), sensors.op_state_to_string(info.getOpState()));
@@ -299,21 +307,38 @@ void CommandManager::do_cal(SerialManager &ser, MissionManager &info, SensorMana
 
 void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
-  const char *colon = strchr(data, ':');
+  char data_copy[CMD_BUFF_SIZE];
+  strcpy(data_copy, data);
+
+  const char *delim = ":";
+  char *token;
+
   char mec[16];
   char val[16];
-  if (colon != NULL)
-  {
-    size_t len_before = colon - data;
-    strncpy(mec, data, len_before);
-    mec[len_before] = '\0';
-    strcpy(val, colon + 1);
-  } 
-  else 
+
+  token = strtok(data_copy, delim);
+  if(token == NULL)
   {
     ser.sendErrorMsg("MEC FORMAT IS INCORRECT, DATA SHOULD CONTAIN 'MEC:VAL'");
+    return;
   }
-  if(strcmp(mec, "SERVO"))
+  else
+  {
+    strcpy(mec, token);
+  }
+
+  token = strtok(NULL, delim);
+  if(token == NULL)
+  {
+    ser.sendErrorMsg("MEC FORMAT IS INCORRECT, DATA SHOULD CONTAIN 'MEC:VAL'");
+    return;
+  }
+  else
+  {
+    strcpy(val, token);
+  }
+
+  if(strcmp(mec, "SERVO") == 0)
   {
     const char *sep = strchr(val, '|');
     if (val != NULL) 
@@ -332,20 +357,20 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
         switch(servo_num)
         {
           case 0:
+            sensors.writeCameraServo(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to camera servo.", servo_val);
+            break;
+          case 1:
             sensors.writeReleaseServo(servo_val);
             ser.sendInfoDataMsg("Wrote %d to release servo.", servo_val);
             break;
-          case 1:
+          case 2:
             sensors.writeGyroServo1(servo_val);
             ser.sendInfoDataMsg("Wrote %d to gyro 1 servo.", servo_val);
             break;
-          case 2:
+          case 3:
             sensors.writeGyroServo2(servo_val);
             ser.sendInfoDataMsg("Wrote %d to gyro 2 servo.", servo_val);
-            break;
-          case 3:
-            sensors.writeCameraServo(servo_val);
-            ser.sendInfoDataMsg("Wrote %d to camera servo.", servo_val);
             break;
           default:
             ser.sendErrorDataMsg("ERROR: RECEIVED INVALID SERVO #: %d", servo_num);
@@ -356,7 +381,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
         ser.sendErrorMsg("ERROR: SERVO COMMAND FORMAT INCORRECT, DID NOT RECEIVE '#|VAL'");
     }
   }
-  else if(strcmp(mec, "CAMERA1"))
+  else if(strcmp(mec, "CAMERA1") == 0)
   {
     if(strcmp(val, "ON"))
     {
@@ -385,7 +410,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
       }
     }
   }
-  else if(strcmp(mec, "CAMERA2"))
+  else if(strcmp(mec, "CAMERA2") == 0)
   {
     if(strcmp(val, "ON"))
     {
@@ -414,7 +439,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
       }
     }
   }
-  else if(strcmp(mec, "CAMERA1_STAT"))
+  else if(strcmp(mec, "CAMERA1_STAT") == 0)
   {
     int state = digitalRead(CAMERA1_STATUS_PIN);
     if(state == HIGH)
@@ -426,7 +451,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
       ser.sendInfoMsg("CAMERA1 OFF");
     }
   }
-  else if(strcmp(mec, "CAMERA2_STAT"))
+  else if(strcmp(mec, "CAMERA2_STAT") == 0)
   {
     int state = digitalRead(CAMERA2_STATUS_PIN);
     if(state == HIGH)
@@ -435,7 +460,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     }
     else
     {
-      ser.sendErrorMsg("CAMERA2 OFF");
+      ser.sendInfoMsg("CAMERA2 OFF");
     }
   }
   else

@@ -30,10 +30,10 @@ private:
         int ACCEL_R = 0;
         int ACCEL_P = 0;
         int ACCEL_Y = 0;
-        float MAG_R = 0;
-        float MAG_P = 0;
-        float MAG_Y = 0;
-        int AUTO_GYRO_ROTATION_RATE = 0;
+        float MAG_R = 0.0;
+        float MAG_P = 0.0;
+        float MAG_Y = 0.0;
+        float AUTO_GYRO_ROTATION_RATE = 0.0;
         char GPS_TIME[DATA_SIZE] = "";
         float GPS_ALTITUDE = 0.0;
         float GPS_LATITUDE = 0.0;
@@ -90,7 +90,7 @@ public:
 
     void setAltData(float alt);
 
-    void startSensors(SerialManager &ser);
+    void startSensors(SerialManager &ser, MissionManager &info);
 
     void writeReleaseServo(int pos);
 

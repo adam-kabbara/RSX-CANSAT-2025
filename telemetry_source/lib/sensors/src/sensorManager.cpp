@@ -24,6 +24,11 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             if(alt_sum > 5.0)
             {
+                mission_info.setOpState(ASCENT);
+                mission_info.beginPref("xb-set", false);
+                int state_int = static_cast<int>(ASCENT);
+                mission_info.putPrefInt("opstate", state_int);
+                mission_info.endPref();
                 return ASCENT;
             }
             break;
@@ -37,6 +42,11 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 if(alt_data.buffer[idx] - alt_data.buffer[(idx - 1 + size) % size] < 5)
                 {
                     alt_data.max_alt = alt_data.buffer[idx];
+                    mission_info.setOpState(APOGEE);
+                    mission_info.beginPref("xb-set", false);
+                    int state_int = static_cast<int>(APOGEE);
+                    mission_info.putPrefInt("opstate", state_int);
+                    mission_info.endPref();
                     return APOGEE;
                 }
             }
@@ -67,6 +77,11 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                     if (d1 < 5.0 && d2 < 5.0)
                     {
                         alt_data.max_alt = avg1;
+                        mission_info.setOpState(APOGEE);
+                        mission_info.beginPref("xb-set", false);
+                        int state_int = static_cast<int>(APOGEE);
+                        mission_info.putPrefInt("opstate", state_int);
+                        mission_info.endPref();
                         return APOGEE;
                     }
 
@@ -94,6 +109,11 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
                     if (avg0 < avg1 && avg1 < avg2)
                     {
+                        mission_info.setOpState(DESCENT);
+                        mission_info.beginPref("xb-set", false);
+                        int state_int = static_cast<int>(DESCENT);
+                        mission_info.putPrefInt("opstate", state_int);
+                        mission_info.endPref();
                         return DESCENT;
                     }
                 }
@@ -112,6 +132,11 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 if (r0 > r1 && r1 > r2)
                 {
                     alt_data.max_alt = alt_data.buffer[idx];
+                    mission_info.setOpState(DESCENT);
+                    mission_info.beginPref("xb-set", false);
+                    int state_int = static_cast<int>(DESCENT);
+                    mission_info.putPrefInt("opstate", state_int);
+                    mission_info.endPref();
                     return DESCENT;
                 }
             }
@@ -141,6 +166,11 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
                 if (avg0 < avg1 && avg1 < avg2)
                 {
+                    mission_info.setOpState(DESCENT);
+                    mission_info.beginPref("xb-set", false);
+                    int state_int = static_cast<int>(DESCENT);
+                    mission_info.putPrefInt("opstate", state_int);
+                    mission_info.endPref();
                     return DESCENT;
                 }
                 break;
@@ -162,6 +192,11 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             if (alt_sum <= 0.75 * alt_data.max_alt)
             {
                 writeReleaseServo(38);
+                mission_info.setOpState(PROBE_RELEASE);
+                mission_info.beginPref("xb-set", false);
+                int state_int = static_cast<int>(PROBE_RELEASE);
+                mission_info.putPrefInt("opstate", state_int);
+                mission_info.endPref();
                 return PROBE_RELEASE;
             }
             break;
@@ -182,6 +217,11 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             if(alt_sum < 5.0)
             {
+                mission_info.setOpState(LAUNCH_PAD);
+                mission_info.beginPref("xb-set", false);
+                int state_int = static_cast<int>(LAUNCH_PAD);
+                mission_info.putPrefInt("opstate", state_int);
+                mission_info.endPref();
                 return LAUNCH_PAD;
             }
             break;
@@ -215,9 +255,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
         alt_data.sample_count++;
     }
 
-    mission_info.setOpState(updateState(mission_info.getOpState(), mission_info));
-
-    strcpy(send_packet.STATE, op_state_to_string(mission_info.getOpState()));
+    strcpy(send_packet.STATE, op_state_to_string(updateState(mission_info.getOpState(), mission_info)));
 
     // TEAM ID
     send_packet.TEAM_ID_PCKT = TEAM_ID;
@@ -233,6 +271,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
 
     getRtcTime(send_packet.MISSION_TIME);
     send_packet.TEMPERATURE = getTemp();
+    
     send_packet.VOLTAGE = getVoltage();
 
     float roll = 0.0;
@@ -267,14 +306,32 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
 
     send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
 
-    while (GPS_Serial.available()) {
+    int gps_avail = GPS_Serial.available();
+    for(int i = 0; i < gps_avail; i++)
+    {
         gps.encode(GPS_Serial.read());
     }
-    getGpsTime(send_packet.GPS_TIME);
-    getGpsAlt(&send_packet.GPS_ALTITUDE);
-    getGpsLat(&send_packet.GPS_LATITUDE);
-    getGpsLong(&send_packet.GPS_LONGITUDE);
-    getGpsSats(&send_packet.GPS_SATS);
+
+    if(gps.location.isUpdated())
+    {
+        getGpsLat(&send_packet.GPS_LATITUDE);
+        getGpsLong(&send_packet.GPS_LONGITUDE);
+    }
+
+    if(gps.time.isUpdated())
+    {
+        getGpsTime(send_packet.GPS_TIME);
+    }
+
+    if(gps.altitude.isUpdated())
+    {
+        getGpsAlt(&send_packet.GPS_ALTITUDE);
+    }
+
+    if(gps.satellites.isUpdated())
+    {
+        getGpsSats(&send_packet.GPS_SATS);
+    }
 
     int cam1_state = digitalRead(CAMERA1_STATUS_PIN);
     int cam2_state = digitalRead(CAMERA2_STATUS_PIN);
@@ -300,12 +357,12 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
 void SensorManager::build_data_str(char *buff, size_t size)
 {
     snprintf(buff, size,
-        "%d,%s,%d,%s,%s," //5
-        "%.1f,%.1f,%.1f,%.1f," //4
-        "%d,%d,%d,%d,%d," //5
-        "%d,%d,%.1f,%.1f,%.1f," //5
-        "%s,%.1f,%.4f," //3
-        "%.4f,%d,%s,%d", //3
+        "%d,%s,%d,%s,%s,"
+        "%.1f,%.1f,%.1f,%.1f,%d,"
+        "%d,%d,%d,%d,%d,"
+        "%.1f,%.1f,%.1f,%.1f,%s,"
+        "%.1f,%.4f,%.4f,%d,%s,"
+        "%d",
         send_packet.TEAM_ID_PCKT, 
         send_packet.MISSION_TIME, 
         send_packet.PACKET_COUNT, 
@@ -315,10 +372,10 @@ void SensorManager::build_data_str(char *buff, size_t size)
         send_packet.TEMPERATURE, 
         send_packet.PRESSURE, 
         send_packet.VOLTAGE, 
-        send_packet.GYRO_R, 
+        send_packet.GYRO_R,
         send_packet.GYRO_P, 
         send_packet.GYRO_Y, 
-        send_packet.ACCEL_R, 
+        send_packet.ACCEL_R,
         send_packet.ACCEL_P, 
         send_packet.ACCEL_Y, 
         send_packet.MAG_R, 
@@ -331,8 +388,7 @@ void SensorManager::build_data_str(char *buff, size_t size)
         send_packet.GPS_LONGITUDE, 
         send_packet.GPS_SATS, 
         send_packet.CMD_ECHO,
-        send_packet.CAMERA_STATUS);
-    
+        send_packet.CAMERA_STATUS); 
 }
 
 const char* SensorManager::op_state_to_string(OperatingState state) 
@@ -424,14 +480,11 @@ void SensorManager::resetAltData()
     alt_data.sample_count = 0;
 }
 
-void SensorManager::startSensors(SerialManager &ser)
+void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
 {
     // Temperature and Pressure
     uint8_t status = bme.begin(0x77);
-    delay(100);
-
-    // GPS
-    GPS_Serial.begin(9600, SERIAL_8N1, RX1_PIN, TX1_PIN);
+    ser.sendInfoDataMsg("BME STATUS=%0d", status);
     delay(100);
 
     // Hall Effect Sensor
@@ -441,29 +494,45 @@ void SensorManager::startSensors(SerialManager &ser)
     // Release Servo
     m_servo_release.attach(SERVO_RELEASE_PIN);
     delay(1000);
-    writeReleaseServo(38);
-    ser.sendInfoMsg("Waiting 10 seconds for release servo setup...");
-    delay(10000);
-    writeReleaseServo(0);
+    if(info.getOpState() == IDLE)
+    {
+        writeReleaseServo(38);
+        ser.sendInfoMsg("Waiting 10 seconds for release servo setup...");
+        delay(10000);
+        writeReleaseServo(0);
+    }
+    delay(100);
+
+    // GPS
+    GPS_Serial.begin(9600, SERIAL_8N1, RX1_PIN, TX1_PIN);
     delay(100);
     
     // Gyro Servo 1
     m_servo_gyro_1.attach(SERVO_GYRO1_PIN);
     delay(1000);
-    writeGyroServo1(90);
-    delay(100);
+    if(info.getOpState() == IDLE)
+    {
+        writeGyroServo1(90);
+        delay(100);
+    }
     
     // Gyro Servo 2
     m_servo_gyro_2.attach(SERVO_GYRO2_PIN);
     delay(1000);
-    writeGyroServo2(90);
-    delay(100);
+    if(info.getOpState() == IDLE)
+    {
+        writeGyroServo2(90);
+        delay(100);
+    }
     
     // Camera Servo
     m_servo_camera.attach(SERVO_CAMERA_PIN);
     delay(1000);
-    writeCameraServo(90);
-    delay(100);
+    if(info.getOpState() == IDLE)
+    {
+        writeCameraServo(90);
+        delay(100);
+    }
     
     // Camera Signal Pins (Trigger)
     pinMode(CAMERA1_SIGNAL_PIN, OUTPUT);
@@ -477,7 +546,7 @@ void SensorManager::startSensors(SerialManager &ser)
     pinMode(CAMERA2_STATUS_PIN, INPUT);
     delay(100);
     
-    ser.sendInfoMsg("All sensors and servos initialized successfully!");
+    ser.sendInfoMsg("Sensors initialized");
 }
 
 void SensorManager::setPacketCount(int count)
