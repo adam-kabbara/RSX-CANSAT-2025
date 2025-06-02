@@ -144,14 +144,28 @@ void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManag
 
 void CommandManager::do_st(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
-    int x,y,z;
+    int h,m,s;
     if(strcmp(data, "GPS") == 0)
     {
-        ser.sendInfoMsg("TODO: GPS!");
+        char time_str[DATA_SIZE];
+        sensors.getGpsTime(time_str);
+        if(sscanf(data, "%d:%d:%d", &h, &m, &s) == 3)
+        {
+          sensors.setRtcTime(s,m,h);
+          sensors.getRtcTime(time_str);
+          ser.sendInfoDataMsg("Set RTC time to %s", time_str);
+        }
+        else
+        {
+          ser.sendErrorMsg("Could not get GPS time in format H:M:S!");
+        }
     }
-    else if(sscanf(data, "%d:%d:%d", &x, &y, &z) == 3)
+    else if(sscanf(data, "%d:%d:%d", &h, &m, &s) == 3)
     {
-        ser.sendInfoMsg("TODO: SET RTC CONTROLLER TIME!");
+        sensors.setRtcTime(s,m,h);
+        char time_str[DATA_SIZE];
+        sensors.getRtcTime(time_str);
+        ser.sendInfoDataMsg("Set RTC time to %s", time_str);
     }
     else
     {

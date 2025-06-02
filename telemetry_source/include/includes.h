@@ -47,6 +47,9 @@
 #define BNO_SPI_MISO 19
 #define BNO_SPI_MOSI 23
 
+#define RTC_I2C_SDA 21
+#define RTC_I2C_SCL 22
+
 #define KALMAN_R 1.0
 #define KALMAN_Q 0.01
 

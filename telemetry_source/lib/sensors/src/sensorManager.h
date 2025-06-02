@@ -14,6 +14,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <math.h>
+#include <uRTCLib.h>
 
 class SensorManager
 {
@@ -74,6 +75,8 @@ private:
     SPIClass *mySPI;
     Adafruit_BNO08x *bno08x;
     Adafruit_LIS3MDL lis3mdl;
+
+    uRTCLib *rtc;
     
     int currState = 0;
     int lastState = 0;
@@ -137,6 +140,8 @@ public:
     float getRotRate();
 
     float calculateRPM(unsigned long pulseInterval, float previous);
+
+    void setRtcTime(int sec, int minute, int hour);
 
 };
 

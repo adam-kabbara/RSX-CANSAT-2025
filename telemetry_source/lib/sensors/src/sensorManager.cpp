@@ -5,6 +5,7 @@ SensorManager::SensorManager()
     GPS_Serial = new HardwareSerial(1);
     mySPI = new SPIClass(VSPI);
     bno08x = new Adafruit_BNO08x(BNO_RST_PIN);
+    rtc = new uRTCLib(0x68);
 }
 
 OperatingState SensorManager::updateState(OperatingState curr_state, MissionManager &mission_info)
@@ -338,9 +339,9 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
                     float mag_p = R[1][0]*mx + R[1][1]*my + R[1][2]*mz;
                     float mag_y = R[2][0]*mx + R[2][1]*my + R[2][2]*mz;
 
-                    send_packet.MAG_R = roll;
-                    send_packet.MAG_P = pitch;
-                    send_packet.MAG_Y = yaw;
+                    send_packet.MAG_R = mag_r;
+                    send_packet.MAG_P = mag_p;
+                    send_packet.MAG_Y = mag_y;
 
                     break;
             }
@@ -623,6 +624,19 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     lis3mdl.setDataRate(LIS3MDL_DATARATE_155_HZ);
     lis3mdl.setRange(LIS3MDL_RANGE_4_GAUSS);
     lis3mdl.setIntThreshold(500);
+
+    Wire.begin(RTC_I2C_SDA, RTC_I2C_SCL);
+    Wire.beginTransmission(0x68);
+	byte error = Wire.endTransmission();
+
+    if (error == 0) 
+    {
+		ser.sendInfoMsg("RTC initialized over I2C");
+	} 
+    else 
+    {
+		ser.sendInfoDataMsg("RTC was not detected: %s", error);
+	}
     
     ser.sendInfoMsg("Done.");
 }
@@ -696,8 +710,9 @@ void SensorManager::getGpsSats(int *sat)
 
 void SensorManager::getRtcTime(char time_str[DATA_SIZE])
 {
-    strncpy(time_str, "00:00:00", DATA_SIZE - 1);
-    time_str[DATA_SIZE - 1] = '\0';
+    rtc->refresh();
+
+    snprintf(time_str, DATA_SIZE, "%02d:%02d:%02d", rtc->hour(), rtc->minute(), rtc->second());
 }
 
 void SensorManager::getGpsTime(char time_str[DATA_SIZE])
@@ -752,4 +767,9 @@ float SensorManager::calculateRPM(unsigned long pulseInterval, float previous)
     }
 
     return currRPM;
+}
+
+void SensorManager::setRtcTime(int sec, int minute, int hour)
+{
+    rtc->set(sec, minute, hour, 1, 1, 1, 0);
 }
