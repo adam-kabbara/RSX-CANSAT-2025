@@ -18,6 +18,10 @@ import re
 import time
 import csv
 import pyqtgraph as pg
+import pyqtgraph.opengl as gl
+import math
+from pyqtgraph import Transform3D
+from scipy.spatial.transform import Rotation as R
 from pyqtgraph import mkPen
 from enum import Enum
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
@@ -170,6 +174,16 @@ class DynamicPlotter_MultiLine(BaseDynamicPlotter):
             for i in range(self.num_lines)
         ]
 
+        label_names = ["R/X", "P/Y", "Y/Z"]
+        self.labels = []
+
+        for i in range(min(self.num_lines, 3)):
+            pen = self.get_pen_color(self.base_line_color_idx + i)
+            color = pen.color()  # Extract QColor from QPen
+            label = pg.TextItem(label_names[i], anchor=(0, 0.5), color=color)
+            self.labels.append(label)
+            self.plt.addItem(label)
+
         self.last_time = None
 
     def update_plot(self, new_vals):
@@ -188,6 +202,12 @@ class DynamicPlotter_MultiLine(BaseDynamicPlotter):
 
         for i in range(self.num_lines):
             self.curve[i].setData(self.x, self.y[i])
+
+        # Update only the first 3 labels
+        for i in range(min(self.num_lines, 3)):
+            latest_x = self.x[-1]
+            latest_y = self.y[i][-1]
+            self.labels[i].setPos(latest_x, latest_y)
     
     def reset_plot(self):
         self.databuffer = [deque([0.0] * self.timewindow, maxlen=self.timewindow) for _ in range(self.num_lines)]
@@ -757,7 +777,7 @@ class GroundStationApp(QMainWindow):
             {"title": "Pressure", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "kPa"},
             {"title": "Voltage", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "V"},
             {"title": "Gyro", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
-            {"title": "Accelerometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit":"deg/s^2"},
+            {"title": "Accelerometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit":"m/s^2"},
             {"title": "Magnetometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "G"},
             {"title": "Rotation", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
             {"title": "GPS Lat v Long", "lines": 1, "2d": True, "x_unit": "Latitude", "y_unit": "Longitude"},
@@ -805,6 +825,42 @@ class GroundStationApp(QMainWindow):
                 plotter = DynamicPlotter_2d(graph, title=entry["title"], timewindow=self.__graph_time_window,x_unit=entry["x_unit"],y_unit=entry["y_unit"])
 
             self.plotters.append(plotter)
+
+        self.rocket_3d = QWidget()
+        rocket_3d_layout = QVBoxLayout()
+
+        view = gl.GLViewWidget()
+        view.setCameraPosition(distance=15)
+        view.mousePressEvent = lambda ev: None
+        view.mouseMoveEvent = lambda ev: None
+        view.mouseReleaseEvent = lambda ev: None
+        view.wheelEvent = lambda ev: None
+
+        rocket_3d_layout.addWidget(view)
+
+        # Rocket body
+        body = gl.GLMeshItem(
+            meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.3, 0.3], length=4),
+            smooth=True, color=(1, 0, 0, 1), shader="shaded"
+        )
+        body.translate(0, 0, -2)
+        view.addItem(body)
+
+        # Rocket nose
+        nose = gl.GLMeshItem(
+            meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.3, 0.0], length=1),
+            smooth=True, color=(1, 0.5, 0, 1), shader="shaded"
+        )
+        nose.translate(0, 0, 2)
+        view.addItem(nose)
+
+        # Store references on tab widget for later access
+        self.rocket_3d.view = view
+        self.rocket_3d.body = body
+        self.rocket_3d.nose = nose
+
+        self.rocket_3d.setLayout(rocket_3d_layout)
+        self.tab_widget.addTab(self.rocket_3d, "3D")
 
         # Sidebar to show all current graph values
         sidebar_widget = QWidget()
@@ -1225,6 +1281,43 @@ class GroundStationApp(QMainWindow):
                 plotter.reset_plot()
         self.__csv_file.seek(0)
         self.__csv_file.truncate()
+        self.__packet_recv_count = 0
+        self.__packet_sent
+
+    def update_rocket_orientation(self, yaw, pitch, roll):
+
+        try:
+            v1 = float(yaw)
+            v2 = float(pitch)
+            v3 = float(roll)
+
+            if math.isnan(v1) or math.isnan(v2) or math.isnan(v3):
+                return
+        except:
+            return
+        
+        # Convert to radians
+        yaw = math.radians(yaw)
+        pitch = math.radians(pitch)
+        roll = math.radians(roll)
+
+        cy, sy = math.cos(yaw), math.sin(yaw)
+        cp, sp = math.cos(pitch), math.sin(pitch)
+        cr, sr = math.cos(roll), math.sin(roll)
+
+        # Rotation matrix (Z-Y-X order)
+        R = np.array([
+            [cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr],
+            [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr],
+            [-sp,     cp * sr,                cp * cr]
+        ])
+
+        m = Transform3D(*R.flatten().tolist() + [0]*3)
+
+        self.rocket_3d.body.resetTransform()
+        self.rocket_3d.nose.resetTransform()
+        self.rocket_3d.body.setTransform(m)
+        self.rocket_3d.nose.setTransform(m)
 
     def set_port_text_closed(self):
          self.label_port.setText(f'<span style="color:black;">Ground Port: \
@@ -1250,6 +1343,8 @@ class GroundStationApp(QMainWindow):
     
     # Upon receiving telemetry string, extract contents and update fields
     def parse_telemetry_string(self, msg):
+
+        #TODO: dont update if fields are invalid (none, empty)
         self.__packet_recv_count += 1
         self.update_packet_label()
         
@@ -1346,6 +1441,7 @@ class GroundStationApp(QMainWindow):
             
         data_dict = data.to_dict()
         self.__csv_writer.writerow(data_dict)
+        self.update_rocket_orientation(data.GYRO_Y, data.GYRO_P, data.GYRO_R)
     
     def extract_data_str(self, msg: str) -> TelemetryData:
         # EXPECTED FORMAT:
