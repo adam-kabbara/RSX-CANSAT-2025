@@ -1,6 +1,8 @@
 #include "sensorManager.h"
 
 HardwareSerial GPS_Serial(1);
+SPIClass mySPI(VSPI);
+Adafruit_BNO08x bno08x(BNO_RST_PIN);
 
 OperatingState SensorManager::updateState(OperatingState curr_state, MissionManager &mission_info)
 {

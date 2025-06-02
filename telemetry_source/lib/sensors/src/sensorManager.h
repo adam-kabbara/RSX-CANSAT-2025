@@ -62,13 +62,12 @@ private:
     altitude_data alt_data;
     Adafruit_BME280 bme;
     TinyGPSPlus gps;
+    Adafruit_LIS3MDL lis3mdl;
+
     Servo m_servo_release;
     Servo m_servo_gyro_1;
     Servo m_servo_gyro_2;
     Servo m_servo_camera;
-    SPIClass mySPI(VSPI);
-    Adafruit_BNO08x bno08x(BNO_RST_PIN);
-    Adafruit_LIS3MDL lis3mdl;
     
     int currState = 0;
     int lastState = 0;
