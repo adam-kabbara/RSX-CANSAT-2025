@@ -6,15 +6,19 @@
 #include "missionManager.h"
 
 #include <Adafruit_BME280.h>
-#include <Wire.h>
 #include <TinyGPS++.h>
 #include <ESP32Servo.h>
 #include <HardwareSerial.h>
+#include <Adafruit_BNO08x.h>
+#include <Adafruit_LIS3MDL.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <math.h>
 
 class SensorManager
 {
 private:
-
+    
     typedef struct transmission_packet {
         int TEAM_ID_PCKT = 0;
         char MISSION_TIME[DATA_SIZE] = "";
@@ -43,7 +47,7 @@ private:
         char CMD_ECHO[CMD_BUFF_SIZE] = "";
         int CAMERA_STATUS = 0;
     } transmission_packet;
-
+    
     transmission_packet send_packet;
 
     typedef struct altitude_data {
@@ -62,7 +66,10 @@ private:
     Servo m_servo_gyro_1;
     Servo m_servo_gyro_2;
     Servo m_servo_camera;
-
+    SPIClass mySPI(VSPI);
+    Adafruit_BNO08x bno08x(BNO_RST_PIN);
+    Adafruit_LIS3MDL lis3mdl;
+    
     int currState = 0;
     int lastState = 0;
     float currRPM = 0.0;
@@ -129,6 +136,8 @@ public:
     void getAccelData(float *r, float *p, float *y);
 
     void getGyroData(float *r, float *p, float *y);
+
+    float quaternionToYawDegrees(float r, float i, float j, float k);
 };
 
 #endif /* SENSOR_MANAGER_H */

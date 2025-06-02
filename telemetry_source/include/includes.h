@@ -40,6 +40,13 @@
 #define HALL_SENSOR_PIN 34
 #define ADC_VOLTAGE_PIN 39
 
+#define BNO_CS_PIN 15
+#define BNO_INT_PIN 35
+#define BNO_RST_PIN 5
+#define BNO_SPI_SCK 18
+#define BNO_SPI_MISO 19
+#define BNO_SPI_MOSI 23
+
 enum SimModeStatus {
     SIM_OFF = 0,
     SIM_EN = 1,

@@ -484,12 +484,13 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
 {
     // Temperature and Pressure
     uint8_t status = bme.begin(0x77);
-    ser.sendInfoDataMsg("BME STATUS=%0d", status);
+    ser.sendInfoDataMsg("Initialized BME with status: %0d", status);
     delay(100);
 
     // Hall Effect Sensor
     pinMode(HALL_SENSOR_PIN, INPUT);
     delay(100);
+    ser.sendInfoMsg("Initialized hall sensor...");
     
     // Release Servo
     m_servo_release.attach(SERVO_RELEASE_PIN);
@@ -502,10 +503,12 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
         writeReleaseServo(0);
     }
     delay(100);
+    ser.sendInfoMsg("Initialized release servo...");
 
     // GPS
     GPS_Serial.begin(9600, SERIAL_8N1, RX1_PIN, TX1_PIN);
     delay(100);
+    ser.sendInfoMsg("Initialized GPS...");
     
     // Gyro Servo 1
     m_servo_gyro_1.attach(SERVO_GYRO1_PIN);
@@ -533,6 +536,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
         writeCameraServo(90);
         delay(100);
     }
+    ser.sendInfoMsg("Initialized other servos...");
     
     // Camera Signal Pins (Trigger)
     pinMode(CAMERA1_SIGNAL_PIN, OUTPUT);
@@ -545,8 +549,9 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     delay(100);
     pinMode(CAMERA2_STATUS_PIN, INPUT);
     delay(100);
+    ser.sendInfoMsg("Initialized camera...");
     
-    ser.sendInfoMsg("Sensors initialized");
+    ser.sendInfoMsg("Done.");
 }
 
 void SensorManager::setPacketCount(int count)
@@ -674,6 +679,14 @@ float SensorManager::calculateRPM(unsigned long pulseInterval, float previous)
     }
 
     return currRPM;
+}
+
+float SensorManager::quaternionToYawDegrees(float r, float i, float j, float k)
+{
+  float yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
+  float yaw_deg = yaw * 180.0 / PI;
+  if (yaw_deg < 0) yaw_deg += 360.0;
+  return yaw_deg;
 }
 
 void SensorManager::getMagData(float *r, float *p, float *y)
