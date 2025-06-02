@@ -830,7 +830,7 @@ class GroundStationApp(QMainWindow):
         rocket_3d_layout = QVBoxLayout()
 
         view = gl.GLViewWidget()
-        view.setCameraPosition(distance=15)
+        view.setCameraPosition(distance=10)
         view.mousePressEvent = lambda ev: None
         view.mouseMoveEvent = lambda ev: None
         view.mouseReleaseEvent = lambda ev: None
@@ -840,24 +840,15 @@ class GroundStationApp(QMainWindow):
 
         # Rocket body
         body = gl.GLMeshItem(
-            meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.3, 0.3], length=4),
+            meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.5, 0.5], length=3),
             smooth=True, color=(1, 0, 0, 1), shader="shaded"
         )
-        body.translate(0, 0, -2)
+        body.translate(0, 0, -1)
         view.addItem(body)
-
-        # Rocket nose
-        nose = gl.GLMeshItem(
-            meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.3, 0.0], length=1),
-            smooth=True, color=(1, 0.5, 0, 1), shader="shaded"
-        )
-        nose.translate(0, 0, 2)
-        view.addItem(nose)
 
         # Store references on tab widget for later access
         self.rocket_3d.view = view
         self.rocket_3d.body = body
-        self.rocket_3d.nose = nose
 
         self.rocket_3d.setLayout(rocket_3d_layout)
         self.tab_widget.addTab(self.rocket_3d, "3D")
@@ -1312,12 +1303,19 @@ class GroundStationApp(QMainWindow):
             [-sp,     cp * sr,                cp * cr]
         ])
 
-        m = Transform3D(*R.flatten().tolist() + [0]*3)
+        # Convert to 4x4 matrix
+        matrix = [
+            R[0][0], R[0][1], R[0][2], 0,
+            R[1][0], R[1][1], R[1][2], 0,
+            R[2][0], R[2][1], R[2][2], 0,
+            0,       0,       0,       1
+        ]
+
+        m = Transform3D(*matrix)
 
         self.rocket_3d.body.resetTransform()
-        self.rocket_3d.nose.resetTransform()
         self.rocket_3d.body.setTransform(m)
-        self.rocket_3d.nose.setTransform(m)
+        self.rocket_3d.body.translate(0, 0, -1)
 
     def set_port_text_closed(self):
          self.label_port.setText(f'<span style="color:black;">Ground Port: \
