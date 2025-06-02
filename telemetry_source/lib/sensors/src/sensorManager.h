@@ -74,9 +74,6 @@ private:
     SPIClass *mySPI;
     Adafruit_BNO08x *bno08x;
     Adafruit_LIS3MDL lis3mdl;
-
-    float yaw_estimate = 0.0;
-    float yaw_cov = 1.0;
     
     int currState = 0;
     int lastState = 0;
@@ -141,18 +138,6 @@ public:
 
     float calculateRPM(unsigned long pulseInterval, float previous);
 
-    void getMagData(float *r, float *p, float *y);
-
-    void getAccelData(float *r, float *p, float *y);
-
-    void getGyroData(float *r, float *p, float *y);
-
-    float quaternionToYawDegrees(float r, float i, float j, float k);
-
-    float computeTiltCompensatedYaw(float mx, float my, float mz,
-                                float ax, float ay, float az);
-
-    void kalmanUpdate(float gyro_z, float mag_yaw, float dt);
 };
 
 #endif /* SENSOR_MANAGER_H */

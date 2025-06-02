@@ -279,35 +279,73 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
     
     send_packet.VOLTAGE = getVoltage();
 
-    float roll = 0.0;
-    float pitch = 0.0;
-    float yaw = 0.0;
+    // IMU
+    for(int i = 0; i < 3; i++)
+    {
+        sh2_SensorValue_t sensorValue;
+        if(bno08x->getSensorEvent(&sensorValue))
+        {
+            switch(sensorValue.sensorId)
+            {
+                case SH2_ACCELEROMETER:
+                    send_packet.ACCEL_R = sensorValue.un.accelerometer.x;
+                    send_packet.ACCEL_P = sensorValue.un.accelerometer.y;
+                    send_packet.ACCEL_Y = sensorValue.un.accelerometer.z;
+                    break;
+                
+                case SH2_GYROSCOPE_CALIBRATED:
+                    send_packet.GYRO_R = sensorValue.un.gyroscope.y * RAD_TO_DEG;
+                    send_packet.GYRO_P = sensorValue.un.gyroscope.x * RAD_TO_DEG;
+                    send_packet.GYRO_Y = sensorValue.un.gyroscope.z * RAD_TO_DEG;
+                    break;
+                
+                case SH2_ROTATION_VECTOR:
+                    float qw = sensorValue.un.rotationVector.real;
+                    float qx = sensorValue.un.rotationVector.i;
+                    float qy = sensorValue.un.rotationVector.j;
+                    float qz = sensorValue.un.rotationVector.k;
 
-    getGyroData(&roll, &pitch, &yaw);
+                    // Convert quaternion to Euler angles (roll, pitch, yaw in radians)
+                    float roll  = atan2(2.0f * (qw * qx + qy * qz),
+                                        1.0f - 2.0f * (qx * qx + qy * qy));
+                    float pitch = asin(2.0f * (qw * qy - qz * qx));
+                    float yaw   = atan2(2.0f * (qw * qz + qx * qy),
+                                        1.0f - 2.0f * (qy * qy + qz * qz));
 
-    send_packet.GYRO_R = roll;
-    send_packet.GYRO_P = pitch;
-    send_packet.GYRO_Y = yaw;
+                    // Convert radians to degrees
+                    roll  *= 180.0 / PI;
+                    pitch *= 180.0 / PI;
+                    yaw   *= 180.0 / PI;
 
-    roll = 0.0;
-    pitch = 0.0;
-    yaw = 0.0;
+                    lis3mdl.read();
+                    float mx = lis3mdl.x / 100;
+                    float my = lis3mdl.y / 100;
+                    float mz = lis3mdl.z / 100;
 
-    getAccelData(&roll, &pitch, &yaw);
+                    float cr = cos(roll),  sr = sin(roll);
+                    float cp = cos(pitch), sp = sin(pitch);
+                    float cy = cos(yaw),   sy = sin(yaw);
 
-    send_packet.ACCEL_R = roll;
-    send_packet.ACCEL_P = pitch;
-    send_packet.ACCEL_Y = yaw;
+                    // Rotation matrix from sensor (XYZ) to RPY frame
+                    float R[3][3] = {
+                    { cp * cy,                         cp * sy,                        -sp      },
+                    { sr * sp * cy - cr * sy,         sr * sp * sy + cr * cy,         sr * cp },
+                    { cr * sp * cy + sr * sy,         cr * sp * sy - sr * cy,         cr * cp }
+                    };
 
-    roll = 0.0;
-    pitch = 0.0;
-    yaw = 0.0;
+                    // Rotate magnetic vector
+                    float mag_r = R[0][0]*mx + R[0][1]*my + R[0][2]*mz;
+                    float mag_p = R[1][0]*mx + R[1][1]*my + R[1][2]*mz;
+                    float mag_y = R[2][0]*mx + R[2][1]*my + R[2][2]*mz;
 
-    getMagData(&roll, &pitch, &yaw);
+                    send_packet.MAG_R = roll;
+                    send_packet.MAG_P = pitch;
+                    send_packet.MAG_Y = yaw;
 
-    send_packet.MAG_R = roll;
-    send_packet.MAG_P = pitch;
-    send_packet.MAG_Y = yaw;
+                    break;
+            }
+        }
+    }
 
     send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
 
@@ -714,67 +752,4 @@ float SensorManager::calculateRPM(unsigned long pulseInterval, float previous)
     }
 
     return currRPM;
-}
-
-float SensorManager::quaternionToYawDegrees(float r, float i, float j, float k)
-{
-  float yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
-  float yaw_deg = yaw * 180.0 / PI;
-  if (yaw_deg < 0) yaw_deg += 360.0;
-  return yaw_deg;
-}
-
-float SensorManager::computeTiltCompensatedYaw(float mx, float my, float mz,
-                                float ax, float ay, float az) 
-{
-  float norm = sqrt(ax * ax + ay * ay + az * az);
-  if (norm == 0) return 0;
-  ax /= norm;
-  ay /= norm;
-  az /= norm;
-
-  float pitch = asin(-ax);
-  float roll = atan2(ay, az);
-
-  float Xh = mx * cos(pitch) + mz * sin(pitch);
-  float Yh = mx * sin(roll) * sin(pitch) + my * cos(roll) - mz * sin(roll) * cos(pitch);
-
-  float heading = atan2(Yh, Xh);
-  float heading_deg = heading * 180.0 / PI;
-  if (heading_deg < 0) heading_deg += 360.0;
-  return heading_deg;
-}
-
-void SensorManager::getMagData(float *r, float *p, float *y)
-{
-    *r = 0.0;
-    *p = 0.0;
-    *y = 0.0;
-}
-
-void SensorManager::getGyroData(float *r, float *p, float *y)
-{
-    *r = 0.0;
-    *p = 0.0;
-    *y = 0.0;
-}
-
-void SensorManager::getAccelData(float *r, float *p, float *y)
-{
-    *r = 0.0;
-    *p = 0.0;
-    *y = 0.0;
-}
-
-void SensorManager::kalmanUpdate(float gyro_z, float mag_yaw, float dt)
-{
-  yaw_estimate += gyro_z * dt * 180.0 / PI;  // convert rad/s to deg/s
-  yaw_cov += KALMAN_Q;
-
-  if (yaw_estimate < 0) yaw_estimate += 360.0;
-  if (yaw_estimate >= 360.0) yaw_estimate -= 360.0;
-
-  float K = yaw_cov / (yaw_cov + KALMAN_R);
-  yaw_estimate += K * (mag_yaw - yaw_estimate);
-  yaw_cov *= (1 - K);
 }
