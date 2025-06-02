@@ -87,6 +87,8 @@ private:
 
 public:
 
+    SensorManager();
+
     OperatingState updateState(OperatingState curr_state, MissionManager &mission_info);
 
     void sampleSensors(MissionManager &mission_info);

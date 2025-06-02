@@ -560,12 +560,31 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     mySPI->begin(BNO_SPI_SCK, BNO_SPI_MISO, BNO_SPI_MOSI);
     if (!bno08x->begin_SPI(BNO_CS_PIN, BNO_INT_PIN, mySPI)) 
     {
-        ser.sendInfoMsg("BNO was not detected.");
+        ser.sendErrorMsg("BNO was not detected.");
+    }
+    else
+    {
+        ser.sendInfoMsg("BNO initialized over SPI");
     }
     
     bno08x->enableReport(SH2_ARVR_STABILIZED_RV);
     bno08x->enableReport(SH2_ACCELEROMETER);
     bno08x->enableReport(SH2_GYROSCOPE_CALIBRATED);
+
+    if (!lis3mdl.begin_I2C()) 
+    {
+        ser.sendErrorMsg("LIS3MDL was not detected.");
+    }
+    else
+    {
+        ser.sendInfoMsg("LIS3MDL initialized over I2C");
+    }
+
+    lis3mdl.setPerformanceMode(LIS3MDL_LOWPOWERMODE);
+    lis3mdl.setOperationMode(LIS3MDL_CONTINUOUSMODE);
+    lis3mdl.setDataRate(LIS3MDL_DATARATE_155_HZ);
+    lis3mdl.setRange(LIS3MDL_RANGE_4_GAUSS);
+    lis3mdl.setIntThreshold(500);
     
     ser.sendInfoMsg("Done.");
 }
