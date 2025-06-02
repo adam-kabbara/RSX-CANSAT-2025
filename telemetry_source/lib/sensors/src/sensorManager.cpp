@@ -1,7 +1,5 @@
 #include "sensorManager.h"
 
-HardwareSerial GPS_Serial(1);
-
 OperatingState SensorManager::updateState(OperatingState curr_state, MissionManager &mission_info)
 {
     int idx = alt_data.idx - 1;
@@ -550,6 +548,9 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     pinMode(CAMERA2_STATUS_PIN, INPUT);
     delay(100);
     ser.sendInfoMsg("Initialized camera...");
+
+    mySPI = new SPIClass(VSPI);
+    bno08x = new Adafruit_BNO08x(BNO_RST_PIN);
     
     ser.sendInfoMsg("Done.");
 }
@@ -689,6 +690,27 @@ float SensorManager::quaternionToYawDegrees(float r, float i, float j, float k)
   return yaw_deg;
 }
 
+float SensorManager::computeTiltCompensatedYaw(float mx, float my, float mz,
+                                float ax, float ay, float az) 
+{
+  float norm = sqrt(ax * ax + ay * ay + az * az);
+  if (norm == 0) return 0;
+  ax /= norm;
+  ay /= norm;
+  az /= norm;
+
+  float pitch = asin(-ax);
+  float roll = atan2(ay, az);
+
+  float Xh = mx * cos(pitch) + mz * sin(pitch);
+  float Yh = mx * sin(roll) * sin(pitch) + my * cos(roll) - mz * sin(roll) * cos(pitch);
+
+  float heading = atan2(Yh, Xh);
+  float heading_deg = heading * 180.0 / PI;
+  if (heading_deg < 0) heading_deg += 360.0;
+  return heading_deg;
+}
+
 void SensorManager::getMagData(float *r, float *p, float *y)
 {
     *r = 0.0;
@@ -708,4 +730,17 @@ void SensorManager::getAccelData(float *r, float *p, float *y)
     *r = 0.0;
     *p = 0.0;
     *y = 0.0;
+}
+
+void SensorManager::kalmanUpdate(float gyro_z, float mag_yaw, float dt)
+{
+  yaw_estimate += gyro_z * dt * 180.0 / PI;  // convert rad/s to deg/s
+  yaw_cov += KALMAN_Q;
+
+  if (yaw_estimate < 0) yaw_estimate += 360.0;
+  if (yaw_estimate >= 360.0) yaw_estimate -= 360.0;
+
+  float K = yaw_cov / (yaw_cov + KALMAN_R);
+  yaw_estimate += K * (mag_yaw - yaw_estimate);
+  yaw_cov *= (1 - K);
 }

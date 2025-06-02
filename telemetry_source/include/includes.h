@@ -47,6 +47,9 @@
 #define BNO_SPI_MISO 19
 #define BNO_SPI_MOSI 23
 
+#define KALMAN_R 1.0
+#define KALMAN_Q 0.01
+
 enum SimModeStatus {
     SIM_OFF = 0,
     SIM_EN = 1,
