@@ -1,5 +1,12 @@
 #include "sensorManager.h"
 
+SensorManager::SensorManager()
+{
+    GPS_Serial = new HardwareSerial(1);
+    mySPI = new SPIClass(VSPI);
+    bno08x = new Adafruit_BNO08x(BNO_RST_PIN);
+}
+
 OperatingState SensorManager::updateState(OperatingState curr_state, MissionManager &mission_info)
 {
     int idx = alt_data.idx - 1;
@@ -304,10 +311,10 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
 
     send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
 
-    int gps_avail = GPS_Serial.available();
+    int gps_avail = GPS_Serial->available();
     for(int i = 0; i < gps_avail; i++)
     {
-        gps.encode(GPS_Serial.read());
+        gps.encode(GPS_Serial->read());
     }
 
     if(gps.location.isUpdated())
@@ -504,7 +511,8 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     ser.sendInfoMsg("Initialized release servo...");
 
     // GPS
-    GPS_Serial.begin(9600, SERIAL_8N1, RX1_PIN, TX1_PIN);
+    GPS_Serial = new HardwareSerial(1);
+    GPS_Serial->begin(9600, SERIAL_8N1, RX1_PIN, TX1_PIN);
     delay(100);
     ser.sendInfoMsg("Initialized GPS...");
     
@@ -548,9 +556,6 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     pinMode(CAMERA2_STATUS_PIN, INPUT);
     delay(100);
     ser.sendInfoMsg("Initialized camera...");
-
-    mySPI = new SPIClass(VSPI);
-    bno08x = new Adafruit_BNO08x(BNO_RST_PIN);
     
     ser.sendInfoMsg("Done.");
 }

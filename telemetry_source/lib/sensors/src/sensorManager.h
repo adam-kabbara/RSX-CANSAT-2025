@@ -62,6 +62,8 @@ private:
     altitude_data alt_data;
     Adafruit_BME280 bme;
     TinyGPSPlus gps;
+    Adafruit_LIS3MDL lis3mdl;
+
     Servo m_servo_release;
     Servo m_servo_gyro_1;
     Servo m_servo_gyro_2;
