@@ -1,84 +1,68 @@
 // Date and time functions using a DS1307 RTC connected via I2C and Wire lib
 
 #include <Arduino.h>
-#include "RTClib.h"
+#include <uRTCLib.h>
 
-RTC_DS1307 rtc;
+// Define I2C pins for ESP32
+#define I2C_SDA 21
+#define I2C_SCL 22
 
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+uRTCLib rtc(0x68);
 
-void setup () {
-  Serial.begin(115200);
-
-// #ifndef ESP8266
-//   while (!Serial); // wait for serial port to connect. Needed for native USB
-// #endif
-
-  if (! rtc.begin()) {
-    Serial.println("Couldn't find RTC");
-    Serial.flush();
-    while (1) delay(10);
-  }
-
-  if (! rtc.isrunning()) {
-    Serial.println("RTC is NOT running, let's set the time!");
-    // When time needs to be set on a new device, or after a power loss, the
-    // following line sets the RTC to the date & time this sketch was compiled
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    // This line sets the RTC with an explicit date & time, for example to set
-    // January 21, 2014 at 3am you would call:
-    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
-  }
-
-  // When time needs to be re-set on a previously configured device, the
-  // following line sets the RTC to the date & time this sketch was compiled
-  // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  // This line sets the RTC with an explicit date & time, for example to set
-  // January 21, 2014 at 3am you would call:
-  // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+// Function to set only hours and minutes
+void setTimeOnly(int hour, int minute) {
+	// Set time with other values at 0
+	// Parameters: second, minute, hour, dayOfWeek, dayOfMonth, month, year
+	rtc.set(0, minute, hour, 1, 1, 1, 0);
 }
 
-void loop () {
-    DateTime now = rtc.now();
+void setup() {
+	delay(2000);
+	Serial.begin(115200);
+	Serial.println("Serial OK");
 
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.print(now.day(), DEC);
-    Serial.print(" (");
-    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-    Serial.print(") ");
-    Serial.print(now.hour(), DEC);
-    Serial.print(':');
-    Serial.print(now.minute(), DEC);
-    Serial.print(':');
-    Serial.print(now.second(), DEC);
-    Serial.println();
+	// Initialize I2C with explicit pins for ESP32
+	Wire.begin(I2C_SDA, I2C_SCL);
+	
+	// Check if RTC is responding
+	Wire.beginTransmission(0x68);
+	byte error = Wire.endTransmission();
+	
+	if (error == 0) {
+		Serial.println("RTC found!");
+		// Example: Set time to 14:30 (2:30 PM)
+		setTimeOnly(14, 30);
+	} else {
+		Serial.print("RTC not found! Error: ");
+		Serial.println(error);
+	}
+}
 
-    Serial.print(" since midnight 1/1/1970 = ");
-    Serial.print(now.unixtime());
-    Serial.print("s = ");
-    Serial.print(now.unixtime() / 86400L);
-    Serial.println("d");
+void loop() {
+	rtc.refresh();
 
-    // calculate a date which is 7 days, 12 hours, 30 minutes, and 6 seconds into the future
-    DateTime future (now + TimeSpan(7,12,30,6));
+	Serial.print("RTC DateTime: ");
+	Serial.print(rtc.year());
+	Serial.print('/');
+	Serial.print(rtc.month());
+	Serial.print('/');
+	Serial.print(rtc.day());
 
-    Serial.print(" now + 7d + 12h + 30m + 6s: ");
-    Serial.print(future.year(), DEC);
-    Serial.print('/');
-    Serial.print(future.month(), DEC);
-    Serial.print('/');
-    Serial.print(future.day(), DEC);
-    Serial.print(' ');
-    Serial.print(future.hour(), DEC);
-    Serial.print(':');
-    Serial.print(future.minute(), DEC);
-    Serial.print(':');
-    Serial.print(future.second(), DEC);
-    Serial.println();
+	Serial.print(' ');
 
-    Serial.println();
-    delay(3000);
+	Serial.print(rtc.hour());
+	Serial.print(':');
+	Serial.print(rtc.minute());
+	Serial.print(':');
+	Serial.print(rtc.second());
+
+	Serial.print(" DOW: ");
+	Serial.print(rtc.dayOfWeek());
+
+	Serial.print(" - Temp: ");
+	Serial.print(rtc.temp()  / 100);
+
+	Serial.println();
+
+	delay(1000);
 }
