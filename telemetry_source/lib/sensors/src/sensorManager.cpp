@@ -556,6 +556,16 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     pinMode(CAMERA2_STATUS_PIN, INPUT);
     delay(100);
     ser.sendInfoMsg("Initialized camera...");
+
+    mySPI->begin(BNO_SPI_SCK, BNO_SPI_MISO, BNO_SPI_MOSI);
+    if (!bno08x->begin_SPI(BNO_CS_PIN, BNO_INT_PIN, mySPI)) 
+    {
+        ser.sendInfoMsg("BNO was not detected.");
+    }
+    
+    bno08x->enableReport(SH2_ARVR_STABILIZED_RV);
+    bno08x->enableReport(SH2_ACCELEROMETER);
+    bno08x->enableReport(SH2_GYROSCOPE_CALIBRATED);
     
     ser.sendInfoMsg("Done.");
 }
