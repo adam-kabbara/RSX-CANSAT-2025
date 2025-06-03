@@ -77,11 +77,10 @@ private:
     Adafruit_LIS3MDL lis3mdl;
 
     uRTCLib *rtc;
-    
-    int currState = 0;
-    int lastState = 0;
+
     float currRPM = 0.0;
     float prevRPM = 0.0;
+    int lastState = HIGH;
     unsigned long lastPulseTime = 0;
     unsigned long pulseInterval = 0;
 
@@ -138,8 +137,6 @@ public:
     float getVoltage();
 
     float getRotRate();
-
-    float calculateRPM(unsigned long pulseInterval, float previous);
 
     void setRtcTime(int sec, int minute, int hour);
 

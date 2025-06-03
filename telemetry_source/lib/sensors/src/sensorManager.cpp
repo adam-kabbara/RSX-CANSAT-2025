@@ -533,6 +533,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
 
     // Hall Effect Sensor
     pinMode(HALL_SENSOR_PIN, INPUT);
+    pinMode(ONBOARD_LED_PIN, OUTPUT);
     delay(100);
     ser.sendInfoMsg("Initialized hall sensor...");
     
@@ -733,42 +734,27 @@ float SensorManager::getVoltage()
 
 float SensorManager::getRotRate()
 {
-    currState = digitalRead(HALL_SENSOR_PIN);
+    int analogValue = analogRead(HALL_SENSOR_PIN);
+    int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
 
-    // Turns on LED and calculates starting time when magnet comes across the hall effect sensor
-    if (currState == LOW && lastState == HIGH)
-    {
-        digitalWrite(2, HIGH);
-        unsigned long currentTime = micros();
-        pulseInterval = currentTime - lastPulseTime;
-        lastPulseTime = currentTime;
+    if (currState == LOW && lastState == HIGH) {
+        digitalWrite(ONBOARD_LED_PIN, HIGH);
+        unsigned long now = micros();
+        pulseInterval = now - lastPulseTime;
+        lastPulseTime = now;
+        if (pulseInterval > 0) {
+            currRPM = 60.0 * 1000000.0 / pulseInterval;
+            if (currRPM > 2000.0) {
+                currRPM = prevRPM;
+            }
+            prevRPM = currRPM;
+        }
     } else {
-        digitalWrite(2, LOW);
+        digitalWrite(ONBOARD_LED_PIN, LOW);
     }
 
-    currRPM = calculateRPM(pulseInterval, prevRPM);
-    prevRPM = currRPM; // Resets the RPM state
-
-    lastState = currState; // Resets the hall effect state
-    
+    lastState = currState;
     return currRPM * 6.0;
-}
-
-float SensorManager::calculateRPM(unsigned long pulseInterval, float previous)
-{
-    // Calculates the RPM value using the substracted time
-    if ((currState == LOW) && (lastState == HIGH) && (pulseInterval > 0))
-    {
-        currRPM = (60.0 * 1000000) / pulseInterval;
-    }
-
-    // Filters out extreme RPM calculations 
-    if (currRPM > 2000.0)
-    {
-        currRPM = previous;
-    }
-
-    return currRPM;
 }
 
 void SensorManager::setRtcTime(int sec, int minute, int hour)
