@@ -733,7 +733,7 @@ float SensorManager::getVoltage()
         1942.37477 * pow(adc_voltage, 3) -
         6281.94345 * pow(adc_voltage, 2) +
         9018.07141 * adc_voltage -
-        4845.86174;
+        4845.86174 + 0.1;
     return real_voltage;
 }
 
@@ -742,19 +742,24 @@ float SensorManager::getRotRate()
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
 
-    if (currState == LOW && lastState == HIGH) {
+    if(currState == LOW && lastState == HIGH)
+    {
         digitalWrite(ONBOARD_LED_PIN, HIGH);
         unsigned long now = micros();
         pulseInterval = now - lastPulseTime;
         lastPulseTime = now;
-        if (pulseInterval > 0) {
+        if (pulseInterval > 0)
+        {
             currRPM = 60.0 * 1000000.0 / pulseInterval;
-            if (currRPM > 2000.0) {
+            if (currRPM > 2000.0)
+            {
                 currRPM = prevRPM;
             }
             prevRPM = currRPM;
         }
-    } else {
+    } 
+    else
+    {
         digitalWrite(ONBOARD_LED_PIN, LOW);
     }
 
