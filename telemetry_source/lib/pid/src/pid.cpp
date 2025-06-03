@@ -176,8 +176,6 @@ void PIDController::kalmanUpdate(float gyro_z, float mag_yaw, float dt) {
   yaw_cov *= (1 - K);
 }
 
-
-
 bool PIDController::hasMissedNorthTooLong(float yaw_estimate) {
     unsigned long now = millis();
 
@@ -198,9 +196,8 @@ bool PIDController::hasMissedNorthTooLong(float yaw_estimate) {
   }
 
 
-float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float bnoYaw, float mx, float my, float mz)
+float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float mx, float my, float mz)
 {
-
     unsigned long now = millis();
     float dt = (now - lastUpdate) / 1000.0;
     lastUpdate = now;
@@ -211,11 +208,11 @@ float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float
     kalmanUpdate(gyroZ, magYaw, dt);
 
     float setpoint = 0.0f;
-    float finCmd = pidController.compute(setpoint, yaw_estimate);
+    float finCmd = pidController->compute(setpoint, yaw_estimate);
     float error = fmod((setpoint - yaw_estimate + 540.0f), 360.0f) - 180.0f;
-    tuner.update(fabs(error));
+    tuner->update(fabs(error));
     if ((!swapped) && hasMissedNorthTooLong(yaw_estimate)){
-        pidController.setGains(0.6267f, 0, 0.9488f);        
+        pidController->setGains(0.6267f, 0, 0.9488f);        
         swapped = true;
     }
 
