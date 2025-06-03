@@ -726,9 +726,8 @@ void SensorManager::getGpsTime(char time_str[DATA_SIZE])
 float SensorManager::getVoltage()
 {
     int adc_raw = analogRead(ADC_VOLTAGE_PIN);
-    float adc_voltage = (adc_raw / 4096.0) * 3.3;
-    
-    float real_voltage = adc_voltage / ADC_LINEAR_REGRESSION;
+    float adc_voltage = ((adc_raw / 4095.0) * 3.3) + 0.15;
+    float real_voltage = 8.29909*adc_voltage - 10.78987;
     return real_voltage;
 }
 
