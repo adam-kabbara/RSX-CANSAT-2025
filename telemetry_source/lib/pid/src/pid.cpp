@@ -178,12 +178,25 @@ void PIDController::kalmanUpdate(float gyro_z, float mag_yaw, float dt) {
 
 
 
-PIDController::PIDController()
-{
-    pidController = new PID(0.6267, 0, 0.9488, FIN_LIMIT);
-    tuner = new SimpleAutoTuner(*pidController, TUNER_WINDOW, TUNER_THRESH, TUNER_FACTOR);
-    lastUpdate = millis();
-}
+bool PIDController::hasMissedNorthTooLong(float yaw_estimate) {
+    unsigned long now = millis();
+
+    // Normalize yaw_estimate into [0, 360)
+    float y = fmodf(yaw_estimate, 360.0f);
+    if (y < 0.0f) y += 360.0f;
+
+    // How far is y from 0°?  (take the shorter wraparound distance)
+    float delta_to_north = min(y, 360.0f - y);
+
+    if (delta_to_north <= NORTH_TOLERANCE_DEG) {
+      // We’re “close enough” to north—reset the timer
+      last_time_at_north = now;
+    }
+
+    // If it’s been more than NORTH_TIMEOUT_MS since we were “close enough”:
+    return (now - last_time_at_north) > NORTH_TIMEOUT_MS;
+  }
+
 
 float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float bnoYaw, float mx, float my, float mz)
 {
@@ -191,12 +204,20 @@ float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float
     unsigned long now = millis();
     float dt = (now - lastUpdate) / 1000.0;
     lastUpdate = now;
+    
+    float magYaw = computeTiltCompensatedYaw(mx, my, mz, ax, ay, az);
 
     // Kalman filter
     kalmanUpdate(gyroZ, magYaw, dt);
 
     float setpoint = 0.0f;
     float finCmd = pidController.compute(setpoint, yaw_estimate);
-    tuner.update(fabs(setpoint - yaw_estimate));
+    float error = fmod((setpoint - yaw_estimate + 540.0f), 360.0f) - 180.0f;
+    tuner.update(fabs(error));
+    if ((!swapped) && hasMissedNorthTooLong(yaw_estimate)){
+        pidController.setGains(0.6267f, 0, 0.9488f);        
+        swapped = true;
+    }
+
     return finCmd;
 }
