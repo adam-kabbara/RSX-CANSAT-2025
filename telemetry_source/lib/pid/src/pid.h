@@ -61,7 +61,6 @@ private:
     const uint8_t TUNER_WINDOW = 5;
     const float   TUNER_THRESH = 5.0f;
     const float   TUNER_FACTOR = 0.8f;
-    const float FIN_LIMIT = 15.0f;
     float yaw_estimate = 0.0;
     float yaw_cov = 1.0;
     const float Q = 0.01;  // process noise
@@ -88,7 +87,7 @@ public:
         lastUpdate = millis();
     }
     void kalmanUpdate(float gyro_z, float mag_yaw, float dt);
-    void update_PID(float ax, float ay, float az, float gyroZ, float bnoYaw, float mx, float my, float mz, float* fin_left, float* fin_right);
+    void update_PID(float ax, float ay, float az, float gyroZ, float mx, float my, float mz, float* fin_left, float* fin_right);
     bool hasMissedNorthTooLong(float yaw_estimate);
     float quaternionToYawDegrees(float r, float i, float j, float k);
     float computeTiltCompensatedYaw(float mx, float my, float mz,float ax, float ay, float az);
