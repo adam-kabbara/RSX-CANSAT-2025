@@ -66,10 +66,30 @@ private:
     const float Q = 0.01;  // process noise
     const float R = 1.0;   // measurement noise
     unsigned long lastUpdate = 0;
+
+    // How close to “true north” we call “close enough” (in degrees)
+    static constexpr float NORTH_TOLERANCE_DEG = 5.0f;
+
+    // Timeout threshold in milliseconds (e.g. if T = 2 seconds, T_ms = 2000)
+    const unsigned long NORTH_TIMEOUT_MS;
+
+    // Timestamp of the last moment yaw_estimate was within ±NORTH_TOLERANCE_DEG of north.
+    unsigned long last_time_at_north;
+    bool swapped = false;
+
 public:
-    PIDController();
+  // Modify constructor to accept a timeout in seconds (or ms):
+    PIDController(unsigned long north_timeout_ms = 2000UL)
+        : NORTH_TIMEOUT_MS(north_timeout_ms),
+        last_time_at_north(millis())
+    {
+        pidController = new PID(0.6267, 0, 0.9488, FIN_LIMIT);
+        tuner = new SimpleAutoTuner(*pidController, TUNER_WINDOW, TUNER_THRESH, TUNER_FACTOR);
+        lastUpdate = millis();
+    }
     void kalmanUpdate(float gyro_z, float mag_yaw, float dt);
     float update_PID(float ax, float ay, float az, float gyroZ, float bnoYaw, float mx, float my, float mz);
+    bool hasMissedNorthTooLong(float yaw_estimate);
 };
 
 #endif
