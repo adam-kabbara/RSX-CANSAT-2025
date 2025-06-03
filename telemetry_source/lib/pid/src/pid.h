@@ -79,7 +79,7 @@ private:
 
 public:
   // Modify constructor to accept a timeout in seconds (or ms):
-    PIDController(unsigned long north_timeout_ms = 2000UL)
+    PIDController(unsigned long north_timeout_ms = 5000UL)
         : NORTH_TIMEOUT_MS(north_timeout_ms),
         last_time_at_north(millis())
     {
