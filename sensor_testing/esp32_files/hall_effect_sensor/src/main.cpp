@@ -7,7 +7,7 @@
 
 #include <Arduino.h>
 
-#define HALL_PIN 34     // ADC1_CH6, 12-bit ADC
+#define HALL_EFFECT_PIN 34     // ADC1_CH6, 12-bit ADC
 #define THRESHOLD 2500  // Adjust as needed for your sensor
 
 unsigned long lastPulseTime = 0;
@@ -18,12 +18,12 @@ int lastState = HIGH;
 
 void setup() {
     Serial.begin(115200);
-    pinMode(HALL_PIN, INPUT);
+    pinMode(HALL_EFFECT_PIN, INPUT);
     pinMode(2, OUTPUT);
 }
 
 void loop() {
-    int analogValue = analogRead(HALL_PIN);
+    int analogValue = analogRead(HALL_EFFECT_PIN);
     int currState = (analogValue < THRESHOLD) ? LOW : HIGH;
 
     if (currState == LOW && lastState == HIGH) {
