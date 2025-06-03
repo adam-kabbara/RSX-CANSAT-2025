@@ -8,7 +8,7 @@
 #include <Arduino.h>
 
 // ESP32 Pins
-int hallSensorPin = 23;
+int hallSensorPin = 34;
 int ledPin = 2;
 
 // Initializing variables
