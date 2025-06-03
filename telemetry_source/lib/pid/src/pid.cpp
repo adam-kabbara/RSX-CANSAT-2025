@@ -225,6 +225,6 @@ void PIDController::update_PID(float ax, float ay, float az, float gyroZ, float 
     *fin_right -= finCmd;
 
     // Constrain to valid servo range [0°, 180°]
-    *fin_left  = constrain(currentAngleLeft,  0.0f, 180.0f);
-    *fin_right = constrain(currentAngleRight, 0.0f, 180.0f);
+    *fin_left  = constrain(*fin_left,  0.0f, 180.0f);
+    *fin_right = constrain(*fin_right, 0.0f, 180.0f);
 }

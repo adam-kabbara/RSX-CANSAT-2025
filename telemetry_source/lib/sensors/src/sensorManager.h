@@ -15,6 +15,7 @@
 #include <SPI.h>
 #include <math.h>
 #include <uRTCLib.h>
+#include "pid.h"
 
 class SensorManager
 {
@@ -84,6 +85,16 @@ private:
     unsigned long lastPulseTime = 0;
     unsigned long pulseInterval = 0;
 
+    PIDController pid_cntl;
+    float ax = 0;
+    float ay = 0;
+    float az = 0;
+    float mx = 0;
+    float my = 0;
+    float mz = 0;
+    float gyroZ = 0;
+    unsigned long last_servo_update = 0;
+
 public:
 
     SensorManager();
@@ -116,9 +127,9 @@ public:
 
     void writeReleaseServo(int pos);
 
-    void writeGyroServo1(int pos);
+    void writeGyroServoRight(int pos);
 
-    void writeGyroServo2(int pos);
+    void writeGyroServoLeft(int pos);
 
     void writeCameraServo(int pos);
 

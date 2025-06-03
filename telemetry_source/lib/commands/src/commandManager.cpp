@@ -379,12 +379,12 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
             ser.sendInfoDataMsg("Wrote %d to release servo.", servo_val);
             break;
           case 2:
-            sensors.writeGyroServo1(servo_val);
-            ser.sendInfoDataMsg("Wrote %d to gyro 1 servo.", servo_val);
+            sensors.writeGyroServoRight(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to right gyro servo.", servo_val);
             break;
           case 3:
-            sensors.writeGyroServo2(servo_val);
-            ser.sendInfoDataMsg("Wrote %d to gyro 2 servo.", servo_val);
+            sensors.writeGyroServoLeft(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to left gyro servo.", servo_val);
             break;
           default:
             ser.sendErrorDataMsg("ERROR: RECEIVED INVALID SERVO #: %d", servo_num);

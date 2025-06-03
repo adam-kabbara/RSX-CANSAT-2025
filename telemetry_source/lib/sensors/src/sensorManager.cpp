@@ -292,12 +292,16 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
                     send_packet.ACCEL_R = sensorValue.un.accelerometer.x;
                     send_packet.ACCEL_P = sensorValue.un.accelerometer.y;
                     send_packet.ACCEL_Y = sensorValue.un.accelerometer.z;
+                    ax = sensorValue.un.accelerometer.x;
+                    ay = sensorValue.un.accelerometer.y;
+                    az = sensorValue.un.accelerometer.z;
                     break;
                 
                 case SH2_GYROSCOPE_CALIBRATED:
                     send_packet.GYRO_R = sensorValue.un.gyroscope.y * RAD_TO_DEG;
                     send_packet.GYRO_P = sensorValue.un.gyroscope.x * RAD_TO_DEG;
                     send_packet.GYRO_Y = sensorValue.un.gyroscope.z * RAD_TO_DEG;
+                    gyroZ = sensorValue.un.gyroscope.z;
                     break;
                 
                 case SH2_ROTATION_VECTOR:
@@ -319,9 +323,13 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
                     yaw   *= 180.0 / PI;
 
                     lis3mdl.read();
-                    float mx = lis3mdl.x / 100;
-                    float my = lis3mdl.y / 100;
-                    float mz = lis3mdl.z / 100;
+                    mx = lis3mdl.x;
+                    my = lis3mdl.y;
+                    mz = lis3mdl.z;
+
+                    float mx_g = mx / 100;
+                    float my_g = my / 100;
+                    float mz_g = mz / 100;
 
                     float cr = cos(roll),  sr = sin(roll);
                     float cp = cos(pitch), sp = sin(pitch);
@@ -335,18 +343,31 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
                     };
 
                     // Rotate magnetic vector
-                    float mag_r = R[0][0]*mx + R[0][1]*my + R[0][2]*mz;
-                    float mag_p = R[1][0]*mx + R[1][1]*my + R[1][2]*mz;
-                    float mag_y = R[2][0]*mx + R[2][1]*my + R[2][2]*mz;
+                    float mag_r = R[0][0]*mx_g + R[0][1]*my_g + R[0][2]*mz_g;
+                    float mag_p = R[1][0]*mx_g + R[1][1]*my_g + R[1][2]*mz_g;
+                    float mag_y = R[2][0]*mx_g + R[2][1]*my_g + R[2][2]*mz_g;
 
                     send_packet.MAG_R = mag_r;
                     send_packet.MAG_P = mag_p;
                     send_packet.MAG_Y = mag_y;
 
                     break;
+                    
             }
         }
     }
+
+    /*
+    float servo_left = 0.0;
+    float servo_right = 0.0;
+    pid_cntl.update_PID(ax, ay, az, gyroZ, mx, my, mz, &servo_left, &servo_right);
+    unsigned long servo_now = millis();
+    if(servo_now - last_servo_update >= 250)
+    {
+        writeGyroServoLeft(servo_left);
+        writeGyroServoRight(servo_right);
+    }
+    */
 
     send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
 
@@ -556,21 +577,21 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     delay(100);
     ser.sendInfoMsg("Initialized GPS...");
     
-    // Gyro Servo 1
+    // Gyro Servo 2
     m_servo_gyro_1.attach(SERVO_GYRO1_PIN);
     delay(1000);
     if(info.getOpState() == IDLE)
     {
-        writeGyroServo1(90);
+        writeGyroServoLeft(90);
         delay(100);
     }
     
-    // Gyro Servo 2
+    // Gyro Servo 1
     m_servo_gyro_2.attach(SERVO_GYRO2_PIN);
     delay(1000);
     if(info.getOpState() == IDLE)
     {
-        writeGyroServo2(90);
+        writeGyroServoRight(90);
         delay(100);
     }
     
@@ -636,9 +657,9 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
 	} 
     else 
     {
-		ser.sendInfoDataMsg("RTC was not detected: %s", error);
+		ser.sendInfoDataMsg("RTC was not detected");
 	}
-    
+
     ser.sendInfoMsg("Done.");
 }
 
@@ -662,12 +683,12 @@ void SensorManager::writeReleaseServo(int pos)
     m_servo_release.write(pos);
 }
 
-void SensorManager::writeGyroServo1(int pos)
+void SensorManager::writeGyroServoRight(int pos)
 {
     m_servo_gyro_1.write(pos);
 }
 
-void SensorManager::writeGyroServo2(int pos)
+void SensorManager::writeGyroServoLeft(int pos)
 {
     m_servo_gyro_2.write(pos);
 }
