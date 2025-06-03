@@ -1,4 +1,9 @@
 #include "pid.h"
+#include <Adafruit_BNO08x.h>
+#include <Adafruit_LIS3MDL.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <math.h>
 
 PID::PID(float Kp_, float Ki_, float Kd_, float output_limit_)
   : Kp(Kp_), Ki(Ki_), Kd(Kd_), output_limit(output_limit_),
@@ -78,7 +83,7 @@ SimpleAutoTuner::SimpleAutoTuner(PID &pid_ref,
     }
 }
 
-void clearBuffer()
+void SimpleAutoTuner::clearBuffer()
 {
     for (uint8_t i = 0; i < window_size; i++)
     {
@@ -89,7 +94,7 @@ void clearBuffer()
 }
 
 // Call this every control step with absolute error (deg):
-void update(float abs_error) 
+void SimpleAutoTuner::update(float abs_error) 
 {
     // Push new error into circular buffer
     errors[head] = abs_error;
@@ -127,37 +132,109 @@ void update(float abs_error)
     }
 }
 
+
+
+// Convert BNO08x quaternion to yaw (degrees)
+float quaternionToYawDegrees(float r, float i, float j, float k) {
+  float yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
+  float yaw_deg = yaw * 180.0 / PI;
+  if (yaw_deg < 0) yaw_deg += 360.0;
+  return yaw_deg;
+}
+
+// Tilt-compensated heading from magnetometer + accelerometer
+float computeTiltCompensatedYaw(float mx, float my, float mz,
+                                float ax, float ay, float az) {
+  float norm = sqrt(ax * ax + ay * ay + az * az);
+  if (norm == 0) return 0;
+  ax /= norm;
+  ay /= norm;
+  az /= norm;
+
+  float pitch = asin(-ax);
+  float roll = atan2(ay, az);
+
+  float Xh = mx * cos(pitch) + mz * sin(pitch);
+  float Yh = mx * sin(roll) * sin(pitch) + my * cos(roll) - mz * sin(roll) * cos(pitch);
+
+  float heading = atan2(Yh, Xh);
+  float heading_deg = heading * 180.0 / PI;
+  if (heading_deg < 0) heading_deg += 360.0;
+  return heading_deg;
+}
+
+// Kalman filter update
+void PIDController::kalmanUpdate(float gyro_z, float mag_yaw, float dt) {
+  yaw_estimate += gyro_z * dt * 180.0 / PI;  // convert rad/s to deg/s
+  yaw_cov += Q;
+
+    yaw_estimate = fmod(yaw_estimate, 360.0f);
+    if (yaw_estimate < 0) yaw_estimate += 360.0f;
+
+  float K = yaw_cov / (yaw_cov + R);
+  yaw_estimate += K * (mag_yaw - yaw_estimate);
+  yaw_cov *= (1 - K);
+}
+
+
+
 PIDController::PIDController()
 {
     pidController = new PID(0.6267, 0, 0.9488, FIN_LIMIT);
     tuner = new SimpleAutoTuner(*pidController, TUNER_WINDOW, TUNER_THRESH, TUNER_FACTOR);
+    lastUpdate = millis();
 }
 
-float PIDController::kalmanUpdate(float gyro_z, float mag_yaw, float dt)
+float PIDController::update_PID(Adafruit_BNO08x& bno08x, Adafruit_LIS3MDL& lis3mdl)
 {
-    yaw_estimate += gyro_z * dt * 180.0 / PI;  // integrate gyro
-    yaw_cov += Q;                              // predict
+    static float gyroZ = 0;
+    static float ax = 0, ay = 0, az = 0;
+    float bnoYaw = -1;
 
-    // Normalize yaw to [0, 360)
-    if (yaw_estimate < 0) yaw_estimate += 360.0;
-    if (yaw_estimate >= 360.0) yaw_estimate -= 360.0;
+    // Read ONE event (non-blocking)
+    sh2_SensorValue_t sensorValue;
+    if (bno08x.getSensorEvent(&sensorValue)) {
+        switch (sensorValue.sensorId) {
+        case SH2_ACCELEROMETER:
+            ax = sensorValue.un.accelerometer.x;
+            ay = sensorValue.un.accelerometer.y;
+            az = sensorValue.un.accelerometer.z;
+            break;
 
-    // Kalman gain and update
-    float K = yaw_cov / (yaw_cov + R);
-    float angle_error = fmod((mag_yaw - yaw_estimate + 540.0), 360.0) - 180.0;
-    yaw_estimate += K * angle_error;
-    yaw_cov *= (1 - K);
+        case SH2_GYROSCOPE_CALIBRATED:
+            gyroZ = sensorValue.un.gyroscope.z;
+            break;
 
-    // Normalize again if needed
-    if (yaw_estimate < 0) yaw_estimate += 360.0;
-    if (yaw_estimate >= 360.0) yaw_estimate -= 360.0;
-    return yaw_estimate;
-}
+        case SH2_ARVR_STABILIZED_RV:
+            bnoYaw = quaternionToYawDegrees(
+            sensorValue.un.arvrStabilizedRV.real,
+            sensorValue.un.arvrStabilizedRV.i,
+            sensorValue.un.arvrStabilizedRV.j,
+            sensorValue.un.arvrStabilizedRV.k);
+            break;
+        }
+    }
 
-float PIDController::update_PID(float roll)
-{
+    // Read LIS3MDL magnetometer
+    lis3mdl.read();
+    float mx = lis3mdl.x;
+    float my = lis3mdl.y;
+    float mz = lis3mdl.z;
+
+    float magYaw = computeTiltCompensatedYaw(mx, my, mz, ax, ay, az);
+
+    float pitch = asin(-ax);
+    float roll = atan2(ay, az);
+
+    unsigned long now = millis();
+    float dt = (now - lastUpdate) / 1000.0;
+    lastUpdate = now;
+
+    // Kalman filter
+    kalmanUpdate(gyroZ, magYaw, dt);
+
     float setpoint = 0.0f;
-    float finCmd = pidController->compute(setpoint, roll);
-    tuner->update(fabs(setpoint - roll));
+    float finCmd = pidController.compute(setpoint, roll);
+    tuner.update(fabs(setpoint - roll));
     return finCmd;
 }
