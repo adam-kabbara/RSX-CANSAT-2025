@@ -748,10 +748,10 @@ float SensorManager::getRotRate()
         unsigned long now = micros();
         pulseInterval = now - lastPulseTime;
         lastPulseTime = now;
-        if (pulseInterval > 0)
+        if(pulseInterval > 0)
         {
             currRPM = 60.0 * 1000000.0 / pulseInterval;
-            if (currRPM > 2000.0)
+            if(currRPM > 2000.0)
             {
                 currRPM = prevRPM;
             }
