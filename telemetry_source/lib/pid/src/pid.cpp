@@ -157,7 +157,7 @@ float PIDController::kalmanUpdate(float gyro_z, float mag_yaw, float dt)
 float PIDController::update_PID(float roll)
 {
     float setpoint = 0.0f;
-    float finCmd = pidController.compute(setpoint, roll);
-    tuner.update(fabs(setpoint - roll));
+    float finCmd = pidController->compute(setpoint, roll);
+    tuner->update(fabs(setpoint - roll));
     return finCmd;
 }
