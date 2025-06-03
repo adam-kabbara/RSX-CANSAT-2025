@@ -69,7 +69,7 @@ private:
 public:
     PIDController();
     void kalmanUpdate(float gyro_z, float mag_yaw, float dt);
-    float update_PID(Adafruit_BNO08x& bno08x, Adafruit_LIS3MDL& lis3mdl);
+    float update_PID(float ax, float ay, float az, float gyroZ, float bnoYaw, float mx, float my, float mz);
 };
 
 #endif
