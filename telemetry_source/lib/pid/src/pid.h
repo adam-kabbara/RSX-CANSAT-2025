@@ -1,0 +1,77 @@
+// PID.h
+#ifndef PID_H
+#define PID_H
+
+class PID {
+public:
+  PID(float Kp_, float Ki_, float Kd_, float output_limit_);
+
+  float update(float error, float current_time);  // declare update() method
+
+  void reset();  // optional: to reset integral/derivative terms
+
+  float compute(float setpoint_deg, float current_deg);
+
+  // Allow external code to adjust gains
+  void setGains(float Kp_, float Ki_, float Kd_);
+
+  void getGains(float &outKp, float &outKi, float &outKd);
+
+private:
+  float Kp, Ki, Kd;
+  float output_limit;
+  float integral;
+  float prev_error;
+  float prev_derivative = 0.0f;
+  const float der_filter_coeff = 0.3f;  // α for D‐term filter
+  unsigned long prev_time;              // last millis() timestamp
+};
+
+class SimpleAutoTuner
+{
+private:
+  PID &pid;
+  static const uint8_t MAX_WINDOW = 10;  // absolute max size
+  uint8_t window_size;
+  float error_threshold;
+  float adjust_factor;
+
+  float errors[MAX_WINDOW];
+  uint8_t head;
+  uint8_t count;
+
+public:
+  // window_size = how many consecutive error samples to check
+  // error_threshold = if abs(error) > this after window, trigger
+  // adjust_factor = multiply Kp/Kd by this factor when instability detected
+  SimpleAutoTuner(PID &pid_ref,
+                  uint8_t window_size_ = 5,
+                  float error_threshold_ = 2.0f,
+                  float adjust_factor_ = 0.8f);
+
+  void clearBuffer();
+
+  // Call this every control step with absolute error (deg):
+  void update(float abs_error);
+};
+
+class PIDController
+{
+private:
+    const float FIN_LIMIT = 15.0f;
+    PID *pidController;
+    SimpleAutoTuner *tuner;
+    const uint8_t TUNER_WINDOW = 5;
+    const float   TUNER_THRESH = 5.0f;
+    const float   TUNER_FACTOR = 0.8f;
+    float yaw_estimate = 0.0;
+    float yaw_cov = 1.0;
+    const float Q = 0.01;  // process noise
+    const float R = 1.0;   // measurement noise
+    unsigned long lastUpdate = 0;
+public:
+    float kalmanUpdate(float gyro_z, float mag_yaw, float dt);
+    float update_PID(float roll);
+};
+
+#endif
