@@ -21,8 +21,8 @@ SDI --> GPIO21
 
 BN-220 (GPS):
 GND         --> GND
-TX (White)  --> RXD0/GPIO3
-RX (Green)  --> TXD0/GPIO1
+TX (White)  --> RXD1/GPIO9
+RX (Green)  --> TXD1/GPIO10
 VCC         --> 3.3V (Power Board)
 
 Adafruit LIS3MDL (Magnetometer):
