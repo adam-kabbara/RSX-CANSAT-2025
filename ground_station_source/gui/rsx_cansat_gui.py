@@ -875,9 +875,9 @@ class GroundStationApp(QMainWindow):
             ("Gyro R", "0 °/s"),
             ("Gyro P", "0 °/s"),
             ("Gyro Y", "0 °/s"),
-            ("Accel R", "0 °/s²"),
-            ("Accel P", "0 °/s²"),
+            ("Accel X", "0 °/s²"),
             ("Accel Y", "0 °/s²"),
+            ("Accel Z", "0 °/s²"),
             ("Mag R", "0 G"),
             ("Mag P", "0 G"),
             ("Mag Y", "0 G"),
@@ -1273,7 +1273,7 @@ class GroundStationApp(QMainWindow):
         self.__csv_file.seek(0)
         self.__csv_file.truncate()
         self.__packet_recv_count = 0
-        self.__packet_sent
+        self.__packet_sent_count = 0
 
     def update_rocket_orientation(self, yaw, pitch, roll):
 
