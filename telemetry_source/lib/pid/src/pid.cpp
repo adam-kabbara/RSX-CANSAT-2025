@@ -208,14 +208,20 @@ void PIDController::update_PID(float ax, float ay, float az, float gyroZ, float 
 
     // Kalman filter
     kalmanUpdate(gyroZ, magYaw, dt);
-
+    float finCmd, error;
     float setpoint = 0.0f;
-    float finCmd = pidController->compute(setpoint, yaw_estimate);
-    float error = fmod((setpoint - yaw_estimate + 540.0f), 360.0f) - 180.0f;
+    if (!swapped){
+      finCmd = pidController->compute(setpoint, yaw_estimate);
+      error = fmod((setpoint - yaw_estimate + 540.0f), 360.0f) - 180.0f;
+    }else{
+      finCmd = pidController->compute(setpoint, gyroZ* 180.0 / PI);
+      error = fmod((setpoint - gyroZ* 180.0 / PI + 540.0f), 360.0f) - 180.0f;
+    }
     tuner->update(fabs(error));
     if ((!swapped) && hasMissedNorthTooLong(yaw_estimate)){
         pidController->setGains(0.6267f, 0, 0.9488f);        
         swapped = true;
+        tuner->clearBuffer();
         }
     if (finCmd >  FIN_LIMIT) finCmd =  FIN_LIMIT;
     if (finCmd < -FIN_LIMIT) finCmd = -FIN_LIMIT;
