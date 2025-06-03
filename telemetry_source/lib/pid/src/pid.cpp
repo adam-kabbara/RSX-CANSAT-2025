@@ -66,9 +66,9 @@ void PID::getGains(float &outKp, float &outKi, float &outKd)
 }
 
 SimpleAutoTuner::SimpleAutoTuner(PID &pid_ref,
-                uint8_t window_size_ = 5,
-                float error_threshold_ = 2.0f,
-                float adjust_factor_ = 0.8f)
+                uint8_t window_size_,
+                float error_threshold_,
+                float adjust_factor_)
 : pid(pid_ref),
     window_size(window_size_),
     error_threshold(error_threshold_),
@@ -132,10 +132,9 @@ void SimpleAutoTuner::update(float abs_error)
     }
 }
 
-
-
 // Convert BNO08x quaternion to yaw (degrees)
-float quaternionToYawDegrees(float r, float i, float j, float k) {
+float PIDController::quaternionToYawDegrees(float r, float i, float j, float k)
+{
   float yaw = atan2(2.0 * (r * k + i * j), 1.0 - 2.0 * (j * j + k * k));
   float yaw_deg = yaw * 180.0 / PI;
   if (yaw_deg < 0) yaw_deg += 360.0;
@@ -143,8 +142,9 @@ float quaternionToYawDegrees(float r, float i, float j, float k) {
 }
 
 // Tilt-compensated heading from magnetometer + accelerometer
-float computeTiltCompensatedYaw(float mx, float my, float mz,
-                                float ax, float ay, float az) {
+float PIDController::computeTiltCompensatedYaw(float mx, float my, float mz,
+                                float ax, float ay, float az)
+{
   float norm = sqrt(ax * ax + ay * ay + az * az);
   if (norm == 0) return 0;
   ax /= norm;
@@ -164,7 +164,8 @@ float computeTiltCompensatedYaw(float mx, float my, float mz,
 }
 
 // Kalman filter update
-void PIDController::kalmanUpdate(float gyro_z, float mag_yaw, float dt) {
+void PIDController::kalmanUpdate(float gyro_z, float mag_yaw, float dt)
+{
   yaw_estimate += gyro_z * dt * 180.0 / PI;  // convert rad/s to deg/s
   yaw_cov += Q;
 
@@ -176,7 +177,8 @@ void PIDController::kalmanUpdate(float gyro_z, float mag_yaw, float dt) {
   yaw_cov *= (1 - K);
 }
 
-bool PIDController::hasMissedNorthTooLong(float yaw_estimate) {
+bool PIDController::hasMissedNorthTooLong(float yaw_estimate)
+{
     unsigned long now = millis();
 
     // Normalize yaw_estimate into [0, 360)

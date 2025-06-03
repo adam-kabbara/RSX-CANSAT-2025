@@ -78,7 +78,6 @@ private:
     bool swapped = false;
 
 public:
-  // Modify constructor to accept a timeout in seconds (or ms):
     PIDController(unsigned long north_timeout_ms = 5000UL)
         : NORTH_TIMEOUT_MS(north_timeout_ms),
         last_time_at_north(millis())
@@ -88,8 +87,10 @@ public:
         lastUpdate = millis();
     }
     void kalmanUpdate(float gyro_z, float mag_yaw, float dt);
-    float update_PID(float ax, float ay, float az, float gyroZ, float bnoYaw, float mx, float my, float mz);
+    float update_PID(float ax, float ay, float az, float gyroZ, float mx, float my, float mz);
     bool hasMissedNorthTooLong(float yaw_estimate);
+    float quaternionToYawDegrees(float r, float i, float j, float k);
+    float computeTiltCompensatedYaw(float mx, float my, float mz,float ax, float ay, float az);
 };
 
 #endif
