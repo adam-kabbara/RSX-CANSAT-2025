@@ -1215,11 +1215,11 @@ class GroundStationApp(QMainWindow):
                                             </span><span style="color:GREEN;">ON</span>')
             
             if "CAMERA2 ON" in msg:
-                self.camera2_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
+                self.camera2_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
                                             </span><span style="color:GREEN;">ON</span>')
                 
             if "CAMERA1 OFF" in msg:
-                self.camera1_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
+                self.camera1_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
                                             </span><span style="color:RED;">OFF</span>')
             
             if "CAMERA2 OFF" in msg:
@@ -1424,15 +1424,19 @@ class GroundStationApp(QMainWindow):
                                               </span><span style="color:RED;">{data.CMD_ECHO}</span>')
 
         if data.CAM_STATUS is not None:
-            if data.CAM_STATUS==3 or data.CAM_STATUS==1:
+            # CAMERA1 status
+            if data.CAM_STATUS == 3 or data.CAM_STATUS == 1:
                 self.camera1_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
-                                            </span><span style="color:GREEN;">ON</span>')
-            if data.CAM_STATUS==3 or data.CAM_STATUS==2:
-                self.camera2_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
                                             </span><span style="color:GREEN;">ON</span>')
             else:
                 self.camera1_status_label.setText(f'<span style="color:black;">CAMERA1 Status: \
                                             </span><span style="color:RED;">OFF</span>')
+            
+            # CAMERA2 status
+            if data.CAM_STATUS == 3 or data.CAM_STATUS == 2:
+                self.camera2_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
+                                            </span><span style="color:GREEN;">ON</span>')
+            else:
                 self.camera2_status_label.setText(f'<span style="color:black;">CAMERA2 Status: \
                                             </span><span style="color:RED;">OFF</span>')
 
