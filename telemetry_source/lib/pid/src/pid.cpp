@@ -185,46 +185,10 @@ PIDController::PIDController()
     lastUpdate = millis();
 }
 
-float PIDController::update_PID(Adafruit_BNO08x& bno08x, Adafruit_LIS3MDL& lis3mdl)
+float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float bnoYaw, float mx, float my, float mz)
 {
-    static float gyroZ = 0;
-    static float ax = 0, ay = 0, az = 0;
-    float bnoYaw = -1;
-
-    // Read ONE event (non-blocking)
-    sh2_SensorValue_t sensorValue;
-    if (bno08x.getSensorEvent(&sensorValue)) {
-        switch (sensorValue.sensorId) {
-        case SH2_ACCELEROMETER:
-            ax = sensorValue.un.accelerometer.x;
-            ay = sensorValue.un.accelerometer.y;
-            az = sensorValue.un.accelerometer.z;
-            break;
-
-        case SH2_GYROSCOPE_CALIBRATED:
-            gyroZ = sensorValue.un.gyroscope.z;
-            break;
-
-        case SH2_ARVR_STABILIZED_RV:
-            bnoYaw = quaternionToYawDegrees(
-            sensorValue.un.arvrStabilizedRV.real,
-            sensorValue.un.arvrStabilizedRV.i,
-            sensorValue.un.arvrStabilizedRV.j,
-            sensorValue.un.arvrStabilizedRV.k);
-            break;
-        }
-    }
-
-    // Read LIS3MDL magnetometer
-    lis3mdl.read();
-    float mx = lis3mdl.x;
-    float my = lis3mdl.y;
-    float mz = lis3mdl.z;
-
-    float magYaw = computeTiltCompensatedYaw(mx, my, mz, ax, ay, az);
-
-    float pitch = asin(-ax);
-    float roll = atan2(ay, az);
+    //float pitch = asin(-ax);
+    //float roll = atan2(ay, az);
 
     unsigned long now = millis();
     float dt = (now - lastUpdate) / 1000.0;
