@@ -187,8 +187,6 @@ PIDController::PIDController()
 
 float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float bnoYaw, float mx, float my, float mz)
 {
-    //float pitch = asin(-ax);
-    //float roll = atan2(ay, az);
 
     unsigned long now = millis();
     float dt = (now - lastUpdate) / 1000.0;
@@ -198,7 +196,7 @@ float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float
     kalmanUpdate(gyroZ, magYaw, dt);
 
     float setpoint = 0.0f;
-    float finCmd = pidController.compute(setpoint, roll);
-    tuner.update(fabs(setpoint - roll));
+    float finCmd = pidController.compute(setpoint, yaw_estimate);
+    tuner.update(fabs(setpoint - yaw_estimate));
     return finCmd;
 }
