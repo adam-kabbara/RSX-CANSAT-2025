@@ -1,15 +1,13 @@
 // PID.h
 #ifndef PID_H
 #define PID_H
-
+#include <Adafruit_BNO08x.h>
+#include <Adafruit_LIS3MDL.h>
 class PID {
 public:
   PID(float Kp_, float Ki_, float Kd_, float output_limit_);
 
   float update(float error, float current_time);  // declare update() method
-
-  void reset();  // optional: to reset integral/derivative terms
-
   float compute(float setpoint_deg, float current_deg);
 
   // Allow external code to adjust gains
@@ -35,7 +33,6 @@ private:
   uint8_t window_size;
   float error_threshold;
   float adjust_factor;
-
   float errors[MAX_WINDOW];
   uint8_t head;
   uint8_t count;
@@ -70,8 +67,9 @@ private:
     const float R = 1.0;   // measurement noise
     unsigned long lastUpdate = 0;
 public:
-    float kalmanUpdate(float gyro_z, float mag_yaw, float dt);
-    float update_PID(float roll);
+    PIDController();
+    void kalmanUpdate(float gyro_z, float mag_yaw, float dt);
+    float update_PID(Adafruit_BNO08x& bno08x, Adafruit_LIS3MDL& lis3mdl);
 };
 
 #endif
