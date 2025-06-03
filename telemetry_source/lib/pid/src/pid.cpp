@@ -198,7 +198,7 @@ bool PIDController::hasMissedNorthTooLong(float yaw_estimate)
   }
 
 
-float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float mx, float my, float mz)
+void PIDController::update_PID(float ax, float ay, float az, float gyroZ, float mx, float my, float mz, float* fin_left, float* fin_right)
 {
     unsigned long now = millis();
     float dt = (now - lastUpdate) / 1000.0;
@@ -216,7 +216,15 @@ float PIDController::update_PID(float ax, float ay, float az, float gyroZ, float
     if ((!swapped) && hasMissedNorthTooLong(yaw_estimate)){
         pidController->setGains(0.6267f, 0, 0.9488f);        
         swapped = true;
-    }
+        }
+    if (finCmd >  FIN_LIMIT) finCmd =  FIN_LIMIT;
+    if (finCmd < -FIN_LIMIT) finCmd = -FIN_LIMIT;
 
-    return finCmd;
+    // Apply the change incrementally to the current angles
+    *fin_left  += finCmd;
+    *fin_right -= finCmd;
+
+    // Constrain to valid servo range [0°, 180°]
+    *fin_left  = constrain(currentAngleLeft,  0.0f, 180.0f);
+    *fin_right = constrain(currentAngleRight, 0.0f, 180.0f);
 }
