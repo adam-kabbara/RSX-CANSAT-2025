@@ -21,31 +21,31 @@ void setup() {
     GPS_Serial.begin(9600, SERIAL_8N1, 9, 10); // Set baud rate and pins for GPS
 
     // Initialize SPIFFS
-    if (!SPIFFS.begin(true)) {
-        Serial.println("Failed to mount file system");
-        return;
-    }
+    // if (!SPIFFS.begin(true)) {
+    //     Serial.println("Failed to mount file system");
+    //     return;
+    // }
 
     Serial.println("GPS Module is starting up...");
 }
 
 void loop() {
     // Open or create the gps_data.txt file for appending
-    gpsFile = SPIFFS.open("/gps_data.txt", FILE_APPEND);
-    if (!gpsFile) {
-        Serial.println("Failed to open gps_data.txt for writing");
-        return;
-    }
+    // gpsFile = SPIFFS.open("/gps_data.txt", FILE_APPEND);
+    // if (!gpsFile) {
+    //     Serial.println("Failed to open gps_data.txt for writing");
+    //     return;
+    // }
 
     // Process incoming GPS data
     while (GPS_Serial.available() > 0) {
         char c = GPS_Serial.read();
-        gpsFile.write(c);      // Write raw data to the file
+        //gpsFile.write(c);      // Write raw data to the file
         Serial.write(c);       // Print raw data to Serial Monitor
         gps.encode(c);         // Feed data to TinyGPS++ for parsing
     }
 
-    gpsFile.close(); // Close the file to save after changes
+    //gpsFile.close(); // Close the file to save after changes
 
     delay(2000);
 }
