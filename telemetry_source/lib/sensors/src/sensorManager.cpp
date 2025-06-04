@@ -371,29 +371,41 @@ void SensorManager::sampleSensors(MissionManager &mission_info)
 
     send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
 
+    // int gps_avail = GPS_Serial->available();
+    // for(int i = 0; i < gps_avail; i++)
+    // {
+    //     gps.encode(GPS_Serial->read());
+    // }
+
     int gps_avail = GPS_Serial->available();
-    for(int i = 0; i < gps_avail; i++)
-    {
-        gps.encode(GPS_Serial->read());
+    gpsData = "";
+    for (int i = 0; i < gps_avail; i++) {
+        gpsData += (char)GPS_Serial->read();
     }
 
-    if(gps.location.isUpdated())
+    if (gpsData.length() > 0) {
+        for (size_t i = 0; i < gpsData.length(); i++) {
+            gps.encode(gpsData[i]);
+        }
+    }
+
+    if (gps.location.isUpdated())
     {
         getGpsLat(&send_packet.GPS_LATITUDE);
         getGpsLong(&send_packet.GPS_LONGITUDE);
     }
 
-    if(gps.time.isUpdated())
+    if (gps.time.isUpdated())
     {
         getGpsTime(send_packet.GPS_TIME);
     }
 
-    if(gps.altitude.isUpdated())
+    if (gps.altitude.isUpdated())
     {
         getGpsAlt(&send_packet.GPS_ALTITUDE);
     }
 
-    if(gps.satellites.isUpdated())
+    if (gps.satellites.isUpdated())
     {
         getGpsSats(&send_packet.GPS_SATS);
     }
