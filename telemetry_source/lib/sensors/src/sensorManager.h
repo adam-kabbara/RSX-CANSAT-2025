@@ -151,6 +151,9 @@ public:
 
     void setRtcTime(int sec, int minute, int hour);
 
+    int getCamera1Status();
+
+    int getCamera2Status();
 };
 
 #endif /* SENSOR_MANAGER_H */

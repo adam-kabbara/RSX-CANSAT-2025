@@ -152,8 +152,28 @@ void loop()
 
         // Back to IDLE state, turn off timer & camera, reset settings
         timerAlarmDisable(send_timer);
-        digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
-        digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
+
+        int cam1_state = sensor_mgr.getCamera1Status();
+        int cam2_state = sensor_mgr.getCamera2Status();
+
+        if(cam1_state)
+        {
+            digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
+            delay(1000);
+            digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
+            delay(1000);
+            xbee_serial.sendInfoMsg("Turning off camera 1...");
+        }
+
+        if(cam2_state)
+        {
+            digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
+            delay(1000);
+            digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
+            delay(1000);
+            xbee_serial.sendInfoMsg("Turning off camera 2...");
+        }
+
         mission_info.setAltCalOff();
         mission_info.waitingForSimp();
         logfile.close();

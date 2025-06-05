@@ -418,8 +418,8 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     }
 
     // CAMERA status
-    int cam1_state = digitalRead(CAMERA1_STATUS_PIN);
-    int cam2_state = digitalRead(CAMERA2_STATUS_PIN);
+    int cam1_state = getCamera1Status();
+    int cam2_state = getCamera2Status();
 
     if (cam1_state && cam2_state)
     {
@@ -812,4 +812,14 @@ float SensorManager::getRotRate()
 void SensorManager::setRtcTime(int sec, int minute, int hour)
 {
     rtc->set(sec, minute, hour, 1, 1, 1, 0);
+}
+
+int SensorManager::getCamera1Status()
+{
+    return digitalRead(CAMERA1_STATUS_PIN);
+}
+
+int SensorManager::getCamera2Status()
+{
+    return digitalRead(CAMERA2_STATUS_PIN);
 }
