@@ -18,7 +18,10 @@ File gpsFile;
 
 void setup() {
     Serial.begin(115200); // For monitoring
-    GPS_Serial.begin(9600, SERIAL_8N1, 9, 10); // Set baud rate and pins for GPS
+    Serial.println("Starting GPS Module...");
+    delay(1000); // Allow time for Serial to initialize
+    
+    GPS_Serial.begin(9600, SERIAL_8N1, 3, 1); // Set baud rate and pins for GPS
 
     // Initialize SPIFFS
     // if (!SPIFFS.begin(true)) {
@@ -26,7 +29,7 @@ void setup() {
     //     return;
     // }
 
-    Serial.println("GPS Module is starting up...");
+    Serial.println("GPS Module started successfully!");
 }
 
 void loop() {
@@ -91,6 +94,7 @@ void loop() {
             Serial.println("INVALID");
 
         Serial.println();
+        }
     }
 
     //gpsFile.close(); // Close the file to save after changes

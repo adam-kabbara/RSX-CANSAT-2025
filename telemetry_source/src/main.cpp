@@ -41,7 +41,7 @@ void setup()
     // Reset sequence
     mission_info.resetSeq(xbee_serial);
 
-    sensor_mgr.startSensors(xbee_serial);
+    sensor_mgr.startSensors(xbee_serial, mission_info);
 
     xbee_serial.sendInfoMsg("Startup Completed.");
 
@@ -120,7 +120,7 @@ void loop()
                 continue;
             }
 
-            sensor_mgr.sampleSensors(mission_info);
+            sensor_mgr.sampleSensors(mission_info, xbee_serial);
 
             if(send_flag == 1)
             {
