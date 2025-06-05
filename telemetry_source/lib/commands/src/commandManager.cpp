@@ -411,6 +411,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     {
       digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
       int state = digitalRead(CAMERA1_STATUS_PIN);
+      delay(1000);
       if(state == HIGH)
       {
         ser.sendInfoMsg("CAMERA1 ON");
@@ -431,6 +432,8 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
       delay(1000);
       digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
       delay(1000);
+      digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
+      delay(1000);
       int state = digitalRead(CAMERA1_STATUS_PIN);
       if(state == LOW)
       {
@@ -448,6 +451,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     {
       digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
       int state = digitalRead(CAMERA2_STATUS_PIN);
+      delay(1000);
       if(state == HIGH)
       {
         ser.sendInfoMsg("CAMERA2 ON");
@@ -469,6 +473,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
       digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
       delay(1000);
       digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
+      delay(1000);
       int state = digitalRead(CAMERA2_STATUS_PIN);
       if(state == LOW)
       {
