@@ -101,7 +101,7 @@ public:
 
     OperatingState updateState(OperatingState curr_state, MissionManager &mission_info);
 
-    void sampleSensors(MissionManager &mission_info);
+    void sampleSensors(MissionManager &mission_info, SerialManager &ser);
 
     void build_data_str(char *buff, size_t size);
 

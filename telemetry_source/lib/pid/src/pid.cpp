@@ -217,7 +217,7 @@ void PIDController::update_PID(float ax, float ay, float az, float gyroZ, float 
       finCmd = pidController->compute(setpoint, gyroZ* 180.0 / PI);
       error = fmod((setpoint - gyroZ* 180.0 / PI + 540.0f), 360.0f) - 180.0f;
     }
-    tuner->update(fabs(error));
+    tuner->update(fabs(error)); //THIS IS THE AUTOTUNER WHAT IT DOES IS IT WEAKENS THE GAINS OF THE PID IF IT THINKS ITS GOING UNSTABLE
     if ((!swapped) && hasMissedNorthTooLong(yaw_estimate)){
         pidController->setGains(0.6267f, 0, 0.9488f);        
         swapped = true;
@@ -228,9 +228,9 @@ void PIDController::update_PID(float ax, float ay, float az, float gyroZ, float 
 
     // Apply the change incrementally to the current angles
     *fin_left  += finCmd;
-    *fin_right -= finCmd;
+    //*fin_right -= finCmd;
 
     // Constrain to valid servo range [0°, 180°]
     *fin_left  = constrain(*fin_left,  0.0f, 180.0f);
-    *fin_right = constrain(*fin_right, 0.0f, 180.0f);
+    *fin_right = 180.0f - (*fin_left);
 }
