@@ -1345,6 +1345,9 @@ class GroundStationApp(QMainWindow):
         #TODO: dont update if fields are invalid (none, empty)
         self.__packet_recv_count += 1
         self.update_packet_label()
+
+        if msg is None or msg.strip().replace(',', '') == '':
+            return  # message is empty or only whitespace/commas
         
         data = self.extract_data_str(msg)
 
@@ -1373,9 +1376,9 @@ class GroundStationApp(QMainWindow):
 
         new_accel_data = [data.ACCEL_R, data.ACCEL_P, data.ACCEL_Y]
         self.plotters[self.graph_title_to_index.get("Accel")].update_plot(new_accel_data)
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel R")].setText(f"{data.ACCEL_R} °/s²")
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel P")].setText(f"{data.ACCEL_P} °/s²")
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{data.ACCEL_Y} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel X")].setText(f"{data.ACCEL_R} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{data.ACCEL_P} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Z")].setText(f"{data.ACCEL_Y} °/s²")
 
         new_mag_data = [data.MAG_R, data.MAG_P, data.MAG_Y]
         self.plotters[self.graph_title_to_index.get("Mag")].update_plot(new_mag_data)
