@@ -238,7 +238,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
     return curr_state;
 }
 
-void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &ser)
+void SensorManager::sampleSensors(MissionManager &mission_info)
 {
     // PRESSURE
     if(mission_info.getOpMode() == OPMODE_SIM)
@@ -322,11 +322,10 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
                     pitch *= 180.0 / PI;
                     yaw   *= 180.0 / PI;
 
-                    sensors_event_t event_lis3mdl;
-                    lis3mdl.getEvent(&event_lis3mdl);
-                    mx = event_lis3mdl.magnetic.x;
-                    my = event_lis3mdl.magnetic.y;
-                    mz = event_lis3mdl.magnetic.z;
+                    lis3mdl.read();
+                    mx = lis3mdl.x;
+                    my = lis3mdl.y;
+                    mz = lis3mdl.z;
 
                     float mx_g = mx / 100;
                     float my_g = my / 100;
@@ -365,10 +364,8 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     unsigned long servo_now = millis();
     if(servo_now - last_servo_update >= 250)
     {
-        //ser.sendInfoDataMsg("GyroZ=%f",gyroZ);
-        //ser.sendInfoDataMsg("servo_left=%f",servo_left);
-        //ser.sendInfoDataMsg("servo_right=%f",servo_right);
-        last_servo_update = servo_now;
+        writeGyroServoLeft(servo_left);
+        writeGyroServoRight(servo_right);
     }
     */
 
@@ -646,7 +643,6 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     bno08x->enableReport(SH2_ARVR_STABILIZED_RV);
     bno08x->enableReport(SH2_ACCELEROMETER);
     bno08x->enableReport(SH2_GYROSCOPE_CALIBRATED);
-    bno08x->enableReport(SH2_ROTATION_VECTOR);
 
     if (!lis3mdl.begin_I2C()) 
     {

@@ -25,7 +25,7 @@ from scipy.spatial.transform import Rotation as R
 from pyqtgraph import mkPen
 from enum import Enum
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
-from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTimer, QTime, pyqtSlot, QStandardPaths, QDir
+from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTimer, QTime, pyqtSlot
 from PyQt6.QtGui import QFont, QIcon, QIntValidator, QColor, QPalette
 from PyQt6.QtWidgets import (
     QApplication,
@@ -49,18 +49,6 @@ from PyQt6.QtWidgets import (
     QAbstractItemView,
     QApplication,
 )
-import os
-
-# Helper function to get absolute path to resource, works for dev and for cx_Freeze
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller/cx_Freeze """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        # cx_Freeze uses a different mechanism, often files are relative to sys.executable
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.abspath("."))
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
 
 # Structure to store packet data
 @dataclass(frozen=True)
@@ -303,50 +291,11 @@ class GroundStationApp(QMainWindow):
         self.__camera_val                   = 0
         self.__set_time_id                  = 1
 
-        # 3D Test Data and Timer
-        self._3d_test_coordinates = [
-            (0, 0, 0),
-            (0, 0, 15),
-            (0, 0, 30),
-            (0, 0, 45),
-            (0, 0, 60),
-            (0, 0, 75),
-            (0, 0, 90),
-            (0, 0, 105),
-            (0, 0, 120),
-            (0, 0, 135),
-            (0, 0, 150),
-            (0, 0, 165),
-            (0, 0, 180),
-            (0, 0, 195),
-            (0, 0, 210),
-            (0, 0, 225),
-            (0, 0, 240),
-            (0, 0, 255),
-            (0, 0, 270),
-            (0, 0, 285),
-            (0, 0, 300),
-            (0, 0, 315),
-            (0, 0, 330),
-            (0, 0, 345),
-            (0, 0, 0),
-            # (10, 0, 0),
-            # (10, 10, 0),
-            # (10, 10, 10),
-            # (20, 15, 5),
-            # (30, 10, -10),
-            # (0, 0, 0),
-        ]
-        self._3d_test_index = 0
-        self._3d_test_timer = QTimer(self)
-        self._3d_test_timer.timeout.connect(self.run_3d_test_sequence)
-        # self._3d_test_timer.start(1000)  # Update every 1 second
-
         self.setWindowTitle("CANSAT Ground Station")
-        self.setWindowIcon(QIcon(resource_path('icon.png')))
+        self.setWindowIcon(QIcon('icon.png'))
 
         tray = QSystemTrayIcon()
-        tray.setIcon(QIcon(resource_path('icon.png')))
+        tray.setIcon(QIcon('icon.png'))
         tray.setVisible(True)
         tray.show()
 
@@ -889,30 +838,17 @@ class GroundStationApp(QMainWindow):
 
         rocket_3d_layout.addWidget(view)
 
-        # Rocket components
-        # Cylinder body
-        cylinder_body = gl.GLMeshItem(
+        # Rocket body
+        body = gl.GLMeshItem(
             meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.5, 0.5], length=3),
             smooth=True, color=(1, 0, 0, 1), shader="shaded"
         )
-        cylinder_body.translate(0, 0, -2) # Base at z=-2, top at z=1
-        view.addItem(cylinder_body)
-
-        # Nose cone
-        # Cone is made using a cylinder with one radius 0
-        # Length 1, base radius 0.5, top radius 0
-        # Base of cone should be at z=1 (top of cylinder)
-        nose_cone = gl.GLMeshItem(
-            meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.5, 0], length=1), # radius=[base, top]
-            smooth=True, color=(1, 0, 0, 1), shader="shaded" # Same color for now
-        )
-        nose_cone.translate(0, 0, 1) # Position cone's base at z=1
-        view.addItem(nose_cone)
+        body.translate(0, 0, -1)
+        view.addItem(body)
 
         # Store references on tab widget for later access
         self.rocket_3d.view = view
-        self.rocket_3d.cylinder_body = cylinder_body
-        self.rocket_3d.nose_cone = nose_cone
+        self.rocket_3d.body = body
 
         self.rocket_3d.setLayout(rocket_3d_layout)
         self.tab_widget.addTab(self.rocket_3d, "3D")
@@ -985,13 +921,7 @@ class GroundStationApp(QMainWindow):
         # ------ END GRAPH GROUP ------ #
 
         # ------ START CSV FILE ------- #
-        self.__app_data_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
-        self.__app_data_dir = os.path.join(self.__app_data_dir, "RSXCansatGUI")
-        if not os.path.exists(self.__app_data_dir):
-            os.makedirs(self.__app_data_dir, exist_ok=True)
-
-        csv_file_path = os.path.join(self.__app_data_dir, "cansat_data.csv")
-        self.__csv_file = open(csv_file_path, "w", newline="")
+        self.__csv_file = open("cansat_data.csv", "w", newline="")
         self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
         self.__csv_writer.writeheader()
         # ------- END CSV FILE -------- #
@@ -1275,8 +1205,7 @@ class GroundStationApp(QMainWindow):
             # Get logfile
             if "$LOGFILE:BEGIN" in msg:
                 self.get_log_overlay.show()
-                log_file_path = os.path.join(self.__app_data_dir, "cansat_logs.txt")
-                self.__outfile = open(log_file_path, "wb")
+                self.__outfile = open("cansat_logs.txt", "wb")
                 self.__outfile.write((msg + "\n").encode('utf-8'))
                 self.__write_to_logfile = 1
                 return
@@ -1320,8 +1249,7 @@ class GroundStationApp(QMainWindow):
             if "BEGIN_SIMP" in msg:
                 if(self.__cansat_mode == "SIM"):
                     try:
-                        simp_file_path = resource_path("cansat_2023_simp.txt")
-                        with open(simp_file_path, 'r') as file:
+                        with open("cansat_2023_simp.txt", 'r') as file:
                             for line in file:
                                 if line.startswith("CMD,$,SIMP"):
                                     line = line.replace('$', str(self.__TEAM_ID))
@@ -1385,15 +1313,9 @@ class GroundStationApp(QMainWindow):
 
         m = Transform3D(*matrix)
 
-        # Transform cylinder body
-        self.rocket_3d.cylinder_body.resetTransform()
-        self.rocket_3d.cylinder_body.setTransform(m)
-        self.rocket_3d.cylinder_body.translate(0, 0, -2, local=True) # Initial position for cylinder
-
-        # Transform nose cone
-        self.rocket_3d.nose_cone.resetTransform()
-        self.rocket_3d.nose_cone.setTransform(m)
-        self.rocket_3d.nose_cone.translate(0, 0, 1, local=True) # Initial position for cone, base at cylinder's top
+        self.rocket_3d.body.resetTransform()
+        self.rocket_3d.body.setTransform(m)
+        self.rocket_3d.body.translate(0, 0, -1)
 
     def set_port_text_closed(self):
          self.label_port.setText(f'<span style="color:black;">Ground Port: \
@@ -1423,9 +1345,6 @@ class GroundStationApp(QMainWindow):
         #TODO: dont update if fields are invalid (none, empty)
         self.__packet_recv_count += 1
         self.update_packet_label()
-
-        if msg is None or msg.strip().replace(',', '') == '':
-            return  # message is empty or only whitespace/commas
         
         data = self.extract_data_str(msg)
 
@@ -1454,9 +1373,9 @@ class GroundStationApp(QMainWindow):
 
         new_accel_data = [data.ACCEL_R, data.ACCEL_P, data.ACCEL_Y]
         self.plotters[self.graph_title_to_index.get("Accel")].update_plot(new_accel_data)
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel X")].setText(f"{data.ACCEL_R} °/s²")
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{data.ACCEL_P} °/s²")
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Z")].setText(f"{data.ACCEL_Y} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel R")].setText(f"{data.ACCEL_R} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel P")].setText(f"{data.ACCEL_P} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{data.ACCEL_Y} °/s²")
 
         new_mag_data = [data.MAG_R, data.MAG_P, data.MAG_Y]
         self.plotters[self.graph_title_to_index.get("Mag")].update_plot(new_mag_data)
@@ -1564,15 +1483,6 @@ class GroundStationApp(QMainWindow):
         )
 
         return telemetry_data
-
-    def run_3d_test_sequence(self):
-        if self._3d_test_index < len(self._3d_test_coordinates):
-            yaw, pitch, roll = self._3d_test_coordinates[self._3d_test_index]
-            self.update_rocket_orientation(yaw, pitch, roll)
-            self._3d_test_index += 1
-        else:
-            self._3d_test_timer.stop()
-            self.update_gui_log("3D test sequence finished.", "green")
 
 def customPalette():
 
