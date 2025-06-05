@@ -64,7 +64,6 @@ private:
     altitude_data alt_data;
     
     HardwareSerial *GPS_Serial;
-    String gpsData = "";
 
     Adafruit_BME280 bme;
     TinyGPSPlus gps;
@@ -152,6 +151,9 @@ public:
 
     void setRtcTime(int sec, int minute, int hour);
 
+    int getCamera1Status();
+
+    int getCamera2Status();
 };
 
 #endif /* SENSOR_MANAGER_H */

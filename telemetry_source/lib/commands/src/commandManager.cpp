@@ -352,7 +352,17 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     strcpy(val, token);
   }
 
-  if(strcmp(mec, "SERVO") == 0)
+  if(strcmp(mec, "RELEASE") == 0)
+  {
+    sensors.writeReleaseServo(38);
+    info.setOpState(PROBE_RELEASE);
+    info.beginPref("xb-set", false);
+    int state_int = static_cast<int>(PROBE_RELEASE);
+    info.putPrefInt("opstate", state_int);
+    info.endPref();
+    ser.sendInfoMsg("ATTEMPTED PROBE RELEASE FROM MANUAL TRIGGER!");
+  }
+  else if(strcmp(mec, "SERVO") == 0)
   {
     const char *sep = strchr(val, '|');
     if (val != NULL) 
@@ -397,10 +407,11 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
   }
   else if(strcmp(mec, "CAMERA1") == 0)
   {
-    if(strcmp(val, "ON"))
+    if(strcmp(val, "ON") == 0)
     {
       digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
       int state = digitalRead(CAMERA1_STATUS_PIN);
+      delay(1000);
       if(state == HIGH)
       {
         ser.sendInfoMsg("CAMERA1 ON");
@@ -410,9 +421,19 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
         ser.sendErrorMsg("WROTE ON TO CAMERA1, BUT DID NOT GET ON STATUS");
       }
     }
-    else if(strcmp(val, "OFF"))
+    else if(strcmp(val, "OFF") == 0)
     {
+      if(info.getOpState() != IDLE)
+      {
+        ser.sendErrorMsg("CANNOT TURN OFF CAMERA1 DURING MISSION!");
+        return;
+      }
       digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
+      delay(1000);
+      digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
+      delay(1000);
+      digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
+      delay(1000);
       int state = digitalRead(CAMERA1_STATUS_PIN);
       if(state == LOW)
       {
@@ -426,10 +447,11 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
   }
   else if(strcmp(mec, "CAMERA2") == 0)
   {
-    if(strcmp(val, "ON"))
+    if(strcmp(val, "ON") == 0)
     {
       digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
       int state = digitalRead(CAMERA2_STATUS_PIN);
+      delay(1000);
       if(state == HIGH)
       {
         ser.sendInfoMsg("CAMERA2 ON");
@@ -439,9 +461,19 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
         ser.sendErrorMsg("WROTE TO CAMERA2, BUT DID NOT GET ON STATUS");
       }
     }
-    else if(strcmp(val, "OFF"))
+    else if(strcmp(val, "OFF") == 0)
     {
+      if(info.getOpState() != IDLE)
+      {
+        ser.sendErrorMsg("CANNOT TURN OFF CAMERA2 DURING MISSION!");
+        return;
+      }
       digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
+      delay(1000);
+      digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
+      delay(1000);
+      digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
+      delay(1000);
       int state = digitalRead(CAMERA2_STATUS_PIN);
       if(state == LOW)
       {

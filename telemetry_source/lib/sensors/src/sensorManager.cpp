@@ -280,6 +280,13 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     
     send_packet.VOLTAGE = getVoltage();
 
+    // Magnetometer
+    sensors_event_t event_lis3mdl;
+    lis3mdl.getEvent(&event_lis3mdl);
+    mx = event_lis3mdl.magnetic.x;
+    my = event_lis3mdl.magnetic.y;
+    mz = event_lis3mdl.magnetic.z;
+
     // IMU
     for(int i = 0; i < 3; i++)
     {
@@ -322,12 +329,6 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
                     pitch *= 180.0 / PI;
                     yaw   *= 180.0 / PI;
 
-                    sensors_event_t event_lis3mdl;
-                    lis3mdl.getEvent(&event_lis3mdl);
-                    mx = event_lis3mdl.magnetic.x;
-                    my = event_lis3mdl.magnetic.y;
-                    mz = event_lis3mdl.magnetic.z;
-
                     float mx_g = mx / 100;
                     float my_g = my / 100;
                     float mz_g = mz / 100;
@@ -359,29 +360,38 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     }
 
     /*
-    float servo_left = 0.0;
-    float servo_right = 0.0;
-    pid_cntl.update_PID(ax, ay, az, gyroZ, mx, my, mz, &servo_left, &servo_right);
-    unsigned long servo_now = millis();
-    if(servo_now - last_servo_update >= 250)
+    if(mission_info.getOpState() == PROBE_RELEASE)
     {
-        //ser.sendInfoDataMsg("GyroZ=%f",gyroZ);
-        //ser.sendInfoDataMsg("servo_left=%f",servo_left);
-        //ser.sendInfoDataMsg("servo_right=%f",servo_right);
-        last_servo_update = servo_now;
+        float servo_left = 0.0;
+        float servo_right = 0.0;
+        pid_cntl.update_PID(ax, ay, az, gyroZ, mx, my, mz, &servo_left, &servo_right);
+        unsigned long servo_now = millis();
+        if(servo_now - last_servo_update >= 250)
+        {
+            //ser.sendInfoDataMsg("GyroZ=%f",gyroZ);
+            //ser.sendInfoDataMsg("servo_left=%f",servo_left);
+            //ser.sendInfoDataMsg("servo_right=%f",servo_right);
+            last_servo_update = servo_now;
+        }
     }
     */
 
+    // Hall senssor
     send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
 
+    // GPS
     int gps_avail = GPS_Serial->available();
-    gpsData = "";
-    for (int i = 0; i < gps_avail; i++) {
+    String gpsData = "";
+    for (int i = 0; i < gps_avail; i++)
+    {
         gpsData += (char)GPS_Serial->read();
     }
 
-    if (gpsData.length() > 0) {
-        for (size_t i = 0; i < gpsData.length(); i++) {
+    if (gpsData.length() > 0)
+    {
+        // ser.sendInfoDataMsg("gpsData: %s", gpsData);
+        for (size_t i = 0; i < gpsData.length(); i++)
+        {
             gps.encode(gpsData[i]);
         }
     }
@@ -398,8 +408,9 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
         getGpsSats(&send_packet.GPS_SATS);
     }
 
-    int cam1_state = digitalRead(CAMERA1_STATUS_PIN);
-    int cam2_state = digitalRead(CAMERA2_STATUS_PIN);
+    // CAMERA status
+    int cam1_state = getCamera1Status();
+    int cam2_state = getCamera2Status();
 
     if (cam1_state && cam2_state)
     {
@@ -792,4 +803,14 @@ float SensorManager::getRotRate()
 void SensorManager::setRtcTime(int sec, int minute, int hour)
 {
     rtc->set(sec, minute, hour, 1, 1, 1, 0);
+}
+
+int SensorManager::getCamera1Status()
+{
+    return digitalRead(CAMERA1_STATUS_PIN);
+}
+
+int SensorManager::getCamera2Status()
+{
+    return digitalRead(CAMERA2_STATUS_PIN);
 }
