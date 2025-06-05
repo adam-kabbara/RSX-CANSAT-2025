@@ -120,7 +120,7 @@ void loop()
                 continue;
             }
 
-            sensor_mgr.sampleSensors(mission_info);
+            sensor_mgr.sampleSensors(mission_info, xbee_serial);
 
             if(send_flag == 1)
             {

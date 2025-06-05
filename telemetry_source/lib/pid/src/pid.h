@@ -75,10 +75,10 @@ private:
 
     // Timestamp of the last moment yaw_estimate was within ±NORTH_TOLERANCE_DEG of north.
     unsigned long last_time_at_north;
-    bool swapped = false;
+    bool swapped = false; //IF THIS IS FALSE, IT IS TRYING TO POINT NORTH, ELSE IT IS TRYING TO STOP SPINNING
 
 public:
-    PIDController(unsigned long north_timeout_ms = 5000UL)
+    PIDController(unsigned long north_timeout_ms = 5000UL) //THIS TIMEOUT VARIABLE SAYS HOW LONG IT TAKES UNTIL THE OTHER TUNER KICKS IN
         : NORTH_TIMEOUT_MS(north_timeout_ms),
         last_time_at_north(millis())
     {
