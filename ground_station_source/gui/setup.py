@@ -3,25 +3,7 @@ from cx_Freeze import setup, Executable
 # Dependencies are automatically detected, but it might need
 # fine tuning.
 # Run command: python setup.py bdist_msi
-build_options = {
-    'packages': [
-        'os',
-        'sys',
-        'time',
-        're',
-        'csv',
-        'math',
-        'collections',
-        'datetime',
-        'enum',
-        'numpy',
-        'scipy',
-        'PyQt6',
-        'pyqtgraph'
-    ],
-    'excludes': [],
-    'include_files': ["icon.png", "icon.ico", "cansat_2023_simp.txt"]
-}
+build_options = {'packages': [], 'excludes': [], 'include_files': ["icon.png", "cansat_2023_simp.txt"]}
 
 bdist_msi_options = {
     'upgrade_code': '{77d998f8-74c5-41f1-a150-929695313ea0}',
