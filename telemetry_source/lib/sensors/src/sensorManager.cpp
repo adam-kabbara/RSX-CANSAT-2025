@@ -585,7 +585,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
 
     // GPS
     GPS_Serial = new HardwareSerial(1);
-    GPS_Serial->begin(9600, SERIAL_8N1, RX1_PIN, TX1_PIN);
+    GPS_Serial->begin(9600, SERIAL_8N1, RX0_PIN, TX0_PIN);
     delay(100);
     ser.sendInfoMsg("Initialized GPS...");
     

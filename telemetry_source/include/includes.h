@@ -24,6 +24,8 @@
 #define ADC_LINEAR_REGRESSION 0.119505
 #define HALL_SENSOR_THRESHOLD 2400
 
+#define RX0_PIN 3
+#define TX0_PIN 1
 #define RX1_PIN 9
 #define TX1_PIN 10
 #define RX2_PIN 16
