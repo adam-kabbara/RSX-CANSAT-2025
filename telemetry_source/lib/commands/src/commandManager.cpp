@@ -149,7 +149,7 @@ void CommandManager::do_st(SerialManager &ser, MissionManager &info, SensorManag
     {
         char time_str[DATA_SIZE];
         sensors.getGpsTime(time_str);
-        if(sscanf(data, "%d:%d:%d", &h, &m, &s) == 3)
+        if(sscanf(time_str, "%d:%d:%d", &h, &m, &s) == 3)
         {
           sensors.setRtcTime(s,m,h);
           sensors.getRtcTime(time_str);
@@ -157,7 +157,7 @@ void CommandManager::do_st(SerialManager &ser, MissionManager &info, SensorManag
         }
         else
         {
-          ser.sendErrorMsg("Could not get GPS time in format H:M:S!");
+          ser.sendErrorMsg("Could not get GPS time in format HH:MM:SS!");
         }
     }
     else if(sscanf(data, "%d:%d:%d", &h, &m, &s) == 3)
