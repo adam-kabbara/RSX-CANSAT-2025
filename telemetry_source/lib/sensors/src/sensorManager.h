@@ -64,7 +64,6 @@ private:
     altitude_data alt_data;
     
     HardwareSerial *GPS_Serial;
-    String gpsData = "";
 
     Adafruit_BME280 bme;
     TinyGPSPlus gps;

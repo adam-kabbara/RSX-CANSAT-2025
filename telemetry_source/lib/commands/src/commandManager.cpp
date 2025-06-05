@@ -352,7 +352,17 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     strcpy(val, token);
   }
 
-  if(strcmp(mec, "SERVO") == 0)
+  if(strcmp(mec, "RELEASE") == 0)
+  {
+    sensors.writeReleaseServo(38);
+    info.setOpState(PROBE_RELEASE);
+    info.beginPref("xb-set", false);
+    int state_int = static_cast<int>(PROBE_RELEASE);
+    info.putPrefInt("opstate", state_int);
+    info.endPref();
+    ser.sendInfoMsg("ATTEMPTED PROBE RELEASE FROM MANUAL TRIGGER!");
+  }
+  else if(strcmp(mec, "SERVO") == 0)
   {
     const char *sep = strchr(val, '|');
     if (val != NULL) 

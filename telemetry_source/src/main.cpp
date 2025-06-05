@@ -83,7 +83,7 @@ void loop()
             xbee_serial.sendInfoMsg("BEGIN_SIMP");
         }
 
-        if (LittleFS.exists("/logs.txt")) 
+        if(mission_info.getOpState() == LAUNCH_PAD && LittleFS.exists("/logs.txt")) 
         {
             xbee_serial.sendInfoMsg("Removing logs.txt from file system.");
             LittleFS.remove("/logs.txt");
