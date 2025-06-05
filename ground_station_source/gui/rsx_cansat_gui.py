@@ -25,7 +25,7 @@ from scipy.spatial.transform import Rotation as R
 from pyqtgraph import mkPen
 from enum import Enum
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
-from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTimer, QTime, pyqtSlot, QStandardPaths, QDir
+from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTimer, QTime, pyqtSlot
 from PyQt6.QtGui import QFont, QIcon, QIntValidator, QColor, QPalette
 from PyQt6.QtWidgets import (
     QApplication,
@@ -49,18 +49,6 @@ from PyQt6.QtWidgets import (
     QAbstractItemView,
     QApplication,
 )
-import os
-
-# Helper function to get absolute path to resource, works for dev and for cx_Freeze
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller/cx_Freeze """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        # cx_Freeze uses a different mechanism, often files are relative to sys.executable
-        base_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.abspath("."))
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
 
 # Structure to store packet data
 @dataclass(frozen=True)
@@ -91,6 +79,7 @@ class TelemetryData:
     GPS_SATS: str
     CMD_ECHO: str
     CAM_STATUS: int
+    PACKET_RECV: int
 
     def to_dict(self):
         return {key: str(value) for key, value in self.__dict__.items()}
@@ -303,50 +292,11 @@ class GroundStationApp(QMainWindow):
         self.__camera_val                   = 0
         self.__set_time_id                  = 1
 
-        # 3D Test Data and Timer
-        self._3d_test_coordinates = [
-            (0, 0, 0),
-            (0, 0, 15),
-            (0, 0, 30),
-            (0, 0, 45),
-            (0, 0, 60),
-            (0, 0, 75),
-            (0, 0, 90),
-            (0, 0, 105),
-            (0, 0, 120),
-            (0, 0, 135),
-            (0, 0, 150),
-            (0, 0, 165),
-            (0, 0, 180),
-            (0, 0, 195),
-            (0, 0, 210),
-            (0, 0, 225),
-            (0, 0, 240),
-            (0, 0, 255),
-            (0, 0, 270),
-            (0, 0, 285),
-            (0, 0, 300),
-            (0, 0, 315),
-            (0, 0, 330),
-            (0, 0, 345),
-            (0, 0, 0),
-            # (10, 0, 0),
-            # (10, 10, 0),
-            # (10, 10, 10),
-            # (20, 15, 5),
-            # (30, 10, -10),
-            # (0, 0, 0),
-        ]
-        self._3d_test_index = 0
-        self._3d_test_timer = QTimer(self)
-        self._3d_test_timer.timeout.connect(self.run_3d_test_sequence)
-        # self._3d_test_timer.start(1000)  # Update every 1 second
-
         self.setWindowTitle("CANSAT Ground Station")
-        self.setWindowIcon(QIcon(resource_path('icon.png')))
+        self.setWindowIcon(QIcon('icon.png'))
 
         tray = QSystemTrayIcon()
-        tray.setIcon(QIcon(resource_path('icon.png')))
+        tray.setIcon(QIcon('icon.png'))
         tray.setVisible(True)
         tray.show()
 
@@ -568,6 +518,11 @@ class GroundStationApp(QMainWindow):
         self.program_camera_button.hide()
         ### end program camera
 
+        self.probe_release_force = QPushButton("FORCE PROBE RELEASE")
+        self.probe_release_force.setFont(button_font)
+        self.probe_release_force.clicked.connect(self.force_probe_release)
+        self.probe_release_force.hide()
+
         self.camera_status_button = QPushButton("GET CAMERA STATUS")
         self.camera_status_button.setFont(button_font)
         self.camera_status_button.clicked.connect(self.get_cam_status)
@@ -623,6 +578,7 @@ class GroundStationApp(QMainWindow):
         commands_layout.addWidget(self.button_sim_mode_activate)
         commands_layout.addWidget(self.button_sim_mode_disable)
         commands_layout.addWidget(self.button_get_log_data)
+        commands_layout.addWidget(self.probe_release_force)
         commands_layout.addLayout(team_id_editing_box)
         commands_layout.addWidget(self.button_back)
 
@@ -673,6 +629,7 @@ class GroundStationApp(QMainWindow):
             self.camera_id_field,
             self.camera_val_field,
             self.camera_status_button,
+            self.probe_release_force
         ]
 
         self.buttons_connection = [
@@ -985,13 +942,7 @@ class GroundStationApp(QMainWindow):
         # ------ END GRAPH GROUP ------ #
 
         # ------ START CSV FILE ------- #
-        self.__app_data_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
-        self.__app_data_dir = os.path.join(self.__app_data_dir, "RSXCansatGUI")
-        if not os.path.exists(self.__app_data_dir):
-            os.makedirs(self.__app_data_dir, exist_ok=True)
-
-        csv_file_path = os.path.join(self.__app_data_dir, "cansat_data.csv")
-        self.__csv_file = open(csv_file_path, "w", newline="")
+        self.__csv_file = open("cansat_data.csv", "w", newline="")
         self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
         self.__csv_writer.writeheader()
         # ------- END CSV FILE -------- #
@@ -1132,6 +1083,18 @@ class GroundStationApp(QMainWindow):
         else:
             if(self.send_data("CMD,%d,MEC,%s:OFF" % (self.__TEAM_ID, self.__camera_id))):
                 self.update_gui_log(f"Sent {self.__camera_id} OFF command")
+    
+    def force_probe_release(self):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setWindowTitle("CONFIRM")
+        msg_box.setText("CONFIRM: SEND PROBE RELEASE COMMAND")
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        msg_box.setDefaultButton(QMessageBox.StandardButton.No)
+        response = msg_box.exec()
+        if response == QMessageBox.StandardButton.Yes:
+            if(self.send_data("MEC,%d,RELEASE:X" % self.__TEAM_ID)):
+                self.update_gui_log(f"Sent force probe release command")
 
     def get_cam_status(self):
         if(self.send_data("CMD,%d,MEC,CAMERA1_STAT:X" % self.__TEAM_ID)):
@@ -1275,8 +1238,7 @@ class GroundStationApp(QMainWindow):
             # Get logfile
             if "$LOGFILE:BEGIN" in msg:
                 self.get_log_overlay.show()
-                log_file_path = os.path.join(self.__app_data_dir, "cansat_logs.txt")
-                self.__outfile = open(log_file_path, "wb")
+                self.__outfile = open("cansat_logs.txt", "wb")
                 self.__outfile.write((msg + "\n").encode('utf-8'))
                 self.__write_to_logfile = 1
                 return
@@ -1320,8 +1282,7 @@ class GroundStationApp(QMainWindow):
             if "BEGIN_SIMP" in msg:
                 if(self.__cansat_mode == "SIM"):
                     try:
-                        simp_file_path = resource_path("cansat_2023_simp.txt")
-                        with open(simp_file_path, 'r') as file:
+                        with open("cansat_2023_simp.txt", 'r') as file:
                             for line in file:
                                 if line.startswith("CMD,$,SIMP"):
                                     line = line.replace('$', str(self.__TEAM_ID))
@@ -1420,7 +1381,6 @@ class GroundStationApp(QMainWindow):
     # Upon receiving telemetry string, extract contents and update fields
     def parse_telemetry_string(self, msg):
 
-        #TODO: dont update if fields are invalid (none, empty)
         self.__packet_recv_count += 1
         self.update_packet_label()
 
@@ -1560,19 +1520,11 @@ class GroundStationApp(QMainWindow):
             GPS_LONGITUDE= float(fields[22]) if 22 < len(fields) else None,
             GPS_SATS     = fields[23] if 23 < len(fields) else None,
             CMD_ECHO     = fields[24] if 24 < len(fields) else None,
-            CAM_STATUS   = fields[25] if 25 < len(fields) else None
+            CAM_STATUS   = fields[25] if 25 < len(fields) else None,
+            PACKET_RECV  = self.__packet_recv_count
         )
 
         return telemetry_data
-
-    def run_3d_test_sequence(self):
-        if self._3d_test_index < len(self._3d_test_coordinates):
-            yaw, pitch, roll = self._3d_test_coordinates[self._3d_test_index]
-            self.update_rocket_orientation(yaw, pitch, roll)
-            self._3d_test_index += 1
-        else:
-            self._3d_test_timer.stop()
-            self.update_gui_log("3D test sequence finished.", "green")
 
 def customPalette():
 
