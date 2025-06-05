@@ -289,7 +289,6 @@ class GroundStationApp(QMainWindow):
         self.__servo_id                     = -1
         self.__servo_val                    = -1
         self.__camera_id                    = "NONE"
-        self.__camera_val                   = 0
         self.__set_time_id                  = 1
 
         self.setWindowTitle("CANSAT Ground Station")
@@ -499,22 +498,14 @@ class GroundStationApp(QMainWindow):
         self.camera_id_field.setFont(button_font)
         self.camera_id_field.activated.connect(self.camera_id_edited)
 
-        self.camera_val_field = QComboBox()
-        self.camera_val_field.addItem("ON", 0)
-        self.camera_val_field.addItem("OFF", 1)
-        self.camera_val_field.setFont(button_font)
-        self.camera_val_field.activated.connect(self.camera_val_edited)
-
-        self.program_camera_button = QPushButton(" PROGRAM CAMERA ")
+        self.program_camera_button = QPushButton("TOGGLE CAMERA")
         self.program_camera_button.setFont(button_font)
         self.program_camera_button.clicked.connect(self.toggle_camera)
 
         program_camera_box.addWidget(self.program_camera_button)
         program_camera_box.addWidget(self.camera_id_field)
-        program_camera_box.addWidget(self.camera_val_field)
         
         self.camera_id_field.hide()
-        self.camera_val_field.hide()
         self.program_camera_button.hide()
         ### end program camera
 
@@ -627,7 +618,6 @@ class GroundStationApp(QMainWindow):
             self.servo_val_field,
             self.program_camera_button,
             self.camera_id_field,
-            self.camera_val_field,
             self.camera_status_button,
             self.probe_release_force
         ]
@@ -1074,15 +1064,8 @@ class GroundStationApp(QMainWindow):
             self.update_gui_log(f"Sent command to program {servo_label} to {self.__servo_val}")
 
     def toggle_camera(self):
-        if(self.__camera_id == "NONE" or self.__camera_val == - 1):
-            self.update_gui_log("ERROR: SELECT CAMERA AND MODE FIRST!", "red")
-            return
-        if(self.__camera_val == 0):
-            if(self.send_data("CMD,%d,MEC,%s:ON" % (self.__TEAM_ID, self.__camera_id))):
-                self.update_gui_log(f"Sent {self.__camera_id} ON command")
-        else:
-            if(self.send_data("CMD,%d,MEC,%s:OFF" % (self.__TEAM_ID, self.__camera_id))):
-                self.update_gui_log(f"Sent {self.__camera_id} OFF command")
+        if(self.send_data("CMD,%d,MEC,%s:X" % (self.__TEAM_ID, self.__camera_id))):
+            self.update_gui_log(f"Sent {self.__camera_id} toggle command")
     
     def force_probe_release(self):
         msg_box = QMessageBox()
@@ -1164,9 +1147,6 @@ class GroundStationApp(QMainWindow):
 
     def camera_id_edited(self, index):
         self.__camera_id = self.camera_id_field.itemText(index)
-
-    def camera_val_edited(self, index):
-        self.__camera_val = self.camera_val_field.itemData(index)
     
     def set_time_field_edited(self, index):
         self.__set_time_id = self.set_time_field.itemData(index)
