@@ -93,7 +93,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
                     // Check we are descending in case apogee was missed
 
-                    step = 0.25 * SENSOR_SAMPLE_RATE_HZ;
+                    step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
 
                     avg0 = (alt_data.buffer[(idx + size - 1) % size] +
                                 alt_data.buffer[idx] +
@@ -148,9 +148,9 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             }
             else
             {
-                // Last three average of 3 sample reading over 0.25 sec intervals are decreasing
+                // Last three average of 3 sample reading over 0.15 sec intervals are decreasing
 
-                int step = 0.25 * SENSOR_SAMPLE_RATE_HZ;
+                int step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
 
                 float avg0 = (alt_data.buffer[(idx + size - 1) % size] +
                             alt_data.buffer[idx] +

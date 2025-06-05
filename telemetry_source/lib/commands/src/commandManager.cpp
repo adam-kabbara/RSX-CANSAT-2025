@@ -67,7 +67,7 @@ int CommandManager::processCommand(const char *cmd_buff, SerialManager &ser, Mis
     if(!packet.keyword || !packet.team_id || !packet.command || !packet.data)
     {
         ser.sendErrorMsg("COMMAND REJECTED: FORMAT IS INCORRECT.");
-        ser.sendErrorDataMsg("COMMAND: %s\n", cmd_buff);
+        ser.sendErrorDataMsg("RECEIVED: %s\n", cmd_buff);
         return 0;
     }
 
@@ -423,7 +423,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     }
     else
     {
-      ser.sendErrorMsg("CAMERA1 ON");
+      ser.sendInfoMsg("CAMERA1 ON");
     }
   }
   else if(strcmp(mec, "CAMERA2") == 0)
@@ -445,7 +445,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     }
     else
     {
-      ser.sendErrorMsg("CAMERA2 ON");
+      ser.sendInfoMsg("CAMERA2 ON");
     }
   }
   else if(strcmp(mec, "CAMERA1_STAT") == 0)
