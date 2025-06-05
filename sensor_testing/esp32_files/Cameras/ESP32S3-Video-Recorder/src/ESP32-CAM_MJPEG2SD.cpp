@@ -14,33 +14,25 @@ extern bool forceRecord;
 bool stopRecording = false;
 bool startRecording = true;
 
-// Semaphore to signal pin change activity
-SemaphoreHandle_t recordPinActivitySemaphore = NULL;
+volatile uint8_t pulse_detect = 0;
+volatile uint8_t pin_changed = 0;
 
 // ISR to handle pin changes on RECORD_PIN
-void IRAM_ATTR handleRecordPinChangeISR() {
-  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-  if (recordPinActivitySemaphore != NULL) {
-    xSemaphoreGiveFromISR(recordPinActivitySemaphore, &xHigherPriorityTaskWoken);
+void IRAM_ATTR ISR_pin_change() 
+{
+  if (digitalRead(RECORD_PIN)) {
+    pulse_detect = 1;
+  } else {
+    pulse_detect = 0;
   }
-  if (xHigherPriorityTaskWoken) {
-    portYIELD_FROM_ISR();
-  }
+  pin_changed = 1;
 }
 
 void setup() {
   pinMode(RECORD_PIN, INPUT_PULLDOWN);
   pinMode(RECORDING_DIAG, OUTPUT);
 
-  // Create the binary semaphore
-  recordPinActivitySemaphore = xSemaphoreCreateBinary();
-  if (recordPinActivitySemaphore == NULL) {
-    LOG_ERR("Failed to create recordPinActivitySemaphore");
-    // Handle error appropriately, e.g., by not attaching the interrupt or halting
-  } else {
-    // Attach the interrupt to RECORD_PIN, triggering on CHANGE (both RISING and FALLING edges)
-    attachInterrupt(digitalPinToInterrupt(RECORD_PIN), handleRecordPinChangeISR, CHANGE);
-  }
+  attachInterrupt(digitalPinToInterrupt(RECORD_PIN), ISR_pin_change, CHANGE);
 
   logSetup();
   // prep storage
@@ -80,13 +72,12 @@ void loop() {
   }
 
   // Wait for the semaphore to be given by the ISR
-  if (recordPinActivitySemaphore != NULL && xSemaphoreTake(recordPinActivitySemaphore, portMAX_DELAY) == pdTRUE) {
-    // Interrupt occurred, read the current state of the pin
-    int state = digitalRead(RECORD_PIN);
+  if (pin_changed) {
+    pin_changed = 0;
     Serial.print("Interrupt - state: ");
-    Serial.println(state);
+    Serial.println(pulse_detect);
 
-    if (state == 1) { // Pin is HIGH
+    if (pulse_detect == 1) { // Pin is HIGH
       forceRecord = forceRecord ? !stopRecording : startRecording;
 
       if (!forceRecord && stopRecording) {
@@ -106,9 +97,7 @@ void loop() {
       }
     }
   }
-  // The loop will now block on xSemaphoreTake, so the delay(1000) is no longer needed here for polling.
-  // If other periodic tasks were intended for loop(), xSemaphoreTake could use a timeout.
-  // For now, this makes the RECORD_PIN handling purely event-driven.
+  vTaskDelay(pdMS_TO_TICKS(25));
 
   // vTaskDelete(NULL); // free 8k ram
 }
