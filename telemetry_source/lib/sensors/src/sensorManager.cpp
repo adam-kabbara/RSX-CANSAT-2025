@@ -436,7 +436,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     
     float magYaw = pid_cntl.computeTiltCompensatedYaw(mx, my, mz, ax, ay, az);
     pid_cntl.kalmanUpdate(gyroZ, magYaw, dt);
-    updateCameraGyro(pid_cntl.getYawEstimate());
+    updateCameraServo(pid_cntl.getYawEstimate());
 }
 
 void SensorManager::build_data_str(char *buff, size_t size)
@@ -833,7 +833,7 @@ int SensorManager::getCamera2Status()
     return digitalRead(CAMERA2_STATUS_PIN);
 }
 
-void SensorManager::updateCameraGyro(float yaw_estimate) 
+void SensorManager::updateCameraServo(float yaw_estimate) 
 {
     float angle_to_north = fmod((360.0 - yaw_estimate), 360.0);
     

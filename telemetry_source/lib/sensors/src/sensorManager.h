@@ -156,7 +156,7 @@ public:
 
     int getCamera2Status();
 
-    void updateCameraGyro(float yaw_estimate);
+    void updateCameraServo(float yaw_estimate);
 };
 
 #endif /* SENSOR_MANAGER_H */
