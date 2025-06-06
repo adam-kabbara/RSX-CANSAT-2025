@@ -276,7 +276,7 @@ class GroundStationApp(QMainWindow):
         self.__TEAM_ID                      = 3114
         self.__packet_recv_count            = 0
         self.__packet_sent_count            = 0
-        self.__graph_time_window            = 100
+        self.__graph_time_window            = 500
         self.__csv_file                     = None
         self.__csv_writer                   = None
         self.__outfile                      = None
