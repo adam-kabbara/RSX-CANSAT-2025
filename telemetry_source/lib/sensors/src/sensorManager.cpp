@@ -836,9 +836,19 @@ int SensorManager::getCamera2Status()
 void SensorManager::updateCameraGyro(float yaw_estimate) 
 {
     float angle_to_north = fmod((360.0 - yaw_estimate), 360.0);
-
+    
     int servo_movement = static_cast<int>(angle_to_north / 2.0);
     servo_movement = constrain(servo_movement, 0, 180);
+
+    if(servo_movement < 75) 
+    {
+        servo_movement = 75;
+    }
+    
+    if(servo_movement > 105)
+    {
+        servo_movement = 105;
+    }
 
     writeCameraServo(servo_movement);
 }
