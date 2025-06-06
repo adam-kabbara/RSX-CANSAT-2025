@@ -4,6 +4,7 @@
 #include "includes.h"
 #include "serialManager.h"
 #include "missionManager.h"
+#include "pid.h"
 
 #include <Adafruit_BME280.h>
 #include <TinyGPS++.h>
@@ -15,7 +16,6 @@
 #include <SPI.h>
 #include <math.h>
 #include <uRTCLib.h>
-#include "pid.h"
 
 class SensorManager
 {
@@ -94,6 +94,7 @@ private:
     float mz = 0;
     float gyroZ = 0;
     unsigned long last_servo_update = 0;
+    unsigned long last_camera_servo_update = 0;
 
 public:
 
@@ -154,6 +155,8 @@ public:
     int getCamera1Status();
 
     int getCamera2Status();
+
+    void updateCameraGyro(float yaw_estimate);
 };
 
 #endif /* SENSOR_MANAGER_H */

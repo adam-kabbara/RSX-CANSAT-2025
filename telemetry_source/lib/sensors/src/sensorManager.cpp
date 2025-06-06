@@ -239,7 +239,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 }
 
 void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &ser)
-{
+{    
     // PRESSURE
     if(mission_info.getOpMode() == OPMODE_SIM)
     {
@@ -428,6 +428,15 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     {
         send_packet.CAMERA_STATUS = 0;
     }
+
+    // Timer between camera servo movements
+    unsigned long now = millis();
+    float dt = (now - last_camera_servo_update) / 1000.0;
+    last_camera_servo_update = now;
+    
+    float magYaw = pid_cntl.computeTiltCompensatedYaw(mx, my, mz, ax, ay, az);
+    pid_cntl.kalmanUpdate(gyroZ, magYaw, dt);
+    updateCameraGyro(pid_cntl.getYawEstimate());
 }
 
 void SensorManager::build_data_str(char *buff, size_t size)
@@ -672,6 +681,8 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
 		ser.sendInfoDataMsg("RTC was not detected");
 	}
 
+    last_camera_servo_update = millis();
+
     ser.sendInfoMsg("Done.");
 }
 
@@ -820,4 +831,14 @@ int SensorManager::getCamera1Status()
 int SensorManager::getCamera2Status()
 {
     return digitalRead(CAMERA2_STATUS_PIN);
+}
+
+void SensorManager::updateCameraGyro(float yaw_estimate) 
+{
+    float angle_to_north = fmod((360.0 - yaw_estimate), 360.0);
+
+    int servo_movement = static_cast<int>(angle_to_north / 2.0);
+    servo_movement = constrain(servo_movement, 0, 180);
+
+    writeCameraServo(servo_movement);
 }

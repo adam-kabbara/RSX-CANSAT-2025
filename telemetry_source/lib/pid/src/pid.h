@@ -5,51 +5,51 @@
 #include <Adafruit_LIS3MDL.h>
 class PID {
 public:
-  PID(float Kp_, float Ki_, float Kd_, float output_limit_);
+    PID(float Kp_, float Ki_, float Kd_, float output_limit_);
 
-  float update(float error, float current_time);  // declare update() method
-  float compute(float setpoint_deg, float current_deg);
+    float update(float error, float current_time);  // declare update() method
+    float compute(float setpoint_deg, float current_deg);
 
-  // Allow external code to adjust gains
-  void setGains(float Kp_, float Ki_, float Kd_);
+    // Allow external code to adjust gains
+    void setGains(float Kp_, float Ki_, float Kd_);
 
-  void getGains(float &outKp, float &outKi, float &outKd);
+    void getGains(float &outKp, float &outKi, float &outKd);
 
 private:
-  float Kp, Ki, Kd;
-  float output_limit;
-  float integral;
-  float prev_error;
-  float prev_derivative = 0.0f;
-  const float der_filter_coeff = 0.3f;  // α for D‐term filter
-  unsigned long prev_time;              // last millis() timestamp
+    float Kp, Ki, Kd;
+    float output_limit;
+    float integral;
+    float prev_error;
+    float prev_derivative = 0.0f;
+    const float der_filter_coeff = 0.3f;  // α for D‐term filter
+    unsigned long prev_time;              // last millis() timestamp
 };
 
 class SimpleAutoTuner
 {
 private:
-  PID &pid;
-  static const uint8_t MAX_WINDOW = 10;  // absolute max size
-  uint8_t window_size;
-  float error_threshold;
-  float adjust_factor;
-  float errors[MAX_WINDOW];
-  uint8_t head;
-  uint8_t count;
+    PID &pid;
+    static const uint8_t MAX_WINDOW = 10;  // absolute max size
+    uint8_t window_size;
+    float error_threshold;
+    float adjust_factor;
+    float errors[MAX_WINDOW];
+    uint8_t head;
+    uint8_t count;
 
 public:
-  // window_size = how many consecutive error samples to check
-  // error_threshold = if abs(error) > this after window, trigger
-  // adjust_factor = multiply Kp/Kd by this factor when instability detected
-  SimpleAutoTuner(PID &pid_ref,
-                  uint8_t window_size_ = 5,
-                  float error_threshold_ = 2.0f,
+    // window_size = how many consecutive error samples to check
+    // error_threshold = if abs(error) > this after window, trigger
+    // adjust_factor = multiply Kp/Kd by this factor when instability detected
+    SimpleAutoTuner(PID &pid_ref,
+                    uint8_t window_size_ = 5,
+                    float error_threshold_ = 2.0f,
                   float adjust_factor_ = 0.8f);
 
-  void clearBuffer();
+    void clearBuffer();
 
-  // Call this every control step with absolute error (deg):
-  void update(float abs_error);
+    // Call this every control step with absolute error (deg):
+    void update(float abs_error);
 };
 
 class PIDController
@@ -91,6 +91,7 @@ public:
     bool hasMissedNorthTooLong(float yaw_estimate);
     float quaternionToYawDegrees(float r, float i, float j, float k);
     float computeTiltCompensatedYaw(float mx, float my, float mz,float ax, float ay, float az);
+    float getYawEstimate() const;
 };
 
 #endif
