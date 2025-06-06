@@ -772,13 +772,6 @@ float SensorManager::getVoltage()
 
 float SensorManager::getRotRate()
 {
-    static unsigned long startupIgnore = millis() + 5000;
-
-    if(millis() < startupIgnore)
-    {
-        return 0.0;
-    }
-    
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
 
