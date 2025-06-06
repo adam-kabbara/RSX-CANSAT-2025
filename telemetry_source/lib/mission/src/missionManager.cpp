@@ -180,7 +180,6 @@ void MissionManager::resetSeq(SerialManager &serial)
         serial.sendErrorMsg("Perfoming recovery as processor was not in IDLE state! Telemetry should resume!");
         // Get packet count, launch altitude
         mission_info.launch_altitude = getPrefFloat("grndalt", 0.0);
-        setAltCalibration(mission_info.launch_altitude);
         mission_info.sim_status = static_cast<SimModeStatus>(getPrefInt("simst", 0));
         mission_info.op_mode = static_cast<OperatingMode>(getPrefInt("opmode", 0));
         mission_info.packet_count = getPrefInt("pckts", 0);

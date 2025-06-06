@@ -4,23 +4,16 @@
 #include "includes.h"
 #include "serialManager.h"
 #include "missionManager.h"
-
 #include <Adafruit_BME280.h>
+#include <Wire.h>
 #include <TinyGPS++.h>
 #include <ESP32Servo.h>
 #include <HardwareSerial.h>
-#include <Adafruit_BNO08x.h>
-#include <Adafruit_LIS3MDL.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <math.h>
-#include <uRTCLib.h>
-#include "pid.h"
 
 class SensorManager
 {
 private:
-    
+
     typedef struct transmission_packet {
         int TEAM_ID_PCKT = 0;
         char MISSION_TIME[DATA_SIZE] = "";
@@ -37,10 +30,10 @@ private:
         int ACCEL_R = 0;
         int ACCEL_P = 0;
         int ACCEL_Y = 0;
-        float MAG_R = 0.0;
-        float MAG_P = 0.0;
-        float MAG_Y = 0.0;
-        float AUTO_GYRO_ROTATION_RATE = 0.0;
+        float MAG_R = 0;
+        float MAG_P = 0;
+        float MAG_Y = 0;
+        int AUTO_GYRO_ROTATION_RATE = 0;
         char GPS_TIME[DATA_SIZE] = "";
         float GPS_ALTITUDE = 0.0;
         float GPS_LATITUDE = 0.0;
@@ -49,7 +42,7 @@ private:
         char CMD_ECHO[CMD_BUFF_SIZE] = "";
         int CAMERA_STATUS = 0;
     } transmission_packet;
-    
+
     transmission_packet send_packet;
 
     typedef struct altitude_data {
@@ -62,43 +55,16 @@ private:
     } altitude_data;
 
     altitude_data alt_data;
-    
-    HardwareSerial *GPS_Serial;
-    String gpsData = "";
 
     Adafruit_BME280 bme;
-    TinyGPSPlus gps;
-
     Servo m_servo_release;
     Servo m_servo_gyro_1;
     Servo m_servo_gyro_2;
     Servo m_servo_camera;
 
-    SPIClass *mySPI;
-    Adafruit_BNO08x *bno08x;
-    Adafruit_LIS3MDL lis3mdl;
-
-    uRTCLib *rtc;
-
-    float currRPM = 0.0;
-    float prevRPM = 0.0;
-    int lastState = HIGH;
-    unsigned long lastPulseTime = 0;
-    unsigned long pulseInterval = 0;
-
-    PIDController pid_cntl;
-    float ax = 0;
-    float ay = 0;
-    float az = 0;
-    float mx = 0;
-    float my = 0;
-    float mz = 0;
-    float gyroZ = 0;
-    unsigned long last_servo_update = 0;
+    int servo_1_pos = 0;
 
 public:
-
-    SensorManager();
 
     OperatingState updateState(OperatingState curr_state, MissionManager &mission_info);
 
@@ -124,23 +90,23 @@ public:
 
     void setAltData(float alt);
 
-    void startSensors(SerialManager &ser, MissionManager &info);
+    void startSensors(SerialManager &ser);
 
     void writeReleaseServo(int pos);
 
-    void writeGyroServoRight(int pos);
+    void writeGyroServo1(int pos);
 
-    void writeGyroServoLeft(int pos);
+    void writeGyroServo2(int pos);
 
     void writeCameraServo(int pos);
 
-    void getGpsAlt(float *alt);
+    float getGpsAlt();
 
-    void getGpsLat(float *lat);
+    float getGpsLat();
 
-    void getGpsLong(float *lon);
+    float getGpsLong();
 
-    void getGpsSats(int *sat);
+    int getGpsSats();
 
     void getRtcTime(char time_str[DATA_SIZE]);
 
@@ -150,8 +116,11 @@ public:
 
     float getRotRate();
 
-    void setRtcTime(int sec, int minute, int hour);
+    void getMagData(float *r, float *p, float *y);
 
+    void getAccelData(float *r, float *p, float *y);
+
+    void getGyroData(float *r, float *p, float *y);
 };
 
 #endif /* SENSOR_MANAGER_H */
