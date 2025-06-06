@@ -30,14 +30,14 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             float median = alt_values[4];
 
-            if (median > 20.0f)
+            if(alt_data.sample_count > 10 && median > 20.0f)
             {
                 mission_info.setOpState(ASCENT);
                 mission_info.beginPref("xb-set", false);
                 int state_int = static_cast<int>(ASCENT);
                 mission_info.putPrefInt("opstate", state_int);
                 mission_info.endPref();
-                ser.sendInfoMsg("Changing state to ASCENT!");
+                ser.sendInfoMsg("Changing state to ASCENT");
                 return ASCENT;
             }
             break;
@@ -63,7 +63,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             {
                 if(alt_data.sample_count > size)
                 {
-                    // To detect apogee, take last three averages of three samples at 0.15sec intervals
+                    // To detect apogee, sample three median values at 0.15sec intervals
                     // and determine if the difference between each of them is less than 5m
 
                     int step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
@@ -91,6 +91,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                         int state_int = static_cast<int>(APOGEE);
                         mission_info.putPrefInt("opstate", state_int);
                         mission_info.endPref();
+                        ser.sendInfoMsg("Changing state to APOGEE");
                         return APOGEE;
                     }
 
@@ -123,6 +124,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                         int state_int = static_cast<int>(DESCENT);
                         mission_info.putPrefInt("opstate", state_int);
                         mission_info.endPref();
+                        ser.sendInfoMsg("Changing state to DESCENT");
                         return DESCENT;
                     }
                 }
@@ -588,7 +590,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     delay(1000);
     if(info.getOpState() == IDLE)
     {
-        writeReleaseServo(38);
+        writeReleaseServo(47);
         ser.sendInfoMsg("Waiting 10 seconds for release servo setup...");
         delay(10000);
         writeReleaseServo(0);
@@ -607,7 +609,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     delay(1000);
     if(info.getOpState() == IDLE)
     {
-        writeGyroServoLeft(90);
+        writeGyroServoRight(90);
         delay(100);
     }
     
@@ -616,7 +618,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     delay(1000);
     if(info.getOpState() == IDLE)
     {
-        writeGyroServoRight(90);
+        writeGyroServoLeft(90);
         delay(100);
     }
     
@@ -713,12 +715,12 @@ void SensorManager::writeReleaseServo(int pos)
 
 void SensorManager::writeGyroServoRight(int pos)
 {
-    m_servo_gyro_right.write(pos);
+    m_servo_gyro_right.write(pos+15);
 }
 
 void SensorManager::writeGyroServoLeft(int pos)
 {
-    m_servo_gyro_left.write(pos);
+    m_servo_gyro_left.write(pos+6);
 }
 
 void SensorManager::writeCameraServo(int pos)
