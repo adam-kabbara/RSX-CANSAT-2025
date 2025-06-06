@@ -593,7 +593,6 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     ser.sendInfoMsg("Initialized release servo...");
 
     // GPS
-    GPS_Serial = new HardwareSerial(1);
     GPS_Serial->begin(9600, SERIAL_8N1, RX0_PIN, TX0_PIN);
     delay(100);
     ser.sendInfoMsg("Initialized GPS...");
@@ -784,6 +783,11 @@ float SensorManager::getVoltage()
 
 float SensorManager::getRotRate()
 {
+    if(lastPulseTime == 0)
+    {
+        lastPulseTime = micros();
+        return 0.0;
+    }
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
 
