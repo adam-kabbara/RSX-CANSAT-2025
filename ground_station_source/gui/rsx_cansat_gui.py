@@ -10,6 +10,7 @@ TODO:
 """
 
 import sys
+import webbrowser
 from datetime import datetime, timezone
 from collections import deque
 import numpy as np
@@ -25,8 +26,9 @@ from scipy.spatial.transform import Rotation as R
 from pyqtgraph import mkPen
 from enum import Enum
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
-from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTimer, QTime, pyqtSlot
+from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTimer, QTime, pyqtSlot, QUrl
 from PyQt6.QtGui import QFont, QIcon, QIntValidator, QColor, QPalette
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -49,6 +51,7 @@ from PyQt6.QtWidgets import (
     QAbstractItemView,
     QApplication,
 )
+import folium
 
 # Structure to store packet data
 @dataclass(frozen=True)
@@ -397,9 +400,14 @@ class GroundStationApp(QMainWindow):
         set_time_box.addWidget(self.button_set_time)
         set_time_box.addWidget(self.set_time_field)
 
+        self.button_show_map = QPushButton("SHOW MAP")
+        self.button_show_map.setFont(button_font)
+        self.button_show_map.clicked.connect(lambda: self.update_map_view(self.GPS_LAT, self.GPS_LONG))
+        self.button_show_map.hide()
+
         self.button_reset_mission = QPushButton("CLEAR PLOTS, COMMAND LOG, CSV FILE")
         self.button_reset_mission.setFont(button_font)
-        self.button_reset_mission.clicked.connect(self.reset_mission)
+        self.button_reset_mission.clicked.connect(lambda: self.reset_mission(self.data))
         self.button_reset_mission.hide()
 
         self.button_sim_mode_enable = QPushButton("SIM MODE ENABLE")
@@ -565,6 +573,7 @@ class GroundStationApp(QMainWindow):
         commands_layout.addWidget(self.button_advanced)
         commands_layout.addLayout(set_time_box)
         commands_layout.addWidget(self.button_reset_mission)
+        commands_layout.addWidget(self.button_show_map)
         commands_layout.addWidget(self.button_sim_mode_enable)
         commands_layout.addWidget(self.button_sim_mode_activate)
         commands_layout.addWidget(self.button_sim_mode_disable)
@@ -587,6 +596,7 @@ class GroundStationApp(QMainWindow):
         ]
         
         self.buttons_adv = [
+            self.button_show_map,
             self.button_reset_mission,
             self.button_back,
             self.button_get_log_data,
@@ -643,6 +653,7 @@ class GroundStationApp(QMainWindow):
         # ------ END COMMANDS GROUP ------ #
 
         # ------ DATA GROUP ------ #
+        self.GPS_LAT, self.GPS_LONG = None, None
         status_group_box = QGroupBox()
         status_layout = QVBoxLayout(status_group_box)
 
@@ -940,6 +951,34 @@ class GroundStationApp(QMainWindow):
         self.showMaximized()
     
     # ------ FUNCTIONS ------ #
+    def update_map_view(self, lat, lon):
+        try:
+            # if self.GPS_LAT or self.GPS_LONG are not valid, open a not updated map thing
+            if lat is None or lon is None or lat == 0.0 or lon == 0.0:
+                self.update_gui_log("No GPS data yet", "red")
+                return
+            map_object = folium.Map(location=[lat, lon], zoom_start=15, prefer_canvas=True)
+            folium.Marker([lat, lon], tooltip="CanSat Location").add_to(map_object)
+
+            html = map_object.get_root().render()
+            html = html.replace(
+                    'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css',
+                    'leaflet/leaflet.css'
+                ).replace(
+                    'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js',
+                    'leaflet/leaflet.js'
+                )
+            
+            with open("map.html", "w", encoding="utf-8") as f:
+                f.write(html)
+
+            webbrowser.open("map.html", new=2) 
+            webbrowser.open(f"https://www.google.com/maps/place/{lat},{lon}", new=2) # use google maps if there is data
+
+
+        except Exception as e:
+            self.update_gui_log(f"Map update failed: {e}", "red")
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.get_log_overlay.setGeometry(self.rect())
@@ -1412,6 +1451,7 @@ class GroundStationApp(QMainWindow):
             self.plotters[self.graph_title_to_index.get("GPS")].update_plot(data.GPS_LATITUDE, data.GPS_LONGITUDE)
             self.sidebar_data_labels[self.sidebar_data_dict.get("GPS Lat")].setText(f"{data.GPS_LATITUDE}°")
             self.sidebar_data_labels[self.sidebar_data_dict.get("GPS Long")].setText(f"{data.GPS_LONGITUDE}°")
+            self.GPS_LAT, self.GPS_LONG = data.GPS_LATITUDE, data.GPS_LONGITUDE
         
         if data.GPS_ALTITUDE is not None:
             self.plotters[self.graph_title_to_index.get("GPS Altitude")].update_plot(data.GPS_ALTITUDE)
