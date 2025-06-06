@@ -8,7 +8,7 @@ TODO:
 - graph should auto scroll?
 - remove command log horizontal scrolling (idk how)
 """
-
+import random
 import sys
 import webbrowser
 from datetime import datetime, timezone
@@ -118,7 +118,6 @@ class BaseDynamicPlotter:
         self.plt.getAxis('bottom').setLabel(f'<span style="font-family: Monospace; font-size:14pt; font-weight:bold;">{x_unit}</span>')
         self.plt.getAxis('left').setStyle(tickFont=font)
         self.plt.getAxis('left').setLabel(f'<span style="font-family: Monospace; font-size:14pt; font-weight:bold;">{y_unit}</span>')
-        self.plt.getViewBox().setLimits(xMin=-timewindow, xMax=5000, minXRange=5, yMin=-10000, yMax=10000, minYRange=2)
     
     def get_pen_color(self, index):
         return mkPen(self.pen_color_list[index % len(self.pen_color_list)], width=self.pen_line_size)
@@ -138,7 +137,7 @@ class DynamicPlotter(BaseDynamicPlotter):
         self.x = np.linspace(-timewindow, 0, timewindow)
         self.y = np.zeros(self.databuffer.maxlen, dtype=float)
         self.curve = self.plt.plot(self.x, self.y, pen=self.get_pen_color(self.base_line_color_idx))
-
+        self.plt.getViewBox().setLimits(xMin=-5, xMax=5000, minXRange=5, yMin=-10000, yMax=10000, minYRange=2)
     def update_plot(self, new_val):
 
         current_time = time.time()
@@ -170,7 +169,7 @@ class DynamicPlotter_MultiLine(BaseDynamicPlotter):
         self.databuffer = [deque([0.0] * timewindow, maxlen=timewindow) for _ in range(num_lines)]
         self.x = np.linspace(-timewindow, 0, timewindow)
         self.y = np.zeros(shape=(self.num_lines, timewindow), dtype=float)
-
+        self.plt.getViewBox().setLimits(xMin=-5, xMax=5000, minXRange=5, yMin=-10000, yMax=10000, minYRange=2)
         self.curve = [
             self.plt.plot(self.x, self.y[i], pen=self.get_pen_color(self.base_line_color_idx + i))
             for i in range(self.num_lines)
@@ -221,12 +220,12 @@ class DynamicPlotter_MultiLine(BaseDynamicPlotter):
 
 # Plotting system where both x and y axis require updates from data
 class DynamicPlotter_2d(BaseDynamicPlotter):
-    def __init__(self, plot, title, timewindow, x_unit, y_unit):
+    def __init__(self, plot, title, timewindow, x_unit, y_unit, init_x=0.0, init_y=0.0):
         super().__init__(plot, title, timewindow, x_unit, y_unit)
-        self.databuffer_x = deque([0.0] * timewindow, maxlen=timewindow)
-        self.databuffer_y = deque([0.0] * timewindow, maxlen=timewindow)
-        self.x = np.zeros(self.databuffer_x.maxlen, dtype=float)
-        self.y = np.zeros(self.databuffer_y.maxlen, dtype=float)
+        self.databuffer_x = deque([init_x] * timewindow, maxlen=timewindow)
+        self.databuffer_y = deque([init_y] * timewindow, maxlen=timewindow)
+        self.x = np.full(timewindow, init_x, dtype=float)
+        self.y = np.full(timewindow, init_y, dtype=float)
 
         self.curve = self.plt.plot(self.x, self.y, pen=self.get_pen_color(self.base_line_color_idx))
 
@@ -240,10 +239,12 @@ class DynamicPlotter_2d(BaseDynamicPlotter):
         self.curve.setData(self.x, self.y)
     
     def reset_plot(self):
-        self.databuffer_x = deque([0.0] * self.timewindow, maxlen=self.timewindow)
-        self.databuffer_y = deque([0.0] * self.timewindow, maxlen=self.timewindow)
-        self.x[:] = 0
-        self.y[:] = 0
+        last_x = self.databuffer_x[-1] if self.databuffer_x else 0.0
+        last_y = self.databuffer_y[-1] if self.databuffer_y else 0.0
+        self.databuffer_x = deque([last_x] * self.timewindow, maxlen=self.timewindow)
+        self.databuffer_y = deque([last_y] * self.timewindow, maxlen=self.timewindow)
+        self.x[:] = last_x
+        self.y[:] = last_y
         self.curve.setData(self.x, self.y)
 
 class CommandButtonGroup(Enum):
@@ -834,7 +835,13 @@ class GroundStationApp(QMainWindow):
                                                    timewindow=self.__graph_time_window, num_lines=entry["lines"],
                                                    x_unit=entry["x_unit"],y_unit=entry["y_unit"])
             else:
-                plotter = DynamicPlotter_2d(graph, title=entry["title"], timewindow=self.__graph_time_window,x_unit=entry["x_unit"],y_unit=entry["y_unit"])
+                init_lat = 38.149574
+                init_long = 79.0737
+                plotter = DynamicPlotter_2d(
+                    graph, title=entry["title"], timewindow=self.__graph_time_window,
+                    x_unit=entry["x_unit"], y_unit=entry["y_unit"],
+                    init_x=init_lat, init_y=init_long
+                )
 
             self.plotters.append(plotter)
 
