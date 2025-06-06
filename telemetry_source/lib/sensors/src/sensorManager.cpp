@@ -93,7 +93,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
                     // Check we are descending in case apogee was missed
 
-                    step = 0.25 * SENSOR_SAMPLE_RATE_HZ;
+                    step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
 
                     avg0 = (alt_data.buffer[(idx + size - 1) % size] +
                                 alt_data.buffer[idx] +
@@ -148,9 +148,9 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             }
             else
             {
-                // Last three average of 3 sample reading over 0.25 sec intervals are decreasing
+                // Last three average of 3 sample reading over 0.15 sec intervals are decreasing
 
-                int step = 0.25 * SENSOR_SAMPLE_RATE_HZ;
+                int step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
 
                 float avg0 = (alt_data.buffer[(idx + size - 1) % size] +
                             alt_data.buffer[idx] +
@@ -396,24 +396,15 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
         }
     }
 
-    if (gps.location.isUpdated())
+    if (gps.location.isUpdated() || 
+        gps.time.isUpdated() ||
+        gps.altitude.isUpdated() ||
+        gps.satellites.isUpdated())
     {
         getGpsLat(&send_packet.GPS_LATITUDE);
         getGpsLong(&send_packet.GPS_LONGITUDE);
-    }
-
-    if (gps.time.isUpdated())
-    {
         getGpsTime(send_packet.GPS_TIME);
-    }
-
-    if (gps.altitude.isUpdated())
-    {
         getGpsAlt(&send_packet.GPS_ALTITUDE);
-    }
-
-    if (gps.satellites.isUpdated())
-    {
         getGpsSats(&send_packet.GPS_SATS);
     }
 
@@ -781,6 +772,13 @@ float SensorManager::getVoltage()
 
 float SensorManager::getRotRate()
 {
+    static bool firstCall = true;
+    if(firstCall) 
+    {
+        firstCall = false;
+        return 0.0;
+    }
+    
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
 

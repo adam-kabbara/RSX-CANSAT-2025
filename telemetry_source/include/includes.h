@@ -26,8 +26,6 @@
 
 #define RX0_PIN 3
 #define TX0_PIN 1
-#define RX1_PIN 9
-#define TX1_PIN 10
 #define RX2_PIN 16
 #define TX2_PIN 17
 #define CAMERA1_SIGNAL_PIN 32
