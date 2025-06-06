@@ -37,7 +37,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 int state_int = static_cast<int>(ASCENT);
                 mission_info.putPrefInt("opstate", state_int);
                 mission_info.endPref();
-                ser.sendInfoMsg("Changing state to ASCENT");
+                //ser.sendInfoDataMsg("Changing state to ASCENT, median=%f", median);
                 return ASCENT;
             }
             break;
@@ -202,7 +202,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             if (alt_sum <= 0.75 * alt_data.max_alt)
             {
-                writeReleaseServo(38);
+                writeReleaseServo(47);
                 mission_info.setOpState(PROBE_RELEASE);
                 mission_info.beginPref("xb-set", false);
                 int state_int = static_cast<int>(PROBE_RELEASE);
