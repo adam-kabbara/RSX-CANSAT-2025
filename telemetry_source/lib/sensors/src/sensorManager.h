@@ -100,7 +100,7 @@ public:
 
     SensorManager();
 
-    OperatingState updateState(OperatingState curr_state, MissionManager &mission_info);
+    OperatingState updateState(OperatingState curr_state, MissionManager &mission_info, SerialManager &ser);
 
     void sampleSensors(MissionManager &mission_info, SerialManager &ser);
 

@@ -28,7 +28,6 @@ from enum import Enum
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
 from PyQt6.QtCore import Qt, pyqtSignal, QIODevice, QTimer, QTime, pyqtSlot, QUrl
 from PyQt6.QtGui import QFont, QIcon, QIntValidator, QColor, QPalette
-from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -51,7 +50,6 @@ from PyQt6.QtWidgets import (
     QAbstractItemView,
     QApplication,
 )
-import folium
 
 # Structure to store packet data
 @dataclass(frozen=True)
@@ -293,6 +291,9 @@ class GroundStationApp(QMainWindow):
         self.__servo_val                    = -1
         self.__camera_id                    = "NONE"
         self.__set_time_id                  = 1
+        self.__last_gyro_r                  = 0
+        self.__last_gyro_p                  = 0
+        self.__last_gyro_y                  = 0
 
         self.setWindowTitle("CANSAT Ground Station")
         self.setWindowIcon(QIcon('icon.png'))
@@ -786,6 +787,7 @@ class GroundStationApp(QMainWindow):
             {"title": "Pressure", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "kPa"},
             {"title": "Voltage", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "V"},
             {"title": "Gyro", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
+            {"title": "Gyro Diff", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "deg/s^2"},
             {"title": "Accelerometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit":"m/s^2"},
             {"title": "Magnetometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "G"},
             {"title": "Rotation", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
@@ -804,6 +806,7 @@ class GroundStationApp(QMainWindow):
             "Rotation" : 7,
             "GPS" : 8,
             "GPS Altitude": 9,
+            "Gyro Diff": 10
         }
 
         # Loop through each graph and create a plot using the plot classes
@@ -873,7 +876,7 @@ class GroundStationApp(QMainWindow):
         self.rocket_3d.nose_cone = nose_cone
 
         self.rocket_3d.setLayout(rocket_3d_layout)
-        self.tab_widget.addTab(self.rocket_3d, "3D")
+        #self.tab_widget.addTab(self.rocket_3d, "3D")
 
         # Sidebar to show all current graph values
         sidebar_widget = QWidget()
@@ -957,6 +960,7 @@ class GroundStationApp(QMainWindow):
             if lat is None or lon is None or lat == 0.0 or lon == 0.0:
                 self.update_gui_log("No GPS data yet", "red")
                 return
+            '''
             map_object = folium.Map(location=[lat, lon], zoom_start=15, prefer_canvas=True)
             folium.Marker([lat, lon], tooltip="CanSat Location").add_to(map_object)
 
@@ -971,8 +975,8 @@ class GroundStationApp(QMainWindow):
             
             with open("map.html", "w", encoding="utf-8") as f:
                 f.write(html)
-
-            webbrowser.open("map.html", new=2) 
+        
+            webbrowser.open("map.html", new=2) '''
             webbrowser.open(f"https://www.google.com/maps/place/{lat},{lon}", new=2) # use google maps if there is data
 
 
@@ -1430,6 +1434,11 @@ class GroundStationApp(QMainWindow):
         self.sidebar_data_labels[self.sidebar_data_dict.get("Gyro R")].setText(f"{data.GYRO_R} °/s")
         self.sidebar_data_labels[self.sidebar_data_dict.get("Gyro P")].setText(f"{data.GYRO_P} °/s")
         self.sidebar_data_labels[self.sidebar_data_dict.get("Gyro Y")].setText(f"{data.GYRO_Y} °/s")
+        gyro_diff_data = [data.GYRO_R - self.__last_gyro_r, data.GYRO_P - self.__last_gyro_p, data.GYRO_Y - self.__last_gyro_y]
+        self.plotters[self.graph_title_to_index.get("Gyro Diff")].update_plot(gyro_diff_data)
+        self.__last_gyro_r = data.GYRO_R
+        self.__last_gyro_p = data.GYRO_P
+        self.__last_gyro_y = data.GYRO_Y
 
         new_accel_data = [data.ACCEL_R, data.ACCEL_P, data.ACCEL_Y]
         self.plotters[self.graph_title_to_index.get("Accel")].update_plot(new_accel_data)
@@ -1504,7 +1513,7 @@ class GroundStationApp(QMainWindow):
             
         data_dict = data.to_dict()
         self.__csv_writer.writerow(data_dict)
-        self.update_rocket_orientation(data.GYRO_Y, data.GYRO_P, data.GYRO_R)
+        #self.update_rocket_orientation(data.GYRO_Y, data.GYRO_P, data.GYRO_R)
     
     def extract_data_str(self, msg: str) -> TelemetryData:
         # EXPECTED FORMAT:
