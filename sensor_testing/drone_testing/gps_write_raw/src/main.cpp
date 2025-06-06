@@ -3,7 +3,7 @@
 // Robotics for Space Exploration
 // University of Toronto
 
-// GPS High Altitude Testing
+// GPS High Altitude Testing --> 4AM GPS Testing for CanSat Virginia 2025 lmao
 // Writing to ESP32
 
 #include <Arduino.h>
@@ -21,7 +21,11 @@ void setup() {
     Serial.println("Starting GPS Module...");
     delay(1000); // Allow time for Serial to initialize
     
-    GPS_Serial.begin(9600, SERIAL_8N1, 3, 1); // Set baud rate and pins for GPS
+    // RX0 and TX0 pins for GPS (PCB Version)
+    // GPS_Serial.begin(9600, SERIAL_8N1, 3, 1); // Set baud rate and pins for GPS
+
+    // RX1 and TX1 pins for GPS (Breadboard Version)
+    GPS_Serial.begin(9600, SERIAL_8N1, 9, 10); // Set baud rate and pins for GPS
 
     // Initialize SPIFFS
     // if (!SPIFFS.begin(true)) {
