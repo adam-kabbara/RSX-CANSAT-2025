@@ -842,13 +842,13 @@ void SensorManager::updateCameraServo(float yaw_estimate)
     }
     
     int servo_movement = static_cast<int>(-1 * delta + 90.0);
-    if(servo_movement < 75) 
+    if(servo_movement <40) 
     {
-        servo_movement = 75;
+        servo_movement = 40;
     }
-    if(servo_movement > 105)
+    if(servo_movement > 140)
     {
-        servo_movement = 105;
+        servo_movement = 140;
     }
 
     writeCameraServo(servo_movement);
