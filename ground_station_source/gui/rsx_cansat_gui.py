@@ -291,9 +291,9 @@ class GroundStationApp(QMainWindow):
         self.__servo_val                    = -1
         self.__camera_id                    = "NONE"
         self.__set_time_id                  = 1
-        self.__last_gyro_r                  = 0
-        self.__last_gyro_p                  = 0
-        self.__last_gyro_y                  = 0
+        self.__last_gyro_r                  = 0.0
+        self.__last_gyro_p                  = 0.0
+        self.__last_gyro_y                  = 0.0
 
         self.setWindowTitle("CANSAT Ground Station")
         self.setWindowIcon(QIcon('icon.png'))
@@ -408,7 +408,7 @@ class GroundStationApp(QMainWindow):
 
         self.button_reset_mission = QPushButton("CLEAR PLOTS, COMMAND LOG, CSV FILE")
         self.button_reset_mission.setFont(button_font)
-        self.button_reset_mission.clicked.connect(lambda: self.reset_mission(self.data))
+        self.button_reset_mission.clicked.connect(self.reset_mission)
         self.button_reset_mission.hide()
 
         self.button_sim_mode_enable = QPushButton("SIM MODE ENABLE")
@@ -456,9 +456,9 @@ class GroundStationApp(QMainWindow):
         self.servo_id_field = QComboBox()
         self.servo_id_field.setPlaceholderText("SELECT SERVO")
         self.servo_id_field.addItem("Camera [CPL3] [F]", 0)
-        self.servo_id_field.addItem("GYRO [CPL1] [F]", 2)
+        self.servo_id_field.addItem("Gyro [CPL1] [F]", 2)
         self.servo_id_field.addItem("Release [CLP2] [F]", 1)
-        self.servo_id_field.addItem("GYRO [Camera] [B]", 3)
+        self.servo_id_field.addItem("Gyro [Camera] [B]", 3)
         self.servo_id_field.setFont(button_font)
         self.servo_id_field.activated.connect(self.servo_id_edited)
 
@@ -793,7 +793,7 @@ class GroundStationApp(QMainWindow):
             {"title": "Rotation", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
             {"title": "GPS Lat v Long", "lines": 1, "2d": True, "x_unit": "Latitude", "y_unit": "Longitude"},
             {"title": "GPS Altitude", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "m"}
-        ]
+        ]   
         
         self.graph_title_to_index = {
             "Altitude" : 0,
@@ -801,12 +801,12 @@ class GroundStationApp(QMainWindow):
             "Pressure" : 2,
             "Voltage" : 3,
             "Gyro" : 4,
-            "Accel" : 5,
-            "Mag" : 6,
-            "Rotation" : 7,
-            "GPS" : 8,
-            "GPS Altitude": 9,
-            "Gyro Diff": 10
+            "Gyro Diff": 5,
+            "Accel" : 6,
+            "Mag" : 7,
+            "Rotation" : 8,
+            "GPS" : 9,
+            "GPS Altitude": 10,
         }
 
         # Loop through each graph and create a plot using the plot classes
