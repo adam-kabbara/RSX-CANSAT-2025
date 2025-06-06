@@ -274,12 +274,6 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     // MODE
     strcpy(send_packet.MODE, op_mode_to_string(mission_info.getOpMode(), 0));
 
-    int ran_num[17];
-    for(int i = 0; i < 17; i++)
-    {
-      ran_num[i] = random(0, 20);
-    }
-
     getRtcTime(send_packet.MISSION_TIME);
     send_packet.TEMPERATURE = getTemp();
     
@@ -790,7 +784,6 @@ float SensorManager::getVoltage()
 
 float SensorManager::getRotRate()
 {
-    
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
 
@@ -803,17 +796,16 @@ float SensorManager::getRotRate()
         if(pulseInterval > 0)
         {
             currRPM = 60.0 * 1000000.0 / pulseInterval;
-            // if(currRPM > 2000.0)
-            // {
-            //     currRPM = prevRPM;
-            // }
-            //prevRPM = currRPM;
+            if(currRPM > 2000.0)
+            {
+                currRPM = prevRPM;
+            }
+            prevRPM = currRPM;
         }
     } 
     else
     {
         digitalWrite(ONBOARD_LED_PIN, LOW);
-        currRPM = 0.0;
     }
 
     lastState = currState;
