@@ -8,10 +8,10 @@ SensorManager::SensorManager()
     rtc = new uRTCLib(0x68);
 }
 
-OperatingState SensorManager::updateState(OperatingState curr_state, MissionManager &mission_info)
+OperatingState SensorManager::updateState(OperatingState curr_state, MissionManager &mission_info, SerialManager &ser)
 {
-    int idx = alt_data.idx - 1;
     int size = alt_data.window_size;
+    int idx = (alt_data.idx - 1) % size;
 
     switch(curr_state)
     {
@@ -35,6 +35,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 int state_int = static_cast<int>(ASCENT);
                 mission_info.putPrefInt("opstate", state_int);
                 mission_info.endPref();
+                ser.sendInfoMsg("Going into ascent!");
                 return ASCENT;
             }
             break;
@@ -253,7 +254,6 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     // ALTITUDE
     send_packet.ALTITUDE = pressure_to_alt(send_packet.PRESSURE*10.0) - mission_info.getLaunchAlt();
 
-    // STATE
     if(mission_info.getOpMode() == OPMODE_FLIGHT)
     {
         alt_data.buffer[alt_data.idx] = send_packet.ALTITUDE;
@@ -261,7 +261,8 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
         alt_data.sample_count++;
     }
 
-    strcpy(send_packet.STATE, op_state_to_string(updateState(mission_info.getOpState(), mission_info)));
+    // STATE
+    strcpy(send_packet.STATE, op_state_to_string(updateState(mission_info.getOpState(), mission_info, ser)));
 
     // TEAM ID
     send_packet.TEAM_ID_PCKT = TEAM_ID;
@@ -430,6 +431,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     }
 
     // Timer between camera servo movements
+    /*
     unsigned long now = millis();
     float dt = (now - last_camera_servo_update) / 1000.0;
     last_camera_servo_update = now;
@@ -437,6 +439,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     float magYaw = pid_cntl.computeTiltCompensatedYaw(mx, my, mz, ax, ay, az);
     pid_cntl.kalmanUpdate(gyroZ, magYaw, dt);
     updateCameraServo(pid_cntl.getYawEstimate());
+    */
 }
 
 void SensorManager::build_data_str(char *buff, size_t size)
