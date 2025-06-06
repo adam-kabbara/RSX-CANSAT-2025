@@ -17,25 +17,27 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
     {
         case LAUNCH_PAD: {
 
-            // Average of last 5 samples is > 5m
+            // Median of last 10 samples is > 5m
+            std::vector<float> alt_values;
 
-            float alt_sum = 0.0;
-
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
                 int index = (idx - i + size) % size;
-                alt_sum += alt_data.buffer[index];
+                alt_values.push_back(alt_data.buffer[index]);
             }
-            alt_sum = alt_sum / 5;
 
-            if(alt_sum > 5.0)
+            std::sort(alt_values.begin(), alt_values.end());
+
+            float median = alt_values[4];
+
+            if (median > 20.0f)
             {
                 mission_info.setOpState(ASCENT);
                 mission_info.beginPref("xb-set", false);
                 int state_int = static_cast<int>(ASCENT);
                 mission_info.putPrefInt("opstate", state_int);
                 mission_info.endPref();
-                ser.sendInfoMsg("Going into ascent!");
+                ser.sendInfoMsg("Changing state to ASCENT!");
                 return ASCENT;
             }
             break;
@@ -405,7 +407,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
         getGpsLat(&send_packet.GPS_LATITUDE);
         getGpsLong(&send_packet.GPS_LONGITUDE);
         getGpsTime(send_packet.GPS_TIME);
-        getGpsAlt(&send_packet.GPS_ALTITUDE);
+        getGpsAlt(&send_packet.GPS_ALTITUDE, mission_info.getLaunchAlt());
         getGpsSats(&send_packet.GPS_SATS);
     }
 
@@ -601,7 +603,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     ser.sendInfoMsg("Initialized GPS...");
     
     // Gyro Servo 2
-    m_servo_gyro_1.attach(SERVO_GYRO1_PIN);
+    m_servo_gyro_right.attach(SERVO_GYRO_RIGHT_PIN);
     delay(1000);
     if(info.getOpState() == IDLE)
     {
@@ -610,7 +612,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     }
     
     // Gyro Servo 1
-    m_servo_gyro_2.attach(SERVO_GYRO2_PIN);
+    m_servo_gyro_left.attach(SERVO_GYRO_LEFT_PIN);
     delay(1000);
     if(info.getOpState() == IDLE)
     {
@@ -711,12 +713,12 @@ void SensorManager::writeReleaseServo(int pos)
 
 void SensorManager::writeGyroServoRight(int pos)
 {
-    m_servo_gyro_1.write(pos);
+    m_servo_gyro_right.write(pos);
 }
 
 void SensorManager::writeGyroServoLeft(int pos)
 {
-    m_servo_gyro_2.write(pos);
+    m_servo_gyro_left.write(pos);
 }
 
 void SensorManager::writeCameraServo(int pos)
@@ -724,11 +726,11 @@ void SensorManager::writeCameraServo(int pos)
     m_servo_camera.write(pos);
 }
 
-void SensorManager::getGpsAlt(float *alt)
+void SensorManager::getGpsAlt(float *alt, float launch_alt)
 {
     if (gps.altitude.isValid())
     {
-        *alt = gps.altitude.meters();
+        *alt = gps.altitude.meters() - launch_alt;
     }
 }
 
@@ -786,12 +788,6 @@ float SensorManager::getVoltage()
 
 float SensorManager::getRotRate()
 {
-    static bool firstCall = true;
-    if(firstCall) 
-    {
-        firstCall = false;
-        return 0.0;
-    }
     
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
@@ -805,16 +801,17 @@ float SensorManager::getRotRate()
         if(pulseInterval > 0)
         {
             currRPM = 60.0 * 1000000.0 / pulseInterval;
-            if(currRPM > 2000.0)
-            {
-                currRPM = prevRPM;
-            }
-            prevRPM = currRPM;
+            // if(currRPM > 2000.0)
+            // {
+            //     currRPM = prevRPM;
+            // }
+            //prevRPM = currRPM;
         }
     } 
     else
     {
         digitalWrite(ONBOARD_LED_PIN, LOW);
+        currRPM = 0.0;
     }
 
     lastState = currState;

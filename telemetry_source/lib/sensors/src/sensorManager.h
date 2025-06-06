@@ -15,6 +15,8 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <math.h>
+#include <vector>
+#include <algorithm>
 #include <uRTCLib.h>
 
 class SensorManager
@@ -69,8 +71,8 @@ private:
     TinyGPSPlus gps;
 
     Servo m_servo_release;
-    Servo m_servo_gyro_1;
-    Servo m_servo_gyro_2;
+    Servo m_servo_gyro_right;
+    Servo m_servo_gyro_left;
     Servo m_servo_camera;
 
     SPIClass *mySPI;
@@ -134,7 +136,7 @@ public:
 
     void writeCameraServo(int pos);
 
-    void getGpsAlt(float *alt);
+    void getGpsAlt(float *alt, float launch_alt);
 
     void getGpsLat(float *lat);
 
