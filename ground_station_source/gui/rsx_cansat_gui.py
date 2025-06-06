@@ -788,8 +788,8 @@ class GroundStationApp(QMainWindow):
             {"title": "Pressure", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "kPa"},
             {"title": "Voltage", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "V"},
             {"title": "Gyro", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
-            {"title": "Gyro Diff", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "deg/s^2"},
-            {"title": "Accelerometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit":"m/s^2"},
+            {"title": "Accel RPY ", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "deg/s^2"},
+            {"title": "Accel XYZ", "lines": 3, "2d": False, "x_unit": "s", "y_unit":"m/s^2"},
             {"title": "Magnetometer", "lines": 3, "2d": False, "x_unit": "s", "y_unit": "G"},
             {"title": "Rotation", "lines": 1, "2d": False, "x_unit": "s", "y_unit": "deg/s"},
             {"title": "GPS Lat v Long", "lines": 1, "2d": True, "x_unit": "Latitude", "y_unit": "Longitude"},
@@ -910,6 +910,9 @@ class GroundStationApp(QMainWindow):
             ("Accel X", "0 °/s²"),
             ("Accel Y", "0 °/s²"),
             ("Accel Z", "0 °/s²"),
+            ("Accel R", "0 °/s²"),
+            ("Accel P", "0 °/s²"),
+            ("Accel Y", "0 °/s²"),
             ("Mag R", "0 G"),
             ("Mag P", "0 G"),
             ("Mag Y", "0 G"),
@@ -1446,12 +1449,15 @@ class GroundStationApp(QMainWindow):
         self.__last_gyro_r = data.GYRO_R
         self.__last_gyro_p = data.GYRO_P
         self.__last_gyro_y = data.GYRO_Y
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel R")].setText(f"{gyro_diff_data[0]} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel P")].setText(f"{gyro_diff_data[1]} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{gyro_diff_data[2]} °/s²")
 
         new_accel_data = [data.ACCEL_R, data.ACCEL_P, data.ACCEL_Y]
         self.plotters[self.graph_title_to_index.get("Accel")].update_plot(new_accel_data)
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel X")].setText(f"{data.ACCEL_R} °/s²")
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{data.ACCEL_P} °/s²")
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Z")].setText(f"{data.ACCEL_Y} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel X")].setText(f"{data.ACCEL_R} m/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{data.ACCEL_P} m/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Z")].setText(f"{data.ACCEL_Y} m/s²")
 
         new_mag_data = [data.MAG_R, data.MAG_P, data.MAG_Y]
         self.plotters[self.graph_title_to_index.get("Mag")].update_plot(new_mag_data)
