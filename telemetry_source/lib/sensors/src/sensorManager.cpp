@@ -801,7 +801,7 @@ float SensorManager::getRotRate()
 
     if(currState == LOW && lastState == HIGH)
     {
-        digitalWrite(ONBOARD_LED_PIN, HIGH);
+        // digitalWrite(ONBOARD_LED_PIN, HIGH);
         unsigned long now = micros();
         pulseInterval = now - lastPulseTime;
         lastPulseTime = now;
@@ -817,7 +817,7 @@ float SensorManager::getRotRate()
     } 
     else
     {
-        digitalWrite(ONBOARD_LED_PIN, LOW);
+        // digitalWrite(ONBOARD_LED_PIN, LOW);
     }
 
     lastState = currState;
