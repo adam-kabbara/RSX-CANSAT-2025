@@ -783,38 +783,37 @@ float SensorManager::getVoltage()
 
 float SensorManager::getRotRate()
 {
+    if(lastPulseTime == 0)
+    {
+        lastPulseTime = micros();
+        return 0.0;
+    }
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
 
     if(currState == LOW && lastState == HIGH)
     {
+        digitalWrite(ONBOARD_LED_PIN, HIGH);
         unsigned long now = micros();
-        
-        // Only calculate RPM if we have a previous pulse time
-        if (lastPulseTime != 0)
-        {
-            pulseInterval = now - lastPulseTime;
-            if(pulseInterval > 0)
-            {
-                currRPM = 60.0 * 1000000.0 / pulseInterval;
-                if(currRPM > MAX_RPM_THRESHOLD)
-                {
-                    currRPM = prevRPM;
-                }
-                prevRPM = currRPM;
-            }
-        }
-
-        // Always update the pulse time. For the first pulse, this sets the initial time.
+        pulseInterval = now - lastPulseTime;
         lastPulseTime = now;
-
-        // Toggle LED on each pulse for better visibility
-        ledState = !ledState;
-        digitalWrite(ONBOARD_LED_PIN, ledState);
+        if(pulseInterval > 0)
+        {
+            currRPM = 60.0 * 1000000.0 / pulseInterval;
+            if(currRPM > 2000.0)
+            {
+                currRPM = prevRPM;
+            }
+            prevRPM = currRPM;
+        }
+    } 
+    else
+    {
+        digitalWrite(ONBOARD_LED_PIN, LOW);
     }
 
     lastState = currState;
-    return currRPM * RPM_TO_DEGS_PER_SEC;
+    return currRPM * 6.0;
 }
 
 void SensorManager::setRtcTime(int sec, int minute, int hour)
