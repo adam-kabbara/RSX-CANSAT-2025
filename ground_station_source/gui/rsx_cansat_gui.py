@@ -458,7 +458,7 @@ class GroundStationApp(QMainWindow):
         self.servo_id_field.setPlaceholderText("SELECT SERVO")
         self.servo_id_field.addItem("Camera [CPL3] [F]", 0)
         self.servo_id_field.addItem("Gyro [CPL1] [F]", 2)
-        self.servo_id_field.addItem("Release [FIN1] [B]", 1)
+        self.servo_id_field.addItem("Release [CLP2] [F]", 1)
         self.servo_id_field.addItem("Gyro [Camera] [B]", 3)
         self.servo_id_field.setFont(button_font)
         self.servo_id_field.activated.connect(self.servo_id_edited)
