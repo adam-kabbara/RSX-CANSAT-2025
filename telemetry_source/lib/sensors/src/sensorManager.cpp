@@ -67,7 +67,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             float r1 = alt_data.buffer[(idx + size - 1) % size];
             float r2 = alt_data.buffer[idx];
 
-            if(r0 > r1 && r1 > r2 && (r0 - r2) > 5)
+            if(r0 > r1 && r1 > r2 && (r0 - r2) > 10)
             {
                 mission_info.setOpState(DESCENT);
                 mission_info.beginPref("xb-set", false);
@@ -79,75 +79,6 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 m_servo_gyro_right.attach(SERVO_GYRO_RIGHT_PIN);
                 return DESCENT;
             }
-            /*
-            else
-            {
-                if(alt_data.sample_count > size)
-                {
-                    // To detect apogee, sample three median values at 0.15sec intervals
-                    // and determine if the difference between each of them is less than 5m
-
-                    int step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
-
-                    float avg0 = (alt_data.buffer[(idx + size - 1) % size] +
-                                alt_data.buffer[idx] +
-                                alt_data.buffer[(idx + 1) % size]) / 3.0;
-
-                    float avg1 = (alt_data.buffer[(idx - step + size - 1) % size] +
-                                alt_data.buffer[(idx - step + size) % size] +
-                                alt_data.buffer[(idx - step + size + 1) % size]) / 3.0;
-
-                    float avg2 = (alt_data.buffer[(idx - 2 * step + size - 1) % size] +
-                                alt_data.buffer[(idx - 2 * step + size) % size] +
-                                alt_data.buffer[(idx - 2 * step + size + 1) % size]) / 3.0;
-
-                    float d1 = fabs(avg0 - avg1);
-                    float d2 = fabs(avg1 - avg2);
-
-                    if (d1 < 5.0 && d2 < 5.0)
-                    {
-                        alt_data.max_alt = avg1;
-                        mission_info.setOpState(APOGEE);
-                        mission_info.beginPref("xb-set", false);
-                        int state_int = static_cast<int>(APOGEE);
-                        mission_info.putPrefInt("opstate", state_int);
-                        mission_info.endPref();
-                        return APOGEE;
-                    }
-
-                    // Check we are descending in case apogee was missed
-
-                    step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
-
-                    avg0 = (alt_data.buffer[(idx + size - 1) % size] +
-                                alt_data.buffer[idx] +
-                                alt_data.buffer[(idx + 1) % size]) / 3.0;
-
-                    avg1 = (alt_data.buffer[(idx - step + size - 1) % size] +
-                                alt_data.buffer[(idx - step + size) % size] +
-                                alt_data.buffer[(idx - step + size + 1) % size]) / 3.0;
-
-                    avg2 = (alt_data.buffer[(idx - 2 * step + size - 1) % size] +
-                                alt_data.buffer[(idx - 2 * step + size) % size] +
-                                alt_data.buffer[(idx - 2 * step + size + 1) % size]) / 3.0;
-
-                    // Replace max alt if needed
-                    if(avg0 > alt_data.max_alt)
-                    {
-                        alt_data.max_alt = avg0;
-                    }
-
-                    if (avg0 < avg1 && avg1 < avg2)
-                    {
-                        mission_info.setOpState(DESCENT);
-                        mission_info.beginPref("xb-set", false);
-                        int state_int = static_cast<int>(DESCENT);
-                        mission_info.putPrefInt("opstate", state_int);
-                        mission_info.endPref();
-                        return DESCENT;
-                    }
-                }
-            }*/
             break;
         }
 
@@ -157,7 +88,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             float r1 = alt_data.buffer[(idx + size - 1) % size];
             float r2 = alt_data.buffer[idx];
 
-            if(r0 > r1 && r1 > r2 && (r0 - r2) > 5)
+            if(r0 > r1 && r1 > r2 && (r0 - r2) > 10)
             {
                 mission_info.setOpState(DESCENT);
                 mission_info.beginPref("xb-set", false);
@@ -169,40 +100,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 m_servo_gyro_right.attach(SERVO_GYRO_RIGHT_PIN);
                 return DESCENT;
             }
-            /*
-            else
-            {
-                // Last three average of 3 sample reading over 0.15 sec intervals are decreasing
-
-                int step = 0.15 * SENSOR_SAMPLE_RATE_HZ;
-
-                float avg0 = (alt_data.buffer[(idx + size - 1) % size] +
-                            alt_data.buffer[idx] +
-                            alt_data.buffer[(idx + 1) % size]) / 3.0;
-
-                float avg1 = (alt_data.buffer[(idx - step + size - 1) % size] +
-                            alt_data.buffer[(idx - step + size) % size] +
-                            alt_data.buffer[(idx - step + size + 1) % size]) / 3.0;
-
-                float avg2 = (alt_data.buffer[(idx - 2 * step + size - 1) % size] +
-                            alt_data.buffer[(idx - 2 * step + size) % size] +
-                            alt_data.buffer[(idx - 2 * step + size + 1) % size]) / 3.0;
-
-                // Replace max alt if needed
-                if(avg0 > alt_data.max_alt)
-                {
-                    alt_data.max_alt = avg0;
-                }
-
-                if (avg0 < avg1 && avg1 < avg2)
-                {
-                    mission_info.setOpState(DESCENT);
-                    mission_info.beginPref("xb-set", false);
-                    int state_int = static_cast<int>(DESCENT);
-                    mission_info.putPrefInt("opstate", state_int);
-                    mission_info.endPref();
-                    return DESCENT;
-                }*/
+            
             break;
         }
 
@@ -216,7 +114,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 int index = (idx - i + size) % size;
                 alt_sum += alt_data.buffer[index];
             }
-            alt_sum = alt_sum / 5;
+            alt_sum = alt_sum / 3;
 
             if (alt_sum <= 0.75 * alt_data.max_alt)
             {
