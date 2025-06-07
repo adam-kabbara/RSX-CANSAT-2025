@@ -13,14 +13,18 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
     int size = alt_data.window_size;
     int idx = (alt_data.idx - 1) % size;
 
+    if(curr_state != DESCENT && (alt_data.buffer[idx] > alt_data.max_alt))
+    {
+        alt_data.max_alt = alt_data.buffer[idx];
+    }
+
     switch(curr_state)
     {
         case LAUNCH_PAD: {
 
-            // Median of last 10 samples is > 5m
             std::vector<float> alt_values;
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 2; i++)
             {
                 int index = (idx - i + size) % size;
                 alt_values.push_back(alt_data.buffer[index]);
@@ -28,37 +32,54 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             std::sort(alt_values.begin(), alt_values.end());
 
-            float median = alt_values[4];
+            float median = alt_values[1];
 
-            if(alt_data.sample_count > 10 && median > 20.0f)
+            if(alt_data.sample_count > 3 && median > 10)
             {
                 mission_info.setOpState(ASCENT);
                 mission_info.beginPref("xb-set", false);
                 int state_int = static_cast<int>(ASCENT);
                 mission_info.putPrefInt("opstate", state_int);
                 mission_info.endPref();
-                //ser.sendInfoDataMsg("Changing state to ASCENT, median=%f", median);
+                ser.sendInfoDataMsg("Changing state to ASCENT");
                 return ASCENT;
             }
             break;
         }
         
         case ASCENT: {
-            // Because sim mode only sends reading every 1 second it's way harder to detect apogee
-            if(mission_info.getOpMode() == OPMODE_SIM)
+
+            // Check current reading is less than prev reading and also close to last reading  
+            float ra = alt_data.buffer[idx];
+            float rb = alt_data.buffer[(idx - 1 + size) % size];
+            if(ra < (rb-10) && fabs(rb - ra) < 20)
             {
-                // Just check current reading is <10m difference from last reading
-                if(alt_data.buffer[idx] - alt_data.buffer[(idx - 1 + size) % size] < 5)
-                {
-                    alt_data.max_alt = alt_data.buffer[idx];
-                    mission_info.setOpState(APOGEE);
-                    mission_info.beginPref("xb-set", false);
-                    int state_int = static_cast<int>(APOGEE);
-                    mission_info.putPrefInt("opstate", state_int);
-                    mission_info.endPref();
-                    return APOGEE;
-                }
+                mission_info.setOpState(APOGEE);
+                mission_info.beginPref("xb-set", false);
+                int state_int = static_cast<int>(APOGEE);
+                mission_info.putPrefInt("opstate", state_int);
+                mission_info.endPref();
+                return APOGEE;
             }
+
+            // Check last 3 readings are decreasing
+            float r0 = alt_data.buffer[(idx + size - 2) % size];
+            float r1 = alt_data.buffer[(idx + size - 1) % size];
+            float r2 = alt_data.buffer[idx];
+
+            if(r0 > r1 && r1 > r2 && (r0 - r2) > 5)
+            {
+                mission_info.setOpState(DESCENT);
+                mission_info.beginPref("xb-set", false);
+                int state_int = static_cast<int>(DESCENT);
+                mission_info.putPrefInt("opstate", state_int);
+                mission_info.endPref();
+                m_servo_camera.attach(SERVO_CAMERA_PIN);
+                m_servo_gyro_left.attach(SERVO_GYRO_LEFT_PIN);
+                m_servo_gyro_right.attach(SERVO_GYRO_RIGHT_PIN);
+                return DESCENT;
+            }
+            /*
             else
             {
                 if(alt_data.sample_count > size)
@@ -91,7 +112,6 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                         int state_int = static_cast<int>(APOGEE);
                         mission_info.putPrefInt("opstate", state_int);
                         mission_info.endPref();
-                        ser.sendInfoMsg("Changing state to APOGEE");
                         return APOGEE;
                     }
 
@@ -124,33 +144,32 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                         int state_int = static_cast<int>(DESCENT);
                         mission_info.putPrefInt("opstate", state_int);
                         mission_info.endPref();
-                        ser.sendInfoMsg("Changing state to DESCENT");
                         return DESCENT;
                     }
                 }
-            }
+            }*/
             break;
         }
 
         case APOGEE: {
-            if(mission_info.getOpMode() == OPMODE_SIM)
-            {
-                // Just check last 3 readings are decreasing
-                float r0 = alt_data.buffer[(idx + size - 2) % size];
-                float r1 = alt_data.buffer[(idx + size - 1) % size];
-                float r2 = alt_data.buffer[idx];
+            // Just check last 3 readings are decreasing
+            float r0 = alt_data.buffer[(idx + size - 2) % size];
+            float r1 = alt_data.buffer[(idx + size - 1) % size];
+            float r2 = alt_data.buffer[idx];
 
-                if (r0 > r1 && r1 > r2)
-                {
-                    alt_data.max_alt = alt_data.buffer[idx];
-                    mission_info.setOpState(DESCENT);
-                    mission_info.beginPref("xb-set", false);
-                    int state_int = static_cast<int>(DESCENT);
-                    mission_info.putPrefInt("opstate", state_int);
-                    mission_info.endPref();
-                    return DESCENT;
-                }
+            if(r0 > r1 && r1 > r2 && (r0 - r2) > 5)
+            {
+                mission_info.setOpState(DESCENT);
+                mission_info.beginPref("xb-set", false);
+                int state_int = static_cast<int>(DESCENT);
+                mission_info.putPrefInt("opstate", state_int);
+                mission_info.endPref();
+                m_servo_camera.attach(SERVO_CAMERA_PIN);
+                m_servo_gyro_left.attach(SERVO_GYRO_LEFT_PIN);
+                m_servo_gyro_right.attach(SERVO_GYRO_RIGHT_PIN);
+                return DESCENT;
             }
+            /*
             else
             {
                 // Last three average of 3 sample reading over 0.15 sec intervals are decreasing
@@ -183,9 +202,8 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                     mission_info.putPrefInt("opstate", state_int);
                     mission_info.endPref();
                     return DESCENT;
-                }
-                break;
-            }
+                }*/
+            break;
         }
 
         case DESCENT: {
@@ -193,7 +211,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             float alt_sum = 0.0;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 3; i++)
             {
                 int index = (idx - i + size) % size;
                 alt_sum += alt_data.buffer[index];
@@ -203,6 +221,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             if (alt_sum <= 0.75 * alt_data.max_alt)
             {
                 writeReleaseServo(47);
+                updateCameraServo();
                 mission_info.setOpState(PROBE_RELEASE);
                 mission_info.beginPref("xb-set", false);
                 int state_int = static_cast<int>(PROBE_RELEASE);
@@ -252,7 +271,7 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     }
     else
     {
-      send_packet.PRESSURE = getPressure();
+        send_packet.PRESSURE = getPressure();
     }
 
     // ALTITUDE
@@ -604,34 +623,6 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     delay(100);
     ser.sendInfoMsg("Initialized GPS...");
     
-    // Gyro Servo 2
-    m_servo_gyro_right.attach(SERVO_GYRO_RIGHT_PIN);
-    delay(1000);
-    if(info.getOpState() == IDLE)
-    {
-        writeGyroServoRight(90);
-        delay(100);
-    }
-    
-    // Gyro Servo 1
-    m_servo_gyro_left.attach(SERVO_GYRO_LEFT_PIN);
-    delay(1000);
-    if(info.getOpState() == IDLE)
-    {
-        writeGyroServoLeft(90);
-        delay(100);
-    }
-    
-    // Camera Servo
-    m_servo_camera.attach(SERVO_CAMERA_PIN);
-    delay(1000);
-    if(info.getOpState() == IDLE)
-    {
-        writeCameraServo(90);
-        delay(100);
-    }
-    ser.sendInfoMsg("Initialized other servos...");
-    
     // Camera Signal Pins (Trigger)
     pinMode(CAMERA1_SIGNAL_PIN, OUTPUT);
     delay(100);
@@ -643,7 +634,7 @@ void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
     delay(100);
     pinMode(CAMERA2_STATUS_PIN, INPUT);
     delay(100);
-    ser.sendInfoMsg("Initialized camera...");
+    ser.sendInfoMsg("Initialized camera pins...");
 
     mySPI->begin(BNO_SPI_SCK, BNO_SPI_MISO, BNO_SPI_MOSI);
     if (!bno08x->begin_SPI(BNO_CS_PIN, BNO_INT_PIN, mySPI)) 
@@ -839,9 +830,9 @@ int SensorManager::getCamera2Status()
     return digitalRead(CAMERA2_STATUS_PIN);
 }
 
-void SensorManager::updateCameraServo(float yaw_estimate) 
+void SensorManager::updateCameraServo() 
 {
-    float angle_to_north = fmod((360.0 - yaw_estimate), 360.0);
+    float angle_to_north = fmod((360.0 - pid_cntl.getYawEstimate()), 360.0);
     
     float delta = angle_to_north;
     if(delta > 180.0f) 

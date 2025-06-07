@@ -122,32 +122,33 @@ void loop()
 
             sensor_mgr.sampleSensors(mission_info, xbee_serial);
 
-            if(send_flag == 1)
+            while(send_flag == 0)
             {
-                mission_info.incrPacketCount();
-                sensor_mgr.setPacketCount(mission_info.getPacketCount());
-                mission_info.beginPref("xb-set", false);
-                mission_info.putPrefInt("pckts", mission_info.getPacketCount());
-                mission_info.endPref();
-                sensor_mgr.build_data_str(send_buffer, DATA_BUFF_SIZE);
-                xbee_serial.sendTelemetry(send_buffer);
-                if(logfile.size() < MAX_LOG_FILE_SIZE_BYTES)
-                {
-                    logfile.println(send_buffer);
-                    //logfile.flush(); // idk
-                }
-                else
-                {
-                    if(cannot_write_to_file == 0)
-                    {
-                        xbee_serial.sendErrorMsg("Could not write to logfile, size exceeds 1MB. Data will not be written until mission is restarted.");
-                    }
-                    cannot_write_to_file = 1;
-                }
-                send_flag = 0;
+                vTaskDelay(pdMS_TO_TICKS(100));
             }
+            
+            mission_info.incrPacketCount();
+            sensor_mgr.setPacketCount(mission_info.getPacketCount());
+            mission_info.beginPref("xb-set", false);
+            mission_info.putPrefInt("pckts", mission_info.getPacketCount());
+            mission_info.endPref();
+            sensor_mgr.build_data_str(send_buffer, DATA_BUFF_SIZE);
+            xbee_serial.sendTelemetry(send_buffer);
+            if(logfile.size() < MAX_LOG_FILE_SIZE_BYTES)
+            {
+                logfile.println(send_buffer);
+                //logfile.flush(); // idk
+            }
+            else
+            {
+                if(cannot_write_to_file == 0)
+                {
+                    xbee_serial.sendErrorMsg("Could not write to logfile, size exceeds 1MB. Data will not be written until mission is restarted.");
+                }
+                cannot_write_to_file = 1;
+            }
+            send_flag = 0;
 
-            vTaskDelay(pdMS_TO_TICKS(delay_rate_ms));
         }
 
         // Back to IDLE state, turn off timer & camera, reset settings

@@ -98,6 +98,8 @@ private:
     unsigned long last_servo_update = 0;
     unsigned long last_camera_servo_update = 0;
 
+    unsigned long last_alt_update = 0;
+
 public:
 
     SensorManager();
@@ -158,7 +160,7 @@ public:
 
     int getCamera2Status();
 
-    void updateCameraServo(float yaw_estimate);
+    void updateCameraServo();
 };
 
 #endif /* SENSOR_MANAGER_H */
