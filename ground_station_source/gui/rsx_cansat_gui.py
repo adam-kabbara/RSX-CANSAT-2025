@@ -907,12 +907,12 @@ class GroundStationApp(QMainWindow):
             ("Gyro R", "0 °/s"),
             ("Gyro P", "0 °/s"),
             ("Gyro Y", "0 °/s"),
-            ("Accel X", "0 °/s²"),
-            ("Accel Y", "0 °/s²"),
-            ("Accel Z", "0 °/s²"),
-            ("Accel R", "0 °/s²"),
-            ("Accel P", "0 °/s²"),
-            ("Accel Y", "0 °/s²"),
+            ("Accel X", "0 m/s²"),
+            ("Accel Y", "0 m/s²"),
+            ("Accel Z", "0 m/s²"),
+            ("RAccel R", "0 °/s²"),
+            ("RAccel P", "0 °/s²"),
+            ("RAccel Y", "0 °/s²"),
             ("Mag R", "0 G"),
             ("Mag P", "0 G"),
             ("Mag Y", "0 G"),
@@ -1449,9 +1449,9 @@ class GroundStationApp(QMainWindow):
         self.__last_gyro_r = data.GYRO_R
         self.__last_gyro_p = data.GYRO_P
         self.__last_gyro_y = data.GYRO_Y
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel R")].setText(f"{gyro_diff_data[0]} °/s²")
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel P")].setText(f"{gyro_diff_data[1]} °/s²")
-        self.sidebar_data_labels[self.sidebar_data_dict.get("Accel Y")].setText(f"{gyro_diff_data[2]} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("RAccel R")].setText(f"{gyro_diff_data[0]} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("RAccel P")].setText(f"{gyro_diff_data[1]} °/s²")
+        self.sidebar_data_labels[self.sidebar_data_dict.get("RAccel Y")].setText(f"{gyro_diff_data[2]} °/s²")
 
         new_accel_data = [data.ACCEL_R, data.ACCEL_P, data.ACCEL_Y]
         self.plotters[self.graph_title_to_index.get("Accel")].update_plot(new_accel_data)
