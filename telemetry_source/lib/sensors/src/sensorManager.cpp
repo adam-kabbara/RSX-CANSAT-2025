@@ -375,8 +375,15 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     }
     */
 
-    // Hall senssor
-    send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
+    // Hall Effect Sensor
+    if(mission_into.getOpMode() == PROBE_RELEASE)
+    {
+        send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
+    }
+    else
+    {
+        send_packet.AUTO_GYRO_ROTATION_RATE = 0.0
+    }
 
     // GPS
     int gps_avail = GPS_Serial->available();
@@ -788,6 +795,7 @@ float SensorManager::getRotRate()
         lastPulseTime = micros();
         return 0.0;
     }
+
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
 
