@@ -65,6 +65,10 @@ private:
 
     altitude_data alt_data;
     
+    // Hall sensor constants
+    static constexpr float RPM_TO_DEGS_PER_SEC = 6.0f;
+    static constexpr float MAX_RPM_THRESHOLD = 2000.0f;
+    
     HardwareSerial *GPS_Serial;
 
     Adafruit_BME280 bme;
@@ -86,6 +90,7 @@ private:
     int lastState = HIGH;
     unsigned long lastPulseTime = 0;
     unsigned long pulseInterval = 0;
+    bool ledState = false;
 
     PIDController pid_cntl;
     float ax = 0;
