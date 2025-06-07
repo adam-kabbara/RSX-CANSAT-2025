@@ -376,13 +376,13 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     */
 
     // Hall Effect Sensor
-    if(mission_into.getOpMode() == PROBE_RELEASE)
+    if(mission_info.getOpState() == PROBE_RELEASE)
     {
         send_packet.AUTO_GYRO_ROTATION_RATE = getRotRate();
     }
     else
     {
-        send_packet.AUTO_GYRO_ROTATION_RATE = 0.0
+        send_packet.AUTO_GYRO_ROTATION_RATE = 0.0;
     }
 
     // GPS
