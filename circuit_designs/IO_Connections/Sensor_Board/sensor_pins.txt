@@ -1,0 +1,95 @@
+CanSat_Sensor_Board Pin Connections
+
+Format: <Sensor Connection> --> <ESP32 Pins>
+
+SparkFun XBee Explorer (XBee Pro SB3):
+DIN     --> GPIO17
+DOUT    --> GPIO16
+3.3V    --> 3.3V (Power Board)
+GND     --> GND
+
+Hall Effect Sensor:
+Vout    --> GPIO34
+GND     --> GND
+VCC     --> 3.3V (Power Board)
+
+Adafruit BME280 (Temp & Pressure):
+VIN --> 3.3V (Power Board)
+GND --> GND
+SCK --> GPIO22
+SDI --> GPIO21
+
+BN-220 (GPS):
+GND         --> GND
+TX (White)  --> RXD1/GPIO9
+RX (Green)  --> TXD1/GPIO10
+VCC         --> 3.3V (Power Board)
+
+Adafruit LIS3MDL (Magnetometer):
+SDA --> GPIO21
+SCL --> GPIO22
+GND --> GND
+VIN --> 3.3V (Power Board)
+
+Adafruit BNO085 (IMU):
+VIN --> 3.3V (Power Board)
+RST --> GPIO5
+CS  --> GPIO15
+DI  --> GPIO23
+SCL --> GPIO18
+SDA --> GPIO19
+INT --> GPIO35 & 10k Ohm Pull-Up Resistor --> 3.3V (Power Board)
+P0  --> 3.3V (Power Board)
+P1  --> 3.3V (Power Board)
+GND --> GND
+
+LED (Power Indicator):
+(+) --> 10 Ohm Resistor --> 3.3V (Power Board)
+(-) --> GND
+
+Servo 1 (Fin 1):
+Signal  --> GPIO2
+VCC     --> 7.4V (Power Board)
+GND     --> GND
+
+Servo 2 (Fin 2):
+Signal  --> GPIO4
+VCC     --> 7.4V (Power Board)
+GND     --> GND
+
+Servo 3 (Camera):
+Signal  --> GPIO27
+VCC     --> 7.4V (Power Board)
+GND     --> GND
+
+Servo 4 (CPL 1):
+Signal  --> GPIO14
+VCC     --> 7.4V (Power Board)
+GND     --> GND
+
+Servo 5 (CPL 2):
+Signal  --> GPIO12
+VCC     --> 7.4V (Power Board)
+GND     --> GND
+
+Servo 6 (CPL 3):
+Signal  --> GPIO13
+VCC     --> 7.4V (Power Board)
+GND     --> GND
+
+Camera Board (JST):
+VCC     --> 7.4V (Power Board)
+Signal1 --> GPIO32
+Signal2 --> GPIO33
+Data1   --> GPIO25
+Data2   --> GPIO26
+GND     --> GND
+
+Power Board (JST):
+3.3V
+7.4V    --> 5V & Six Servos & Camera Board (JST)
+ADC     --> GPIO39
+GND
+
+Booster + Battery connections not included here, as well as various resistors and capacitors, please see the schematic for more details here:
+/$USER/RSX-CANSAT-2T4-2T5/RSX-CANSAT-2025/circuit_designs/PCBs/CanSat_Sensor_Board/CanSat_Sensor_Board.kicad_sch

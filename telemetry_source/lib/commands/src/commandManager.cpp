@@ -67,7 +67,7 @@ int CommandManager::processCommand(const char *cmd_buff, SerialManager &ser, Mis
     if(!packet.keyword || !packet.team_id || !packet.command || !packet.data)
     {
         ser.sendErrorMsg("COMMAND REJECTED: FORMAT IS INCORRECT.");
-        ser.sendErrorDataMsg("RECEIVED: %s\n", cmd_buff);
+        ser.sendErrorDataMsg("COMMAND: %s\n", cmd_buff);
         return 0;
     }
 
@@ -139,18 +139,7 @@ void CommandManager::do_st(SerialManager &ser, MissionManager &info, SensorManag
     int x,y,z;
     if(strcmp(data, "GPS") == 0)
     {
-        char time_str[DATA_SIZE];
-        sensors.getGpsTime(time_str);
-        if(sscanf(time_str, "%d:%d:%d", &h, &m, &s) == 3)
-        {
-          sensors.setRtcTime(s,m,h);
-          sensors.getRtcTime(time_str);
-          ser.sendInfoDataMsg("Set RTC time to %s", time_str);
-        }
-        else
-        {
-          ser.sendErrorMsg("Could not get GPS time in format HH:MM:SS!");
-        }
+        ser.sendInfoMsg("TODO: GPS!");
     }
     else if(sscanf(data, "%d:%d:%d", &x, &y, &z) == 3)
     {
@@ -324,22 +313,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
   {
     ser.sendErrorMsg("MEC FORMAT IS INCORRECT, DATA SHOULD CONTAIN 'MEC:VAL'");
   }
-  else
-  {
-    strcpy(val, token);
-  }
-
-  if(strcmp(mec, "RELEASE") == 0)
-  {
-    sensors.writeReleaseServo(47);
-    info.setOpState(PROBE_RELEASE);
-    info.beginPref("xb-set", false);
-    int state_int = static_cast<int>(PROBE_RELEASE);
-    info.putPrefInt("opstate", state_int);
-    info.endPref();
-    ser.sendInfoMsg("ATTEMPTED PROBE RELEASE FROM MANUAL TRIGGER!");
-  }
-  else if(strcmp(mec, "SERVO") == 0)
+  if(strcmp(mec, "SERVO"))
   {
     const char *sep = strchr(val, '|');
     if (val != NULL) 
@@ -384,45 +358,60 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
   }
   else if(strcmp(mec, "CAMERA1"))
   {
-    if(info.getOpState() != IDLE)
+    if(strcmp(val, "ON"))
     {
-      ser.sendErrorMsg("CANNOT TOGGLE CAMERA1 DURING MISSION!");
-      return;
+      digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
+      int state = digitalRead(CAMERA1_STATUS_PIN);
+      if(state == HIGH)
+      {
+        ser.sendInfoMsg("CAMERA1 ON");
+      }
+      else
+      {
+        ser.sendErrorMsg("WROTE ON TO CAMERA1, BUT DID NOT GET ON STATUS");
+      }
     }
-    digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
-    delay(1000);
-    digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
-    delay(1000);
-    int state = digitalRead(CAMERA1_STATUS_PIN);
-    if(state == LOW)
+    else if(strcmp(val, "OFF"))
     {
-      ser.sendInfoMsg("CAMERA1 OFF");
-    }
-    else
-    {
-      ser.sendInfoMsg("CAMERA1 ON");
+      digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
+      int state = digitalRead(CAMERA1_STATUS_PIN);
+      if(state == LOW)
+      {
+        ser.sendInfoMsg("CAMERA1 OFF");
+      }
+      else
+      {
+        ser.sendErrorMsg("WROTE OFF TO CAMERA1, BUT IT IS STILL ON");
+      }
     }
   }
   else if(strcmp(mec, "CAMERA2"))
   {
-    if(info.getOpState() != IDLE)
+    if(strcmp(val, "ON"))
     {
-      ser.sendErrorMsg("CANNOT TOGGLE CAMERA2 DURING MISSION!");
-      return;
+      digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
+      int state = digitalRead(CAMERA2_STATUS_PIN);
+      if(state == HIGH)
+      {
+        ser.sendInfoMsg("CAMERA2 ON");
+      }
+      else
+      {
+        ser.sendErrorMsg("WROTE TO CAMERA2, BUT DID NOT GET ON STATUS");
+      }
     }
-    digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
-    delay(1000);
-    digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
-    delay(1000);
-    digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
-    int state = digitalRead(CAMERA2_STATUS_PIN);
-    if(state == LOW)
+    else if(strcmp(val, "OFF"))
     {
-      ser.sendInfoMsg("CAMERA2 OFF");
-    }
-    else
-    {
-      ser.sendInfoMsg("CAMERA2 ON");
+      digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
+      int state = digitalRead(CAMERA2_STATUS_PIN);
+      if(state == LOW)
+      {
+        ser.sendInfoMsg("CAMERA2 OFF");
+      }
+      else
+      {
+        ser.sendErrorMsg("WROTE OFF TO CAMERA2, BUT IT IS STILL ON");
+      }
     }
   }
   else if(strcmp(mec, "CAMERA1_STAT"))

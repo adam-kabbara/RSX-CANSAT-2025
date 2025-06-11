@@ -1,0 +1,6 @@
+GPS Pin Connections on the ESP32:
+
+- GPS VCC --> 3V3
+- GPS GND --> GND
+- GPS TXD (White) --> GPIO16
+- GPS RXD (Green) --> GPIO17

@@ -1,0 +1,15 @@
+CanSat_Camera_Board Pin Connections
+
+Format: <JST Connection> --> <ESP32 Camera Pins>
+
+Acronyms:
+PRC = Payload Release Camera (Camera 1)
+GC  = Ground Camera (Camera 2)
+
+JST Connection: 
+VCC     --> PRC 5V & GC 5V
+Signal1 --> PRC GPIO14
+Signal2 --> GC GPIO14
+Data1   --> PRC GPIO21
+Data2   --> GC GPIO21
+GND     --> PRC GND & GC GND
