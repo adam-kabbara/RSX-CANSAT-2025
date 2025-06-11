@@ -145,11 +145,6 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
 
             if(alt_sum < 5.0)
             {
-                mission_info.setOpState(LAUNCH_PAD);
-                mission_info.beginPref("xb-set", false);
-                int state_int = static_cast<int>(LAUNCH_PAD);
-                mission_info.putPrefInt("opstate", state_int);
-                mission_info.endPref();
                 return LAUNCH_PAD;
             }
             break;
@@ -193,7 +188,6 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
 
     getRtcTime(send_packet.MISSION_TIME);
     send_packet.TEMPERATURE = getTemp();
-    
     send_packet.VOLTAGE = getVoltage();
 
     // Magnetometer
@@ -367,12 +361,12 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
 void SensorManager::build_data_str(char *buff, size_t size)
 {
     snprintf(buff, size,
-        "%d,%s,%d,%s,%s,"
-        "%.1f,%.1f,%.1f,%.1f,%d,"
-        "%d,%d,%d,%d,%d,"
-        "%.1f,%.1f,%.1f,%.1f,%s,"
-        "%.1f,%.4f,%.4f,%d,%s,"
-        "%d",
+        "%d,%s,%d,%s,%s," //5
+        "%.1f,%.1f,%.1f,%.1f," //4
+        "%d,%d,%d,%d,%d," //5
+        "%d,%d,%.1f,%.1f,%.1f," //5
+        "%s,%.1f,%.4f," //3
+        "%.4f,%d,%s,%d", //3
         send_packet.TEAM_ID_PCKT, 
         send_packet.MISSION_TIME, 
         send_packet.PACKET_COUNT, 
@@ -382,10 +376,10 @@ void SensorManager::build_data_str(char *buff, size_t size)
         send_packet.TEMPERATURE, 
         send_packet.PRESSURE, 
         send_packet.VOLTAGE, 
-        send_packet.GYRO_R,
+        send_packet.GYRO_R, 
         send_packet.GYRO_P, 
         send_packet.GYRO_Y, 
-        send_packet.ACCEL_R,
+        send_packet.ACCEL_R, 
         send_packet.ACCEL_P, 
         send_packet.ACCEL_Y, 
         send_packet.MAG_R, 
@@ -398,7 +392,8 @@ void SensorManager::build_data_str(char *buff, size_t size)
         send_packet.GPS_LONGITUDE, 
         send_packet.GPS_SATS, 
         send_packet.CMD_ECHO,
-        send_packet.CAMERA_STATUS); 
+        send_packet.CAMERA_STATUS);
+    
 }
 
 const char* SensorManager::op_state_to_string(OperatingState state) 
@@ -490,18 +485,11 @@ void SensorManager::resetAltData()
     alt_data.sample_count = 0;
 }
 
-void SensorManager::startSensors(SerialManager &ser, MissionManager &info)
+void SensorManager::startSensors(SerialManager &ser)
 {
     // Temperature and Pressure
     uint8_t status = bme.begin(0x77);
-    ser.sendInfoDataMsg("Initialized BME with status: %0d", status);
     delay(100);
-
-    // Hall Effect Sensor
-    pinMode(HALL_SENSOR_PIN, INPUT);
-    pinMode(ONBOARD_LED_PIN, OUTPUT);
-    delay(100);
-    ser.sendInfoMsg("Initialized hall sensor...");
     
     // Release Servo
     m_servo_release.attach(SERVO_RELEASE_PIN);
@@ -602,12 +590,12 @@ void SensorManager::writeReleaseServo(int pos)
     m_servo_release.write(pos);
 }
 
-void SensorManager::writeGyroServoRight(int pos)
+void SensorManager::writeGyroServo1(int pos)
 {
     m_servo_gyro_right.write(pos+15);
 }
 
-void SensorManager::writeGyroServoLeft(int pos)
+void SensorManager::writeGyroServo2(int pos)
 {
     m_servo_gyro_left.write(pos+6);
 }
@@ -625,55 +613,39 @@ void SensorManager::getGpsAlt(float *alt, float launch_alt)
     }
 }
 
-void SensorManager::getGpsLat(float *lat)
+float SensorManager::getGpsLat()
 {
-    if (gps.location.isValid())
-    {
-        *lat = gps.location.lat();
-    }
+    return 0;
 }
 
-void SensorManager::getGpsLong(float *lon)
+float SensorManager::getGpsLong()
 {
-    if (gps.location.isValid())
-    {
-        *lon = gps.location.lng();
-    }
+    return 0;
 }
 
-void SensorManager::getGpsSats(int *sat)
+int SensorManager::getGpsSats()
 {
-    if (gps.satellites.isValid())
-    {
-        *sat = gps.satellites.value();
-    }
+    return 0;
 }
 
 void SensorManager::getRtcTime(char time_str[DATA_SIZE])
 {
-    rtc->refresh();
-
-    snprintf(time_str, DATA_SIZE, "%02d:%02d:%02d", rtc->hour(), rtc->minute(), rtc->second());
+    strncpy(time_str, "00:00:00", DATA_SIZE - 1);
+    time_str[DATA_SIZE - 1] = '\0';
 }
 
 void SensorManager::getGpsTime(char time_str[DATA_SIZE])
-{   
-    if (gps.time.isValid())
-    {
-        snprintf(time_str, DATA_SIZE, "%02d:%02d:%02d", gps.time.hour(), gps.time.minute(), gps.time.second());
-    }
+{
+    strncpy(time_str, "00:00:00", DATA_SIZE - 1);
+    time_str[DATA_SIZE - 1] = '\0';
 }
 
 float SensorManager::getVoltage()
 {
     int adc_raw = analogRead(ADC_VOLTAGE_PIN);
-    float adc_voltage = ((adc_raw / 4095.0) * 3.3) + 0.15;
-    float real_voltage = 
-        -224.72385 * pow(adc_voltage, 4) +
-        1942.37477 * pow(adc_voltage, 3) -
-        6281.94345 * pow(adc_voltage, 2) +
-        9018.07141 * adc_voltage -
-        4845.86174 + 0.1;
+    float adc_voltage = (adc_raw / 4096.0) * 3.3; // 3.3V reference voltage on a 12-bit ADC pin
+    
+    float real_voltage = adc_voltage / 0.295;
     return real_voltage;
 }
 

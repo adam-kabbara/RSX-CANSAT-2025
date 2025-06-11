@@ -104,10 +104,6 @@ void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManag
             info.clearPacketCount();
             ser.sendInfoMsg("STARTING TELEMETRY TRANSMISSION.");
             info.setOpState(LAUNCH_PAD);
-            info.beginPref("xb-set", false);
-            int state_int = static_cast<int>(LAUNCH_PAD);
-            info.putPrefInt("opstate", state_int);
-            info.endPref();
         }
         else if(info.getOpState() != IDLE)
         {
@@ -123,10 +119,6 @@ void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManag
         if(info.getOpState() != IDLE)
         {
             info.setOpState(IDLE);
-            info.beginPref("xb-set", false);
-            int state_int = static_cast<int>(IDLE);
-            info.putPrefInt("opstate", state_int);
-            info.endPref();
             info.setAltCalOff();
             ser.sendInfoDataMsg("ENDING PAYLOAD TRANSMISSION.{%s|%s}", 
                 sensors.op_mode_to_string(info.getOpMode(), 1), sensors.op_state_to_string(info.getOpState()));
@@ -144,7 +136,7 @@ void CommandManager::do_cx(SerialManager &ser, MissionManager &info, SensorManag
 
 void CommandManager::do_st(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
-    int h,m,s;
+    int x,y,z;
     if(strcmp(data, "GPS") == 0)
     {
         char time_str[DATA_SIZE];
@@ -160,12 +152,9 @@ void CommandManager::do_st(SerialManager &ser, MissionManager &info, SensorManag
           ser.sendErrorMsg("Could not get GPS time in format HH:MM:SS!");
         }
     }
-    else if(sscanf(data, "%d:%d:%d", &h, &m, &s) == 3)
+    else if(sscanf(data, "%d:%d:%d", &x, &y, &z) == 3)
     {
-        sensors.setRtcTime(s,m,h);
-        char time_str[DATA_SIZE];
-        sensors.getRtcTime(time_str);
-        ser.sendInfoDataMsg("Set RTC time to %s", time_str);
+        ser.sendInfoMsg("TODO: SET RTC CONTROLLER TIME!");
     }
     else
     {
@@ -321,31 +310,19 @@ void CommandManager::do_cal(SerialManager &ser, MissionManager &info, SensorMana
 
 void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorManager &sensors, const char *data)
 {
-  char data_copy[CMD_BUFF_SIZE];
-  strcpy(data_copy, data);
-
-  const char *delim = ":";
-  char *token;
-
+  const char *colon = strchr(data, ':');
   char mec[16];
   char val[16];
-
-  token = strtok(data_copy, delim);
-  if(token == NULL)
+  if (colon != NULL)
+  {
+    size_t len_before = colon - data;
+    strncpy(mec, data, len_before);
+    mec[len_before] = '\0';
+    strcpy(val, colon + 1);
+  } 
+  else 
   {
     ser.sendErrorMsg("MEC FORMAT IS INCORRECT, DATA SHOULD CONTAIN 'MEC:VAL'");
-    return;
-  }
-  else
-  {
-    strcpy(mec, token);
-  }
-
-  token = strtok(NULL, delim);
-  if(token == NULL)
-  {
-    ser.sendErrorMsg("MEC FORMAT IS INCORRECT, DATA SHOULD CONTAIN 'MEC:VAL'");
-    return;
   }
   else
   {
@@ -381,20 +358,20 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
         switch(servo_num)
         {
           case 0:
-            sensors.writeCameraServo(servo_val);
-            ser.sendInfoDataMsg("Wrote %d to camera servo.", servo_val);
-            break;
-          case 1:
             sensors.writeReleaseServo(servo_val);
             ser.sendInfoDataMsg("Wrote %d to release servo.", servo_val);
             break;
+          case 1:
+            sensors.writeGyroServo1(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to gyro 1 servo.", servo_val);
+            break;
           case 2:
-            sensors.writeGyroServoRight(servo_val);
-            ser.sendInfoDataMsg("Wrote %d to right gyro servo.", servo_val);
+            sensors.writeGyroServo2(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to gyro 2 servo.", servo_val);
             break;
           case 3:
-            sensors.writeGyroServoLeft(servo_val);
-            ser.sendInfoDataMsg("Wrote %d to left gyro servo.", servo_val);
+            sensors.writeCameraServo(servo_val);
+            ser.sendInfoDataMsg("Wrote %d to camera servo.", servo_val);
             break;
           default:
             ser.sendErrorDataMsg("ERROR: RECEIVED INVALID SERVO #: %d", servo_num);
@@ -405,7 +382,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
         ser.sendErrorMsg("ERROR: SERVO COMMAND FORMAT INCORRECT, DID NOT RECEIVE '#|VAL'");
     }
   }
-  else if(strcmp(mec, "CAMERA1") == 0)
+  else if(strcmp(mec, "CAMERA1"))
   {
     if(info.getOpState() != IDLE)
     {
@@ -426,7 +403,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
       ser.sendInfoMsg("CAMERA1 ON");
     }
   }
-  else if(strcmp(mec, "CAMERA2") == 0)
+  else if(strcmp(mec, "CAMERA2"))
   {
     if(info.getOpState() != IDLE)
     {
@@ -448,7 +425,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
       ser.sendInfoMsg("CAMERA2 ON");
     }
   }
-  else if(strcmp(mec, "CAMERA1_STAT") == 0)
+  else if(strcmp(mec, "CAMERA1_STAT"))
   {
     int state = digitalRead(CAMERA1_STATUS_PIN);
     if(state == HIGH)
@@ -460,7 +437,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
       ser.sendInfoMsg("CAMERA1 OFF");
     }
   }
-  else if(strcmp(mec, "CAMERA2_STAT") == 0)
+  else if(strcmp(mec, "CAMERA2_STAT"))
   {
     int state = digitalRead(CAMERA2_STATUS_PIN);
     if(state == HIGH)
@@ -469,7 +446,7 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
     }
     else
     {
-      ser.sendInfoMsg("CAMERA2 OFF");
+      ser.sendErrorMsg("CAMERA2 OFF");
     }
   }
   else
