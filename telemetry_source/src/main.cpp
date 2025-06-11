@@ -83,7 +83,7 @@ void loop()
             xbee_serial.sendInfoMsg("BEGIN_SIMP");
         }
 
-        if (LittleFS.exists("/logs.txt")) 
+        if(mission_info.getOpState() == LAUNCH_PAD && LittleFS.exists("/logs.txt")) 
         {
             xbee_serial.sendInfoMsg("Removing logs.txt from file system.");
             LittleFS.remove("/logs.txt");
@@ -122,38 +122,59 @@ void loop()
 
             sensor_mgr.sampleSensors(mission_info);
 
-            if(send_flag == 1)
+            while(send_flag == 0)
             {
-                mission_info.incrPacketCount();
-                sensor_mgr.setPacketCount(mission_info.getPacketCount());
-                mission_info.beginPref("xb-set", false);
-                mission_info.putPrefInt("pckts", mission_info.getPacketCount());
-                mission_info.endPref();
-                sensor_mgr.build_data_str(send_buffer, DATA_BUFF_SIZE);
-                xbee_serial.sendTelemetry(send_buffer);
-                if(logfile.size() < MAX_LOG_FILE_SIZE_BYTES)
-                {
-                    logfile.println(send_buffer);
-                    //logfile.flush(); // idk
-                }
-                else
-                {
-                    if(cannot_write_to_file == 0)
-                    {
-                        xbee_serial.sendErrorMsg("Could not write to logfile, size exceeds 1MB. Data will not be written until mission is restarted.");
-                    }
-                    cannot_write_to_file = 1;
-                }
-                send_flag = 0;
+                vTaskDelay(pdMS_TO_TICKS(100));
             }
+            
+            mission_info.incrPacketCount();
+            sensor_mgr.setPacketCount(mission_info.getPacketCount());
+            mission_info.beginPref("xb-set", false);
+            mission_info.putPrefInt("pckts", mission_info.getPacketCount());
+            mission_info.endPref();
+            sensor_mgr.build_data_str(send_buffer, DATA_BUFF_SIZE);
+            xbee_serial.sendTelemetry(send_buffer);
+            if(logfile.size() < MAX_LOG_FILE_SIZE_BYTES)
+            {
+                logfile.println(send_buffer);
+                //logfile.flush(); // idk
+            }
+            else
+            {
+                if(cannot_write_to_file == 0)
+                {
+                    xbee_serial.sendErrorMsg("Could not write to logfile, size exceeds 1MB. Data will not be written until mission is restarted.");
+                }
+                cannot_write_to_file = 1;
+            }
+            send_flag = 0;
 
-            vTaskDelay(pdMS_TO_TICKS(delay_rate_ms));
         }
 
         // Back to IDLE state, turn off timer & camera, reset settings
         timerAlarmDisable(send_timer);
-        digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
-        digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
+
+        int cam1_state = sensor_mgr.getCamera1Status();
+        int cam2_state = sensor_mgr.getCamera2Status();
+
+        if(cam1_state)
+        {
+            digitalWrite(CAMERA1_SIGNAL_PIN, LOW);
+            delay(1000);
+            digitalWrite(CAMERA1_SIGNAL_PIN, HIGH);
+            delay(1000);
+            xbee_serial.sendInfoMsg("Turning off camera 1...");
+        }
+
+        if(cam2_state)
+        {
+            digitalWrite(CAMERA2_SIGNAL_PIN, LOW);
+            delay(1000);
+            digitalWrite(CAMERA2_SIGNAL_PIN, HIGH);
+            delay(1000);
+            xbee_serial.sendInfoMsg("Turning off camera 2...");
+        }
+
         mission_info.setAltCalOff();
         mission_info.waitingForSimp();
         logfile.close();

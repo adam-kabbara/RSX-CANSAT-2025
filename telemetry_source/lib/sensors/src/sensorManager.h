@@ -4,11 +4,21 @@
 #include "includes.h"
 #include "serialManager.h"
 #include "missionManager.h"
+#include "pid.h"
+
 #include <Adafruit_BME280.h>
 #include <Wire.h>
 #include <TinyGPS++.h>
 #include <ESP32Servo.h>
 #include <HardwareSerial.h>
+#include <Adafruit_BNO08x.h>
+#include <Adafruit_LIS3MDL.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+#include <uRTCLib.h>
 
 class SensorManager
 {
@@ -55,20 +65,47 @@ private:
     } altitude_data;
 
     altitude_data alt_data;
+    
+    HardwareSerial *GPS_Serial;
 
     Adafruit_BME280 bme;
     Servo m_servo_release;
-    Servo m_servo_gyro_1;
-    Servo m_servo_gyro_2;
+    Servo m_servo_gyro_right;
+    Servo m_servo_gyro_left;
     Servo m_servo_camera;
 
-    int servo_1_pos = 0;
+    SPIClass *mySPI;
+    Adafruit_BNO08x *bno08x;
+    Adafruit_LIS3MDL lis3mdl;
+
+    uRTCLib *rtc;
+
+    float currRPM = 0.0;
+    float prevRPM = 0.0;
+    int lastState = HIGH;
+    unsigned long lastPulseTime = 0;
+    unsigned long pulseInterval = 0;
+
+    PIDController pid_cntl;
+    float ax = 0;
+    float ay = 0;
+    float az = 0;
+    float mx = 0;
+    float my = 0;
+    float mz = 0;
+    float gyroZ = 0;
+    unsigned long last_servo_update = 0;
+    unsigned long last_camera_servo_update = 0;
+
+    unsigned long last_alt_update = 0;
 
 public:
 
-    OperatingState updateState(OperatingState curr_state, MissionManager &mission_info);
+    SensorManager();
 
-    void sampleSensors(MissionManager &mission_info);
+    OperatingState updateState(OperatingState curr_state, MissionManager &mission_info, SerialManager &ser);
+
+    void sampleSensors(MissionManager &mission_info, SerialManager &ser);
 
     void build_data_str(char *buff, size_t size);
 
@@ -100,7 +137,7 @@ public:
 
     void writeCameraServo(int pos);
 
-    float getGpsAlt();
+    void getGpsAlt(float *alt, float launch_alt);
 
     float getGpsLat();
 
@@ -120,7 +157,11 @@ public:
 
     void getAccelData(float *r, float *p, float *y);
 
-    void getGyroData(float *r, float *p, float *y);
+    int getCamera1Status();
+
+    int getCamera2Status();
+
+    void updateCameraServo();
 };
 
 #endif /* SENSOR_MANAGER_H */
