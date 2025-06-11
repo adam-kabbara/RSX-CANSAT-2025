@@ -16,9 +16,22 @@ CanSat Competition:
 - 📅 June 5-8, 2025
 - 📍 Monterey, Virginia, United States
 
+Competition Deliverables & Results:
+- 🏆 95.87725% --> [CanSat 2025 Winners](https://cansatcompetition.com/winners.html)
+- 💾 Full Mission Data: [Team #3114 Mission Data](competition_documentation/3114_mission_data_cansat_2025.csv.xlsx)
+- 📋 Full Scoresheet: [TBA]()
+- 📝 Preliminary Design Review: [Team #3114 PDR](competition_documentation/deliverables/Cansat2025_3114_PDR.pdf)
+- 🛠️ Critical Design Review: [Team #3114 CDR](competition_documentation/deliverables/Cansat2025_3114_CDR.pdf)
+- 🛰️ Post Flight Review: [Team #3114 PFR](competition_documentation/deliverables/Cansat2025_3114_PFR.pdf)
+
+Competition Placements:
+- 🗺️ 5th Place Internationally!
+- 🌎 1st in North America!
+- 🇨🇦 1st in Canada!
+
 ## Use Ground Station
-1. Download and run .msi file from Releases. Cannot be used on mac
-2. This will create a folder with an exe file, note it depends on other files generated in the folder
+1. Download and run .msi file from Releases. Cannot be used on Apple MacOS.
+2. This will create a folder with an exe file, note it depends on other files generated in the folder.
 3. Once app is open click on CONNECTION button, choose a port and press open ground port.
 
 ## Sensor Testing
