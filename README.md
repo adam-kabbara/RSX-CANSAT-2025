@@ -39,10 +39,7 @@ This repository is designed to manage the files made by the CanSat Team under th
 - 🌎 1st in North America!
 - 🍁 1st in Canada!
 
-## Ground Station Usage
-1. Download and run .msi file from Releases. Cannot be used on Apple MacOS.
-2. This will create a folder with an exe file, note it depends on other files generated in the folder.
-3. Once app is open click on CONNECTION button, choose a port and press open ground port.
+
 
 ## Folder Organization
 
@@ -70,5 +67,4 @@ This repository is designed to manage the files made by the CanSat Team under th
 **Sensor Testing:**
 <br>All sensors used on our CanSat are tested separately using an ESP32-WROOM-32D Dev Module microcontroller. This folder contains all related information regarding the tests completed on these sensors including past designs, schematics, pin connections, and code.
 
-**Telemetry Source:**
-<br>The source code and configuration files for the CanSat telemetry system, including firmware, libraries, and project workspace for real-time data transmission and logging.
+
