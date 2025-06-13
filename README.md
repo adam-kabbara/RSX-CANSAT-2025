@@ -22,12 +22,14 @@ This repository is designed to manage the files made by the CanSat Team under th
 - 💾 Mission Data: [Team #3114 Mission Data](competition_documentation/3114_mission_data_cansat_2025.csv.xlsx)
 - 📝 Preliminary Design Review: [Team #3114 PDR](competition_documentation/deliverables/Cansat2025_3114_PDR.pdf)
 - 🛠️ Critical Design Review: [Team #3114 CDR](competition_documentation/deliverables/Cansat2025_3114_CDR.pdf)
+- 🌡️ Environemental Testing Document: [Team #3114 ENV](competition_documentation/deliverables/Cansat2025_3114_Mission_Operations_Manual.pdf)
+- 🗂️ Mission Operations Manual: [Team #3114 MOM](competition_documentation/deliverables/Cansat2025_3114_Mission_Operations_Manual.pdf)
 - 🛰️ Post Flight Review: [Team #3114 PFR](competition_documentation/deliverables/Cansat2025_3114_PFR.pdf)
 
 **Competition Results:**
 - 🗺️ 5th Place Internationally!
 - 🌎 1st in North America!
-- 🇨🇦 1st in Canada!
+- 🍁 1st in Canada!
 
 ## Use Ground Station
 1. Download and run .msi file from Releases. Cannot be used on Apple MacOS.
