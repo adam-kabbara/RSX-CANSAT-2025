@@ -1,5 +1,4 @@
-# RSX CanSat 2T4-2T5 Designs
-![mission_patch](competition_documentation/team_assets/mission_patch.png)
+# RSX CanSat 2T4-2T5 Designs ![mission_patch](competition_documentation/team_assets/mission_patch.png)
 This repository is designed to manage the files made by the CanSat Team under the Robotics for Space eXploration (RSX) design team at the University of Toronto. 
 
 **Competition Team Members:**
