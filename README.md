@@ -1,4 +1,5 @@
 # RSX CanSat 2T4-2T5 Designs
+![mission_patch](competition_documentation/team_assets/mission_patch.png)
 This repository is designed to manage the files made by the CanSat Team under the Robotics for Space eXploration (RSX) design team at the University of Toronto. 
 
 **Competition Team Members:**
@@ -31,7 +32,7 @@ This repository is designed to manage the files made by the CanSat Team under th
 - 🌎 1st in North America!
 - 🍁 1st in Canada!
 
-## Use Ground Station
+## Ground Station Usage
 1. Download and run .msi file from Releases. Cannot be used on Apple MacOS.
 2. This will create a folder with an exe file, note it depends on other files generated in the folder.
 3. Once app is open click on CONNECTION button, choose a port and press open ground port.
