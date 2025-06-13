@@ -55,7 +55,8 @@ This repository is designed to manage the files made by the CanSat Team under th
 **Full Sensor Setup:**
 <br>Initial code used to connect all payload sensor electronics together for testing before integration with full software telemetry.
 
-
+**Ground Station/Telemetry Source:**
+<br>Mission specific operations on payload and ground station.
 
 **PID:**
 <br>The code, notebooks, and scripts for developing, testing, and simulating PID control algorithms and sensor integration for the CanSat project.
