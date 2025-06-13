@@ -2,7 +2,7 @@
 
 <div style="display: flex; gap: 20px; align-items: center;">
   <img src="competition_documentation/team_assets/mission_patch.png" alt="mission_patch" width="120"/>
-  <img src="competition_documentation/team_assets/mascot_capybara.png" alt="mascot_capybara" width="120"/>
+  <img src="competition_documentation/team_assets/mascot_capybara_transparent.png" alt="mascot_capybara" width="120"/>
   <img src="competition_documentation/team_assets/uoft_engineering.png" alt="uoft_engineering_logo" height="120"/>
 </div>
 
