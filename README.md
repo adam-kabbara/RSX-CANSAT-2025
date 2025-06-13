@@ -5,6 +5,7 @@
   <img src="competition_documentation/team_assets/mascot_capybara_transparent.png" alt="mascot_capybara" width="120"/>
   <img src="competition_documentation/team_assets/uoft_engineering.png" alt="uoft_engineering_logo" height="120"/>
 </div>
+<br>
 
 This repository is designed to manage the files made by the CanSat Team under the Robotics for Space eXploration (RSX) design team at the University of Toronto. 
 
@@ -43,14 +44,31 @@ This repository is designed to manage the files made by the CanSat Team under th
 2. This will create a folder with an exe file, note it depends on other files generated in the folder.
 3. Once app is open click on CONNECTION button, choose a port and press open ground port.
 
-## Competition Documention
-All deliverables, team logos, and full results from the 2025 CanSat Competition in Monterey, Virginia, USA!
+## Folder Organization
 
-## Sensor Testing
-All sensors used on our CanSat are tested separately using an ESP32-WROOM-32D Dev Module microcontroller. This folder contains all related information regarding the tests completed on these sensors including past designs, schematics, pin connections, and code.
+**Calculations:**
+<br> Python functions and calculations for sizing inductors and capacitors in a power electronics circuit, including formulas for inductor DC current, ripple current, peak current, and minimum capacitor value, with example calculations and printouts.
 
-## Circuit Design
-This folder contains all the KiCad printed circuit board (PCB) designs our team has created. It also includes each PCB's related schematic, layout, and gerber files with associated custom KiCad symbols, footprints, and 3D models.
+**Circuit Design:**
+<br>This folder contains all the KiCad printed circuit board (PCB) designs our team has created. It also includes each PCB's related schematic, layout, and gerber files with associated custom KiCad symbols, footprints, and 3D models.
 
-## Full Sensor Setup
-Initial code used to connect all payload sensor electronics together for testing before integration with full software telemetry.
+**Competition Documention:**
+<br>All deliverables, team logos, and full results from the 2025 CanSat Competition in Monterey, Virginia, USA!
+
+**Full Sensor Setup:**
+<br>Initial code used to connect all payload sensor electronics together for testing before integration with full software telemetry.
+
+**Ground Station Source:**
+<br>The code and resources for the CanSat ground station application, including data files, a Python GUI for real-time telemetry visualization, setup scripts, and supporting assets for ground station operations are contained in this folder.
+
+**PID:**
+<br>The code, notebooks, and scripts for developing, testing, and simulating PID control algorithms and sensor integration for the CanSat project.
+
+**PFR Plots:**
+<br>Contains Python scripts and output images for generating 2D and 3D plots of CanSat mission and sensor data, including GPS, altitude, and other telemetry visualizations for post-flight review and analysis.
+
+**Sensor Testing:**
+<br>All sensors used on our CanSat are tested separately using an ESP32-WROOM-32D Dev Module microcontroller. This folder contains all related information regarding the tests completed on these sensors including past designs, schematics, pin connections, and code.
+
+**Telemetry Source:**
+<br>The source code and configuration files for the CanSat telemetry system, including firmware, libraries, and project workspace for real-time data transmission and logging.
