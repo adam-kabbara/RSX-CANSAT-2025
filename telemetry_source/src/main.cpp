@@ -55,6 +55,8 @@ void loop()
     CommandManager cmd_mgr;
     int delay_rate_ms = (1/SENSOR_SAMPLE_RATE_HZ) * 1000;
     int cannot_write_to_file = 0;
+    PIDController pid_real;
+    unsigned long last_servo_update = 0;
 
     // Run this loop at 40Hz
     while(1)
@@ -124,9 +126,25 @@ void loop()
 
             while(send_flag == 0)
             {
-                vTaskDelay(pdMS_TO_TICKS(100));
+                /*
+                if(mission_info.getOpState() == PROBE_RELEASE)
+                {
+                    sensor_mgr.update_imu();
+                    float servo_left = 0.0;
+                    float servo_right = 0.0;
+                    pid_real.update_PID(sensor_mgr.getAx(), sensor_mgr.getAy(), sensor_mgr.getAz(), sensor_mgr.getGyroZ(), sensor_mgr.getMx(), sensor_mgr.getMy(), sensor_mgr.getMz(), &servo_left, &servo_right);
+                    unsigned long servo_now = millis();
+                    if(servo_now - last_servo_update >= 150)
+                    {
+                        sensor_mgr.writeGyroServoLeft(servo_left);
+                        sensor_mgr.writeGyroServoRight(servo_left);
+                        last_servo_update = servo_now;
+                    }
+                }
+                */
+                vTaskDelay(pdMS_TO_TICKS(25));
             }
-            
+
             mission_info.incrPacketCount();
             sensor_mgr.setPacketCount(mission_info.getPacketCount());
             mission_info.beginPref("xb-set", false);

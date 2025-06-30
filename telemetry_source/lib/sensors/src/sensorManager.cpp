@@ -13,7 +13,7 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
     int size = alt_data.window_size;
     int idx = (alt_data.idx - 1) % size;
 
-    if(curr_state != DESCENT && (alt_data.buffer[idx] > alt_data.max_alt))
+    if(curr_state != DESCENT && (alt_data.buffer[idx] > alt_data.max_alt) && (alt_data.buffer[idx] < 1000))
     {
         alt_data.max_alt = alt_data.buffer[idx];
     }
@@ -95,9 +95,6 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
                 int state_int = static_cast<int>(DESCENT);
                 mission_info.putPrefInt("opstate", state_int);
                 mission_info.endPref();
-                m_servo_camera.attach(SERVO_CAMERA_PIN);
-                m_servo_gyro_left.attach(SERVO_GYRO_LEFT_PIN);
-                m_servo_gyro_right.attach(SERVO_GYRO_RIGHT_PIN);
                 return DESCENT;
             }
             
@@ -119,12 +116,16 @@ OperatingState SensorManager::updateState(OperatingState curr_state, MissionMana
             if (alt_sum <= 0.75 * alt_data.max_alt)
             {
                 writeReleaseServo(47);
-                updateCameraServo();
                 mission_info.setOpState(PROBE_RELEASE);
                 mission_info.beginPref("xb-set", false);
                 int state_int = static_cast<int>(PROBE_RELEASE);
                 mission_info.putPrefInt("opstate", state_int);
                 mission_info.endPref();
+                m_servo_camera.attach(SERVO_CAMERA_PIN);
+                m_servo_gyro_left.attach(SERVO_GYRO_LEFT_PIN);
+                m_servo_gyro_right.attach(SERVO_GYRO_RIGHT_PIN);
+                writeGyroServoLeft(90);
+                writeGyroServoRight(90);
                 return PROBE_RELEASE;
             }
             break;
@@ -275,23 +276,6 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
         }
     }
 
-    /*
-    if(mission_info.getOpState() == PROBE_RELEASE)
-    {
-        float servo_left = 0.0;
-        float servo_right = 0.0;
-        pid_cntl.update_PID(ax, ay, az, gyroZ, mx, my, mz, &servo_left, &servo_right);
-        unsigned long servo_now = millis();
-        if(servo_now - last_servo_update >= 250)
-        {
-            //ser.sendInfoDataMsg("GyroZ=%f",gyroZ);
-            //ser.sendInfoDataMsg("servo_left=%f",servo_left);
-            //ser.sendInfoDataMsg("servo_right=%f",servo_right);
-            last_servo_update = servo_now;
-        }
-    }
-    */
-
     // Hall Effect Sensor
     if(mission_info.getOpState() == PROBE_RELEASE)
     {
@@ -353,15 +337,16 @@ void SensorManager::sampleSensors(MissionManager &mission_info, SerialManager &s
     }
 
     // Timer between camera servo movements
-    /*
-    unsigned long now = millis();
-    float dt = (now - last_camera_servo_update) / 1000.0;
-    last_camera_servo_update = now;
-    
-    float magYaw = pid_cntl.computeTiltCompensatedYaw(mx, my, mz, ax, ay, az);
-    pid_cntl.kalmanUpdate(gyroZ, magYaw, dt);
-    updateCameraServo(pid_cntl.getYawEstimate());
-    */
+    if(mission_info.getOpState() == PROBE_RELEASE)
+    {
+        unsigned long now = millis();
+        float dt = (now - last_camera_servo_update) / 1000.0;
+        last_camera_servo_update = now;
+        
+        float magYaw = pid_cntl.computeTiltCompensatedYaw(mx, my, mz, ax, ay, az);
+        pid_cntl.kalmanUpdate(gyroZ, magYaw, dt);
+        updateCameraServo();
+    }
 }
 
 void SensorManager::build_data_str(char *buff, size_t size)
@@ -679,18 +664,12 @@ float SensorManager::getVoltage()
 
 float SensorManager::getRotRate()
 {
-    if(lastPulseTime == 0)
-    {
-        lastPulseTime = micros();
-        return 0.0;
-    }
-
     int analogValue = analogRead(HALL_SENSOR_PIN);
     int currState = (analogValue < HALL_SENSOR_THRESHOLD) ? LOW : HIGH;
-
+ 
     if(currState == LOW && lastState == HIGH)
     {
-        // digitalWrite(ONBOARD_LED_PIN, HIGH);
+        digitalWrite(ONBOARD_LED_PIN, HIGH);
         unsigned long now = micros();
         pulseInterval = now - lastPulseTime;
         lastPulseTime = now;
@@ -706,7 +685,7 @@ float SensorManager::getRotRate()
     } 
     else
     {
-        // digitalWrite(ONBOARD_LED_PIN, LOW);
+        digitalWrite(ONBOARD_LED_PIN, LOW);
     }
 
     lastState = currState;
@@ -732,7 +711,7 @@ void SensorManager::updateCameraServo()
 {
     float angle_to_north = fmod((360.0 - pid_cntl.getYawEstimate()), 360.0);
     
-    float delta = angle_to_north;
+    float delta = angle_to_north - 180.0;
     if(delta > 180.0f) 
     {
         delta -= 360.0f;
@@ -749,4 +728,65 @@ void SensorManager::updateCameraServo()
     }
 
     writeCameraServo(servo_movement);
+}
+
+float SensorManager::getAx()
+{
+    return ax;
+}
+float SensorManager::getAy()
+{
+    return ay;
+}
+float SensorManager::getAz()
+{
+    return az;
+}
+float SensorManager::getMx()
+{
+    return mx;
+}
+float SensorManager::getMy()
+{
+    return my;
+}
+float SensorManager::getMz()
+{
+    return mz;
+}
+float SensorManager::getGyroZ()
+{
+    return gyroZ;
+}
+
+void SensorManager::update_imu()
+{
+    sensors_event_t event_lis3mdl;
+    lis3mdl.getEvent(&event_lis3mdl);
+    mx = event_lis3mdl.magnetic.x;
+    my = event_lis3mdl.magnetic.y;
+    mz = event_lis3mdl.magnetic.z;
+
+    // IMU
+    for(int i = 0; i < 2; i++)
+    {
+        sh2_SensorValue_t sensorValue;
+        if(bno08x->getSensorEvent(&sensorValue))
+        {
+            switch(sensorValue.sensorId)
+            {
+                case SH2_ACCELEROMETER:
+                    ax = sensorValue.un.accelerometer.x;
+                    ay = sensorValue.un.accelerometer.y;
+                    az = sensorValue.un.accelerometer.z;
+                    break;
+                
+                case SH2_GYROSCOPE_CALIBRATED:
+                    gyroZ = sensorValue.un.gyroscope.z;
+                    break;
+                
+                    
+            }
+        }
+    }
 }
