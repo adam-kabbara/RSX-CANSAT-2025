@@ -8,7 +8,6 @@ TODO:
 - graph should auto scroll?
 - remove command log horizontal scrolling (idk how)
 """
-import random
 import sys
 import webbrowser
 from datetime import datetime, timezone
@@ -19,10 +18,6 @@ import re
 import time
 import csv
 import pyqtgraph as pg
-import pyqtgraph.opengl as gl
-import math
-from pyqtgraph import Transform3D
-from scipy.spatial.transform import Rotation as R
 from pyqtgraph import mkPen
 from enum import Enum
 from PyQt6.QtSerialPort import QSerialPortInfo, QSerialPort
@@ -137,7 +132,8 @@ class DynamicPlotter(BaseDynamicPlotter):
         self.x = np.linspace(-timewindow, 0, timewindow)
         self.y = np.zeros(self.databuffer.maxlen, dtype=float)
         self.curve = self.plt.plot(self.x, self.y, pen=self.get_pen_color(self.base_line_color_idx))
-        self.plt.getViewBox().setLimits(xMin=-5, xMax=5000, minXRange=5, yMin=-10000, yMax=10000, minYRange=2)
+        #self.plt.getViewBox().setLimits(xMin=-5, xMax=5000, minXRange=5, yMin=-10000, yMax=10000, minYRange=2)
+        self.plt.setXRange(-20, 0)
     def update_plot(self, new_val):
 
         current_time = time.time()
@@ -153,6 +149,7 @@ class DynamicPlotter(BaseDynamicPlotter):
         self.x[-1] = self.x[-2] + time_diff
 
         self.curve.setData(self.x, self.y)
+        self.plt.setXRange(self.x[-1] - 50, self.x[-1])
     
     def reset_plot(self):
         self.databuffer = deque([0.0] * self.timewindow, maxlen=self.timewindow)
@@ -845,46 +842,6 @@ class GroundStationApp(QMainWindow):
 
             self.plotters.append(plotter)
 
-        self.rocket_3d = QWidget()
-        rocket_3d_layout = QVBoxLayout()
-
-        view = gl.GLViewWidget()
-        view.setCameraPosition(distance=10)
-        view.mousePressEvent = lambda ev: None
-        view.mouseMoveEvent = lambda ev: None
-        view.mouseReleaseEvent = lambda ev: None
-        view.wheelEvent = lambda ev: None
-
-        rocket_3d_layout.addWidget(view)
-
-        # Rocket components
-        # Cylinder body
-        cylinder_body = gl.GLMeshItem(
-            meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.5, 0.5], length=3),
-            smooth=True, color=(1, 0, 0, 1), shader="shaded"
-        )
-        cylinder_body.translate(0, 0, -2) # Base at z=-2, top at z=1
-        view.addItem(cylinder_body)
-
-        # Nose cone
-        # Cone is made using a cylinder with one radius 0
-        # Length 1, base radius 0.5, top radius 0
-        # Base of cone should be at z=1 (top of cylinder)
-        nose_cone = gl.GLMeshItem(
-            meshdata=gl.MeshData.cylinder(rows=10, cols=20, radius=[0.5, 0], length=1), # radius=[base, top]
-            smooth=True, color=(1, 0, 0, 1), shader="shaded" # Same color for now
-        )
-        nose_cone.translate(0, 0, 1) # Position cone's base at z=1
-        view.addItem(nose_cone)
-
-        # Store references on tab widget for later access
-        self.rocket_3d.view = view
-        self.rocket_3d.cylinder_body = cylinder_body
-        self.rocket_3d.nose_cone = nose_cone
-
-        self.rocket_3d.setLayout(rocket_3d_layout)
-        #self.tab_widget.addTab(self.rocket_3d, "3D")
-
         # Sidebar to show all current graph values
         sidebar_widget = QWidget()
         sidebar = QVBoxLayout(sidebar_widget)
@@ -956,7 +913,7 @@ class GroundStationApp(QMainWindow):
         # ------ END GRAPH GROUP ------ #
 
         # ------ START CSV FILE ------- #
-        self.__csv_file = open("cansat_data.csv", "w", newline="")
+        self.__csv_file = open("cansat_data_just_need_esp_files.csv", "w", newline="")
         self.__csv_writer = csv.DictWriter(self.__csv_file, fieldnames=csv_fields)
         self.__csv_writer.writeheader()
         # ------- END CSV FILE -------- #
@@ -1129,7 +1086,7 @@ class GroundStationApp(QMainWindow):
         msg_box.setDefaultButton(QMessageBox.StandardButton.No)
         response = msg_box.exec()
         if response == QMessageBox.StandardButton.Yes:
-            if(self.send_data("MEC,%d,RELEASE:X" % self.__TEAM_ID)):
+            if(self.send_data("CMD,%d,MEC,RELEASE:X" % self.__TEAM_ID)):
                 self.update_gui_log(f"Sent force probe release command")
 
     def get_cam_status(self):
@@ -1341,54 +1298,6 @@ class GroundStationApp(QMainWindow):
         self.__packet_recv_count = 0
         self.__packet_sent_count = 0
 
-    def update_rocket_orientation(self, yaw, pitch, roll):
-
-        try:
-            v1 = float(yaw)
-            v2 = float(pitch)
-            v3 = float(roll)
-
-            if math.isnan(v1) or math.isnan(v2) or math.isnan(v3):
-                return
-        except:
-            return
-        
-        # Convert to radians
-        yaw = math.radians(yaw)
-        pitch = math.radians(pitch)
-        roll = math.radians(roll)
-
-        cy, sy = math.cos(yaw), math.sin(yaw)
-        cp, sp = math.cos(pitch), math.sin(pitch)
-        cr, sr = math.cos(roll), math.sin(roll)
-
-        # Rotation matrix (Z-Y-X order)
-        R = np.array([
-            [cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr],
-            [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr],
-            [-sp,     cp * sr,                cp * cr]
-        ])
-
-        # Convert to 4x4 matrix
-        matrix = [
-            R[0][0], R[0][1], R[0][2], 0,
-            R[1][0], R[1][1], R[1][2], 0,
-            R[2][0], R[2][1], R[2][2], 0,
-            0,       0,       0,       1
-        ]
-
-        m = Transform3D(*matrix)
-
-        # Transform cylinder body
-        self.rocket_3d.cylinder_body.resetTransform()
-        self.rocket_3d.cylinder_body.setTransform(m)
-        self.rocket_3d.cylinder_body.translate(0, 0, -2, local=True) # Initial position for cylinder
-
-        # Transform nose cone
-        self.rocket_3d.nose_cone.resetTransform()
-        self.rocket_3d.nose_cone.setTransform(m)
-        self.rocket_3d.nose_cone.translate(0, 0, 1, local=True) # Initial position for cone, base at cylinder's top
-
     def set_port_text_closed(self):
          self.label_port.setText(f'<span style="color:black;">Ground Port: \
                                               </span><span style="color:RED;">CLOSED</span>')
@@ -1526,7 +1435,6 @@ class GroundStationApp(QMainWindow):
             
         data_dict = data.to_dict()
         self.__csv_writer.writerow(data_dict)
-        #self.update_rocket_orientation(data.GYRO_Y, data.GYRO_P, data.GYRO_R)
     
     def extract_data_str(self, msg: str) -> TelemetryData:
         # EXPECTED FORMAT:
