@@ -355,6 +355,8 @@ void CommandManager::do_mec(SerialManager &ser, MissionManager &info, SensorMana
   if(strcmp(mec, "RELEASE") == 0)
   {
     sensors.writeReleaseServo(47);
+    sensors.writeGyroServoLeft(90);
+    sensors.writeGyroServoRight(90);
     info.setOpState(PROBE_RELEASE);
     info.beginPref("xb-set", false);
     int state_int = static_cast<int>(PROBE_RELEASE);

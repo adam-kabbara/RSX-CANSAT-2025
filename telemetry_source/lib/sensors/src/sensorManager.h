@@ -95,7 +95,7 @@ private:
     float my = 0;
     float mz = 0;
     float gyroZ = 0;
-    unsigned long last_servo_update = 0;
+    
     unsigned long last_camera_servo_update = 0;
 
     unsigned long last_alt_update = 0;
@@ -161,6 +161,16 @@ public:
     int getCamera2Status();
 
     void updateCameraServo();
+
+    void update_imu();
+
+    float getAx();
+    float getAy();
+    float getAz();
+    float getGyroZ();
+    float getMx();
+    float getMy();
+    float getMz();
 };
 
 #endif /* SENSOR_MANAGER_H */
