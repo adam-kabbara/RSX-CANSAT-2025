@@ -23,6 +23,7 @@ This repository is designed to manage the files made by the CanSat Team under th
 **CanSat Competition:**
 - 📅 June 5-8, 2025
 - 📍 Monterey, Virginia, United States
+- 📃 [Mission document] (CanSat_Mission_Guide_2025e.pdf)
 
 **Competition Deliverables:**
 - 🏆 95.87725%: [CanSat 2025 Winners](https://cansatcompetition.com/winners.html)
@@ -33,6 +34,7 @@ This repository is designed to manage the files made by the CanSat Team under th
 - 🌡️ Environemental Testing Document: [Team #3114 ENV](competition_documentation/deliverables/Cansat2025_3114_Mission_Operations_Manual.pdf)
 - 🗂️ Mission Operations Manual: [Team #3114 MOM](competition_documentation/deliverables/Cansat2025_3114_Mission_Operations_Manual.pdf)
 - 🛰️ Post Flight Review: [Team #3114 PFR](competition_documentation/deliverables/Cansat2025_3114_PFR.pdf)
+note links might be outdated
 
 **Competition Results:**
 - 🗺️ 5th Place Internationally!
